@@ -24,6 +24,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "er_tft035.h"
+#include "font_6_12.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,11 +108,26 @@ int main(void) {
     MX_RTC_Init();
     MX_FATFS_Init();
     /* USER CODE BEGIN 2 */
+
+    char textBuffer[16];
+    uint16_t counter = 0;
+    sprintf(textBuffer, " Counter: %u", counter);
+
+    ER_TFT035_textProps counterText = {.font = fontData,
+                                       .text = textBuffer,
+                                       .posX = 50,
+                                       .posY = 400,
+                                       .fontSize = 2,
+                                       .fontColor = 0xFF0000,
+                                       .backgroundColor = 0xFFFFFF};
+
     ER_TFT035_init();
-    ER_TFT035_clear(0x00);
+    ER_TFT035_clearScreen(0x00);
     ER_TFT035_fillRectangle(10, 10, 50, 50, CONVERT_24BIT_COLOR(0xFF0000));
     ER_TFT035_fillRectangle(50, 50, 150, 150, CONVERT_24BIT_COLOR(0x0000FF));
     ER_TFT035_fillRectangle(100, 100, 250, 250, CONVERT_24BIT_COLOR(0x00FF00));
+
+    ER_TFT035_drawText(&counterText);
     /* USER CODE END 2 */
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
@@ -118,6 +135,12 @@ int main(void) {
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
+
+        sprintf(textBuffer, " Counter: %u", counter++);
+
+        ER_TFT035_drawText(&counterText);
+
+        HAL_Delay(500);
     }
     /* USER CODE END 3 */
 }
