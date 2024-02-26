@@ -332,7 +332,7 @@ void ER_TFT035_init(void) {
     ER_TFT035_writeCommandData(0x80);
 
     ER_TFT035_writeCommand(0x36);  // Memory Access
-    ER_TFT035_writeCommandData(0x48);
+    ER_TFT035_writeCommandData(0x88);
 
     ER_TFT035_writeCommand(0x3A);      // Interface Pixel Format
     ER_TFT035_writeCommandData(0x66);  // 16 bit

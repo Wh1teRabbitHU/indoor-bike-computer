@@ -118,8 +118,8 @@ int main(void) {
                                        .posX = 50,
                                        .posY = 400,
                                        .fontSize = 2,
-                                       .fontColor = 0xFF0000,
-                                       .backgroundColor = 0xFFFFFF};
+                                       .fontColor = CONVERT_24BIT_COLOR(0xFF0000),
+                                       .backgroundColor = CONVERT_24BIT_COLOR(0xFFFFFF)};
 
     ER_TFT035_init();
     ER_TFT035_clearScreen(0x00);
