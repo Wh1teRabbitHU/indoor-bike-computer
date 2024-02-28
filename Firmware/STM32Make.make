@@ -36,8 +36,10 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
+Core/Src/binary.c \
 Core/Src/er_tft035.c \
 Core/Src/main.c \
+Core/Src/mcp3421.c \
 Core/Src/stm32f4xx_hal_msp.c \
 Core/Src/stm32f4xx_it.c \
 Core/Src/system_stm32f4xx.c \
