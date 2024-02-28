@@ -24,7 +24,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "er_tft035.h"
-#include "font_6_12.h"
+#include "gui.h"
+#include "mcp3421.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -109,17 +110,7 @@ int main(void) {
     MX_FATFS_Init();
     /* USER CODE BEGIN 2 */
 
-    char textBuffer[16];
-    uint16_t counter = 0;
-    sprintf(textBuffer, " Counter: %u", counter);
-
-    ER_TFT035_textProps counterText = {.font = fontData,
-                                       .text = textBuffer,
-                                       .posX = 50,
-                                       .posY = 400,
-                                       .fontSize = 2,
-                                       .fontColor = CONVERT_24BIT_COLOR(0xFF0000),
-                                       .backgroundColor = CONVERT_24BIT_COLOR(0xFFFFFF)};
+    char textBuffer[32];
 
     ER_TFT035_init();
     ER_TFT035_clearScreen(0x00);
@@ -127,7 +118,15 @@ int main(void) {
     ER_TFT035_fillRectangle(50, 50, 150, 150, CONVERT_24BIT_COLOR(0x0000FF));
     ER_TFT035_fillRectangle(100, 100, 250, 250, CONVERT_24BIT_COLOR(0x00FF00));
 
-    ER_TFT035_drawText(&counterText);
+    MCP3421_config config = {0};
+
+    config.mode = MCP3421_MODE_CONTINUOUS;
+    config.sampleRate = MCP3421_RATE_003_75;
+    config.gain = MCP3421_GAIN_1X;
+
+    MCP3421_writeConfig(&hi2c2, &config);
+    HAL_Delay(100);
+
     /* USER CODE END 2 */
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
@@ -136,11 +135,12 @@ int main(void) {
 
         /* USER CODE BEGIN 3 */
 
-        sprintf(textBuffer, " Counter: %u", counter++);
+        uint32_t measurement = MCP3421_readMeasurement(&hi2c2);
+        sprintf(textBuffer, "V: %ldmV       \n", measurement);
 
-        ER_TFT035_drawText(&counterText);
+        GUI_logInfo(textBuffer);
 
-        HAL_Delay(500);
+        HAL_Delay(200);
     }
     /* USER CODE END 3 */
 }

@@ -27,8 +27,8 @@ void MCP3421_readI2C(I2C_HandleTypeDef* i2c, uint8_t* buffer) {
 void MCP3421_setConfig(uint8_t configBin, MCP3421_config* config) {
     config->ready = binary_getBit8(configBin, 7);
     config->mode = binary_getBit8(configBin, 4);
-    config->sampleRate = (binary_getBit8(configBin, 3) << 1) & binary_getBit8(configBin, 2);
-    config->gain = (binary_getBit8(configBin, 1) << 1) & binary_getBit8(configBin, 0);
+    config->sampleRate = (binary_getBit8(configBin, 3) << 1) | binary_getBit8(configBin, 2);
+    config->gain = (binary_getBit8(configBin, 1) << 1) | binary_getBit8(configBin, 0);
 }
 
 void MCP3421_readConfig(I2C_HandleTypeDef* i2c, MCP3421_config* config) {
@@ -65,5 +65,34 @@ uint32_t MCP3421_readMeasurement(I2C_HandleTypeDef* i2c) {
     measurement = measurement | buffer[1] << 8;
     measurement = measurement | ((buffer[0] << 16) & 0b11);
 
-    return measurement * 0.25;
+    switch (currentConfig.sampleRate) {
+        case MCP3421_RATE_240_00:
+            measurement *= MCP3421_UNIT_240_00 * 2;
+            break;
+        case MCP3421_RATE_060_00:
+            measurement *= MCP3421_UNIT_060_00 * 2;
+            break;
+        case MCP3421_RATE_015_00:
+            measurement *= MCP3421_UNIT_015_00 * 2;
+            break;
+        case MCP3421_RATE_003_75:
+            measurement *= MCP3421_UNIT_003_75 * 2;
+            break;
+    }
+
+    switch (currentConfig.gain) {
+        case MCP3421_GAIN_1X:
+            break;
+        case MCP3421_GAIN_2X:
+            measurement *= 2;
+            break;
+        case MCP3421_GAIN_4X:
+            measurement *= 4;
+            break;
+        case MCP3421_GAIN_8X:
+            measurement *= 8;
+            break;
+    }
+
+    return measurement;
 }

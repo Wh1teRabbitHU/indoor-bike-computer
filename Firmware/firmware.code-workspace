@@ -14,7 +14,10 @@
 			"*.cpp": "cpp",
 			"display.h": "c",
 			"er_tft035.h": "c",
-			"font_6_12.h": "c"
+			"font_6_12.h": "c",
+			"binary.h": "c",
+			"gui.h": "c",
+			"mcp3421.h": "c"
 		}
 	}
 }

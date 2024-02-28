@@ -2,6 +2,7 @@
 #define __MCP3421_H
 
 #include "binary.h"
+#include "gui.h"
 #include "main.h"
 
 #define MCP3421_I2C_ADDR 0b1101000 << 1
@@ -12,6 +13,10 @@
 #define MCP3421_RATE_060_00 0b01
 #define MCP3421_RATE_015_00 0b10
 #define MCP3421_RATE_003_75 0b11
+#define MCP3421_UNIT_240_00 1
+#define MCP3421_UNIT_060_00 0.25
+#define MCP3421_UNIT_015_00 0.0625
+#define MCP3421_UNIT_003_75 0.015625
 #define MCP3421_GAIN_1X 0b00
 #define MCP3421_GAIN_2X 0b01
 #define MCP3421_GAIN_4X 0b10

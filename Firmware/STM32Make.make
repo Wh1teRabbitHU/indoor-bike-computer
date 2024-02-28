@@ -38,6 +38,7 @@ BUILD_DIR = build
 C_SOURCES =  \
 Core/Src/binary.c \
 Core/Src/er_tft035.c \
+Core/Src/gui.c \
 Core/Src/main.c \
 Core/Src/mcp3421.c \
 Core/Src/stm32f4xx_hal_msp.c \

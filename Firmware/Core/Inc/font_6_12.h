@@ -1,6 +1,3 @@
-#ifndef __FONT_6_12_H
-#define __FONT_6_12_H
-
 unsigned char fontData[] = {
 
     /*--   {SPACE}  --*/
@@ -1334,5 +1331,3 @@ unsigned char fontData[] = {
     0x00,
 
 };
-
-#endif
