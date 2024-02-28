@@ -44,4 +44,4 @@
 # Libraries
 /lib
 
-Firmware/build
+Firmware/STM32F446/build
