@@ -67,16 +67,16 @@ uint32_t MCP3421_readMeasurement(I2C_HandleTypeDef* i2c) {
 
     switch (currentConfig.sampleRate) {
         case MCP3421_RATE_240_00:
-            measurement *= MCP3421_UNIT_240_00 * 2;
+            measurement *= MCP3421_UNIT_240_00;
             break;
         case MCP3421_RATE_060_00:
-            measurement *= MCP3421_UNIT_060_00 * 2;
+            measurement *= MCP3421_UNIT_060_00;
             break;
         case MCP3421_RATE_015_00:
-            measurement *= MCP3421_UNIT_015_00 * 2;
+            measurement *= MCP3421_UNIT_015_00;
             break;
         case MCP3421_RATE_003_75:
-            measurement *= MCP3421_UNIT_003_75 * 2;
+            measurement *= MCP3421_UNIT_003_75;
             break;
     }
 
