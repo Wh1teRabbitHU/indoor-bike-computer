@@ -128,6 +128,7 @@ int main(void) {
     HAL_Delay(100);
 
     /* USER CODE END 2 */
+
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1) {
@@ -358,10 +359,10 @@ static void MX_GPIO_Init(void) {
     __HAL_RCC_GPIOD_CLK_ENABLE();
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(GPIOC,
-                      DISPLAY_D13_Pin | DISPLAY_D14_Pin | DISPLAY_D15_Pin | DISPLAY_D16_Pin | DISPLAY_D17_Pin |
-                          DISPLAY_RESET_Pin | ESP32_EN_Pin,
-                      GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(
+        GPIOC,
+        DISPLAY_D13_Pin | DISPLAY_D14_Pin | DISPLAY_D15_Pin | DISPLAY_D16_Pin | DISPLAY_D17_Pin | DISPLAY_RESET_Pin,
+        GPIO_PIN_RESET);
 
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOA,
@@ -374,6 +375,9 @@ static void MX_GPIO_Init(void) {
     HAL_GPIO_WritePin(GPIOB, DISPLAY_RD_Pin | DISPLAY_WR_Pin | DISPLAY_DC_Pin | DISPLAY_CS_Pin | GAUGE_ALERT_Pin,
                       GPIO_PIN_RESET);
 
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(ESP32_EN_GPIO_Port, ESP32_EN_Pin, GPIO_PIN_SET);
+
     /*Configure GPIO pin : USER_BTN_4_Pin */
     GPIO_InitStruct.Pin = USER_BTN_4_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
@@ -381,9 +385,9 @@ static void MX_GPIO_Init(void) {
     HAL_GPIO_Init(USER_BTN_4_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : DISPLAY_D13_Pin DISPLAY_D14_Pin DISPLAY_D15_Pin DISPLAY_D16_Pin
-                             DISPLAY_D17_Pin DISPLAY_RESET_Pin ESP32_EN_Pin */
-    GPIO_InitStruct.Pin = DISPLAY_D13_Pin | DISPLAY_D14_Pin | DISPLAY_D15_Pin | DISPLAY_D16_Pin | DISPLAY_D17_Pin |
-                          DISPLAY_RESET_Pin | ESP32_EN_Pin;
+                             DISPLAY_D17_Pin DISPLAY_RESET_Pin */
+    GPIO_InitStruct.Pin =
+        DISPLAY_D13_Pin | DISPLAY_D14_Pin | DISPLAY_D15_Pin | DISPLAY_D16_Pin | DISPLAY_D17_Pin | DISPLAY_RESET_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -415,6 +419,13 @@ static void MX_GPIO_Init(void) {
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+    /*Configure GPIO pin : ESP32_EN_Pin */
+    GPIO_InitStruct.Pin = ESP32_EN_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(ESP32_EN_GPIO_Port, &GPIO_InitStruct);
+
     /*Configure GPIO pin : REVOLUTION_SIGNAL_Pin */
     GPIO_InitStruct.Pin = REVOLUTION_SIGNAL_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
@@ -426,6 +437,13 @@ static void MX_GPIO_Init(void) {
     GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    /* EXTI interrupt init*/
+    HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
+    HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
     /* USER CODE BEGIN MX_GPIO_Init_2 */
     /* USER CODE END MX_GPIO_Init_2 */

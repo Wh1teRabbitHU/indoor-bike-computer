@@ -59,6 +59,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define USER_BTN_4_Pin GPIO_PIN_13
 #define USER_BTN_4_GPIO_Port GPIOC
+#define USER_BTN_4_EXTI_IRQn EXTI15_10_IRQn
 #define DISPLAY_D13_Pin GPIO_PIN_0
 #define DISPLAY_D13_GPIO_Port GPIOC
 #define DISPLAY_D14_Pin GPIO_PIN_1
@@ -111,16 +112,20 @@ void Error_Handler(void);
 #define DISPLAY_D12_GPIO_Port GPIOA
 #define REVOLUTION_SIGNAL_Pin GPIO_PIN_15
 #define REVOLUTION_SIGNAL_GPIO_Port GPIOA
+#define REVOLUTION_SIGNAL_EXTI_IRQn EXTI15_10_IRQn
 #define POWER_ALERT_Pin GPIO_PIN_3
 #define POWER_ALERT_GPIO_Port GPIOB
 #define GAUGE_ALERT_Pin GPIO_PIN_4
 #define GAUGE_ALERT_GPIO_Port GPIOB
 #define USER_BTN_1_Pin GPIO_PIN_5
 #define USER_BTN_1_GPIO_Port GPIOB
+#define USER_BTN_1_EXTI_IRQn EXTI9_5_IRQn
 #define USER_BTN_2_Pin GPIO_PIN_8
 #define USER_BTN_2_GPIO_Port GPIOB
+#define USER_BTN_2_EXTI_IRQn EXTI9_5_IRQn
 #define USER_BTN_3_Pin GPIO_PIN_9
 #define USER_BTN_3_GPIO_Port GPIOB
+#define USER_BTN_3_EXTI_IRQn EXTI9_5_IRQn
 
 /* USER CODE BEGIN Private defines */
 
