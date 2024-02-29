@@ -136,10 +136,10 @@ int main(void) {
 
         /* USER CODE BEGIN 3 */
 
-        uint32_t measurement = MCP3421_readMeasurement(&hi2c2);
-        sprintf(textBuffer, "V: %ldmV       \n", measurement);
+        // uint32_t measurement = MCP3421_readMeasurement(&hi2c2);
+        // sprintf(textBuffer, "V: %ldmV       \n", measurement);
 
-        GUI_logInfo(textBuffer);
+        // GUI_logInfo(textBuffer);
 
         HAL_Delay(200);
     }

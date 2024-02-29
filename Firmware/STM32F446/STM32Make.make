@@ -36,6 +36,7 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
+Core/Src/bike.c \
 Core/Src/binary.c \
 Core/Src/er_tft035.c \
 Core/Src/gui.c \
