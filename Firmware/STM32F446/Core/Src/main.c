@@ -52,6 +52,8 @@ RTC_HandleTypeDef hrtc;
 
 SD_HandleTypeDef hsd;
 
+TIM_HandleTypeDef htim14;
+
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
@@ -66,6 +68,7 @@ static void MX_I2C2_Init(void);
 static void MX_SDIO_SD_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_RTC_Init(void);
+static void MX_TIM14_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -108,6 +111,7 @@ int main(void) {
     MX_USART3_UART_Init();
     MX_RTC_Init();
     MX_FATFS_Init();
+    MX_TIM14_Init();
     /* USER CODE BEGIN 2 */
 
     char textBuffer[32];
@@ -126,6 +130,8 @@ int main(void) {
 
     MCP3421_writeConfig(&hi2c2, &config);
     HAL_Delay(100);
+
+    HAL_TIM_Base_Start_IT(&htim14);
 
     /* USER CODE END 2 */
 
@@ -310,6 +316,33 @@ static void MX_SDIO_SD_Init(void) {
     /* USER CODE BEGIN SDIO_Init 2 */
 
     /* USER CODE END SDIO_Init 2 */
+}
+
+/**
+ * @brief TIM14 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_TIM14_Init(void) {
+    /* USER CODE BEGIN TIM14_Init 0 */
+
+    /* USER CODE END TIM14_Init 0 */
+
+    /* USER CODE BEGIN TIM14_Init 1 */
+
+    /* USER CODE END TIM14_Init 1 */
+    htim14.Instance = TIM14;
+    htim14.Init.Prescaler = 9000 - 1;
+    htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim14.Init.Period = 2000 - 1;
+    htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    if (HAL_TIM_Base_Init(&htim14) != HAL_OK) {
+        Error_Handler();
+    }
+    /* USER CODE BEGIN TIM14_Init 2 */
+
+    /* USER CODE END TIM14_Init 2 */
 }
 
 /**
