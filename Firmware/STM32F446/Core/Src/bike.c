@@ -1,11 +1,15 @@
 #include "bike.h"
 
 uint32_t lastRevolutionTimestamp = 0;
+uint32_t difficulty = 15;
 uint32_t rpm = 0;
 
 char textBuffer[32];
 
-void Bike_updateDifficulty(void) {}
+void Bike_updateDifficulty(void) {
+    difficulty = MCP3421_readMeasurement();
+    GUI_setDifficulty(difficulty);
+}
 
 void Bike_updateRevolution(void) {
     uint32_t currentTimestamp = HAL_GetTick();
@@ -16,5 +20,5 @@ void Bike_updateRevolution(void) {
 
     lastRevolutionTimestamp = currentTimestamp;
 
-    GUI_displayRpm(rpm);
+    GUI_setRpm(rpm);
 }

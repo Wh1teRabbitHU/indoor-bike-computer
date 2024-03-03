@@ -5,13 +5,19 @@
 #include "lvgl.h"
 #include "stdio.h"
 
+typedef struct GUI_mainScreenState {
+    char* infoMessage;
+    char* errorMessage;
+    uint32_t difficulty;
+    uint32_t rpm;
+} GUI_mainScreenState;
+
 void GUI_init();
-void GUI_tick();
+uint32_t GUI_tick();
 
-void GUI_logInfo(char* info);
-void GUI_logError(char* error);
-
-void GUI_displayDifficulty(uint32_t difficulty);
-void GUI_displayRpm(uint32_t rpm);
+void GUI_setInfo(char* info);
+void GUI_setError(char* error);
+void GUI_setDifficulty(uint32_t difficulty);
+void GUI_setRpm(uint32_t rpm);
 
 #endif

@@ -1,19 +1,22 @@
 #include "mcp3421.h"
 
+static I2C_HandleTypeDef* i2c = NULL;
 static MCP3421_config currentConfig =
     {ready : 0, mode : MCP3421_MODE_CONTINUOUS, sampleRate : MCP3421_RATE_240_00, gain : MCP3421_GAIN_1X};
 
-void MCP3421_init(I2C_HandleTypeDef* i2c) {
+void MCP3421_init(I2C_HandleTypeDef* _i2c) {
+    i2c = _i2c;
+
     MCP3421_config config = {0};
 
     config.mode = MCP3421_MODE_CONTINUOUS;
     config.sampleRate = MCP3421_RATE_003_75;
     config.gain = MCP3421_GAIN_1X;
 
-    MCP3421_writeConfig(i2c, &config);
+    MCP3421_writeConfig(&config);
 }
 
-void MCP3421_writeI2C(I2C_HandleTypeDef* i2c, uint8_t data) {
+void MCP3421_writeI2C(uint8_t data) {
     uint8_t buffer[1];
 
     buffer[0] = data;
@@ -21,16 +24,16 @@ void MCP3421_writeI2C(I2C_HandleTypeDef* i2c, uint8_t data) {
     HAL_StatusTypeDef result = HAL_I2C_Master_Transmit(i2c, MCP3421_I2C_ADDR, buffer, 1, 100);
 
     if (result != HAL_OK) {
-        GUI_logError("Error: Couldn't write to the ADC register");
+        GUI_setError("Error: Couldn't write to the ADC register");
     }
 }
 
-void MCP3421_readI2C(I2C_HandleTypeDef* i2c, uint8_t* buffer) {
+void MCP3421_readI2C(uint8_t* buffer) {
     uint8_t dataLength = currentConfig.sampleRate == MCP3421_RATE_003_75 ? 4 : 3;
     HAL_StatusTypeDef result = HAL_I2C_Master_Receive(i2c, MCP3421_I2C_ADDR, buffer, dataLength, 100);
 
     if (result != HAL_OK) {
-        GUI_logError("Error: Couldn't read from the ADC register");
+        GUI_setError("Error: Couldn't read from the ADC register");
     }
 }
 
@@ -41,9 +44,9 @@ void MCP3421_setConfig(uint8_t configBin, MCP3421_config* config) {
     config->gain = (binary_getBit8(configBin, 1) << 1) | binary_getBit8(configBin, 0);
 }
 
-void MCP3421_readConfig(I2C_HandleTypeDef* i2c, MCP3421_config* config) {
+void MCP3421_readConfig(MCP3421_config* config) {
     uint8_t buffer[4] = {0};
-    MCP3421_readI2C(i2c, buffer);
+    MCP3421_readI2C(buffer);
     uint8_t configByte = currentConfig.sampleRate == MCP3421_RATE_003_75 ? 3 : 2;
     uint8_t configBin = buffer[configByte];
 
@@ -51,7 +54,7 @@ void MCP3421_readConfig(I2C_HandleTypeDef* i2c, MCP3421_config* config) {
     MCP3421_setConfig(configBin, &currentConfig);
 }
 
-void MCP3421_writeConfig(I2C_HandleTypeDef* i2c, MCP3421_config* config) {
+void MCP3421_writeConfig(MCP3421_config* config) {
     uint8_t configBin = 0;
 
     configBin = configBin | config->ready << 7;
@@ -61,13 +64,13 @@ void MCP3421_writeConfig(I2C_HandleTypeDef* i2c, MCP3421_config* config) {
     configBin = configBin | binary_getBit8(config->gain, 1) << 1;
     configBin = configBin | binary_getBit8(config->gain, 0);
 
-    MCP3421_writeI2C(i2c, configBin);
+    MCP3421_writeI2C(configBin);
     MCP3421_setConfig(configBin, &currentConfig);
 }
 
-uint32_t MCP3421_readMeasurement(I2C_HandleTypeDef* i2c) {
+uint32_t MCP3421_readMeasurement() {
     uint8_t buffer[4] = {0};
-    MCP3421_readI2C(i2c, buffer);
+    MCP3421_readI2C(buffer);
 
     uint32_t measurement = 0;
 

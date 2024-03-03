@@ -1,13 +1,13 @@
 #include "gui.h"
 
-#include "font_6_12.h"
-
 static char textBuffer[32];
-static uint32_t lastTick = 0;
+
+static GUI_mainScreenState mainScreenState = {.infoMessage = NULL, .errorMessage = NULL, .rpm = 0, .difficulty = 0};
 
 // LVGL
 static lv_display_t* display;
-static lv_color_t buf1[ER_TFT035_SCREEN_WIDTH * ER_TFT035_SCREEN_HEIGHT / 10];
+static lv_color_t buf1[ER_TFT035_SCREEN_WIDTH * ER_TFT035_SCREEN_HEIGHT / 20];
+static uint32_t lastTick = 0;
 
 // LVGL - Components
 
@@ -15,6 +15,9 @@ static lv_color_t buf1[ER_TFT035_SCREEN_WIDTH * ER_TFT035_SCREEN_HEIGHT / 10];
 static lv_obj_t* mainScreen = NULL;
 static lv_obj_t* infoLabel = NULL;
 static lv_obj_t* errorLabel = NULL;
+
+static lv_obj_t* difficultyLabel = NULL;
+static lv_obj_t* rpmLabel = NULL;
 
 // Configuration screen
 // TODO
@@ -37,13 +40,62 @@ void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* co
 
 void GUI_handleKeyboard(lv_indev_t* indev, lv_indev_data_t* data) {
     // TODO: keyboard implementation
-    // data->key = last_key();
+}
 
-    // if (key_pressed())
-    //     data->state = LV_INDEV_STATE_PRESSED;
-    // else
-    //     data->state = LV_INDEV_STATE_RELEASED;
-    data->state = LV_INDEV_STATE_RELEASED;
+void GUI_displayInfo() {
+    if (mainScreenState.infoMessage == NULL) {
+        return;
+    }
+
+    if (infoLabel == NULL) {
+        infoLabel = lv_label_create(mainScreen);
+
+        lv_obj_set_style_text_color(infoLabel, lv_color_hex(0xffffff), LV_PART_MAIN);
+        lv_obj_align(infoLabel, LV_ALIGN_CENTER, 0, 0);
+    }
+
+    lv_label_set_text(infoLabel, mainScreenState.infoMessage);
+}
+
+void GUI_displayError() {
+    if (mainScreenState.errorMessage == NULL) {
+        return;
+    }
+
+    if (errorLabel == NULL) {
+        errorLabel = lv_label_create(mainScreen);
+
+        lv_obj_set_style_text_color(errorLabel, lv_color_hex(0xff0000), LV_PART_MAIN);
+        lv_obj_align(errorLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
+    }
+
+    lv_label_set_text(errorLabel, mainScreenState.errorMessage);
+}
+
+void GUI_displayDifficulty(uint32_t difficulty) {
+    sprintf(textBuffer, "Difficulty: %ldmV  ", difficulty);
+
+    if (difficultyLabel == NULL) {
+        difficultyLabel = lv_label_create(mainScreen);
+
+        lv_obj_set_style_text_color(difficultyLabel, lv_color_hex(0xffffff), LV_PART_MAIN);
+        lv_obj_align(difficultyLabel, LV_ALIGN_CENTER, 0, 0);
+    }
+
+    lv_label_set_text(difficultyLabel, textBuffer);
+}
+
+void GUI_displayRpm(uint32_t rpm) {
+    sprintf(textBuffer, "RPM: %ld/minute  ", rpm);
+
+    if (rpmLabel == NULL) {
+        rpmLabel = lv_label_create(mainScreen);
+
+        lv_obj_set_style_text_color(rpmLabel, lv_color_hex(0xffffff), LV_PART_MAIN);
+        lv_obj_align(rpmLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
+    }
+
+    lv_label_set_text(rpmLabel, textBuffer);
 }
 
 void GUI_initDisplay() {
@@ -52,7 +104,7 @@ void GUI_initDisplay() {
     display = lv_display_create(ER_TFT035_SCREEN_WIDTH, ER_TFT035_SCREEN_HEIGHT);
 
     lv_display_set_buffers(display, buf1, NULL, sizeof(buf1), LV_DISPLAY_RENDER_MODE_PARTIAL);
-    lv_display_set_flush_cb(display, GUI_handleDisplay);
+    lv_display_set_flush_cb(display, (lv_display_flush_cb_t) GUI_handleDisplay);
 }
 
 void GUI_initMainScreen() {
@@ -78,64 +130,31 @@ void GUI_init() {
     GUI_initInputs();
 }
 
-void GUI_tick() {
+void GUI_updateStates() {
+    GUI_displayInfo();
+    GUI_displayError();
+    GUI_displayDifficulty(mainScreenState.difficulty);
+    GUI_displayRpm(mainScreenState.rpm);
+}
+
+uint32_t GUI_tick() {
     uint32_t currentTick = HAL_GetTick();
 
     if (lastTick > 0) {
         lv_tick_inc(currentTick - lastTick);
     }
 
+    GUI_updateStates();
+
     lastTick = HAL_GetTick();
 
-    lv_timer_handler();
+    return lv_timer_handler();
 }
 
-void GUI_logInfo(char* info) {
-    if (infoLabel == NULL) {
-        infoLabel = lv_label_create(mainScreen);
+void GUI_setInfo(char* info) { mainScreenState.infoMessage = info; }
 
-        lv_obj_set_style_text_color(mainScreen, lv_color_hex(0xffffff), LV_PART_MAIN);
-        lv_obj_align(infoLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
-    }
+void GUI_setError(char* error) { mainScreenState.errorMessage = error; }
 
-    lv_label_set_text(infoLabel, info);
-}
+void GUI_setDifficulty(uint32_t difficulty) { mainScreenState.difficulty = difficulty; }
 
-void GUI_logError(char* error) {
-    if (errorLabel == NULL) {
-        errorLabel = lv_label_create(mainScreen);
-
-        lv_obj_set_style_text_color(mainScreen, lv_color_hex(0xff0000), LV_PART_MAIN);
-        lv_obj_align(errorLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
-    }
-
-    lv_label_set_text(errorLabel, error);
-}
-
-void GUI_displayDifficulty(uint32_t difficulty) {
-    sprintf(textBuffer, "Difficulty: %ldmV  ", difficulty);
-
-    ER_TFT035_textProps infoText = {.font = fontData,
-                                    .text = textBuffer,
-                                    .posX = 10,
-                                    .posY = 10,
-                                    .fontSize = 2,
-                                    .fontColor = CONVERT_24BIT_COLOR(0x000000),
-                                    .backgroundColor = CONVERT_24BIT_COLOR(0xFFFFFF)};
-
-    ER_TFT035_drawText(&infoText);
-}
-
-void GUI_displayRpm(uint32_t rpm) {
-    sprintf(textBuffer, "RPM: %ld/minute  ", rpm);
-
-    ER_TFT035_textProps infoText = {.font = fontData,
-                                    .text = textBuffer,
-                                    .posX = 10,
-                                    .posY = 50,
-                                    .fontSize = 2,
-                                    .fontColor = CONVERT_24BIT_COLOR(0x000000),
-                                    .backgroundColor = CONVERT_24BIT_COLOR(0xFFFFFF)};
-
-    ER_TFT035_drawText(&infoText);
-}
+void GUI_setRpm(uint32_t rpm) { mainScreenState.rpm = rpm; }

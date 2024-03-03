@@ -135,8 +135,9 @@ int main(void) {
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-        GUI_tick();
-        HAL_Delay(5);
+        uint32_t waitTime = GUI_tick();
+
+        HAL_Delay(waitTime);
     }
     /* USER CODE END 3 */
 }
