@@ -292,7 +292,7 @@
 
 /* Adjust color mix functions rounding. GPUs might calculate color mix (blending) differently.
  * 0: round down, 64: round up from x.75, 128: round up from half, 192: round up from x.25, 254: round up */
-#define LV_COLOR_MIX_ROUND_OFS  0
+#define LV_COLOR_MIX_ROUND_OFS  128
 
 /* Add 2 x 32 bit variables to each lv_obj_t to speed up getting style properties */
 #define LV_OBJ_STYLE_CACHE      0
@@ -380,7 +380,7 @@
 #define LV_FONT_MONTSERRAT_8  0
 #define LV_FONT_MONTSERRAT_10 0
 #define LV_FONT_MONTSERRAT_12 0
-#define LV_FONT_MONTSERRAT_14 1
+#define LV_FONT_MONTSERRAT_14 0
 #define LV_FONT_MONTSERRAT_16 0
 #define LV_FONT_MONTSERRAT_18 0
 #define LV_FONT_MONTSERRAT_20 0
@@ -406,7 +406,7 @@
 
 /*Pixel perfect monospace fonts*/
 #define LV_FONT_UNSCII_8  0
-#define LV_FONT_UNSCII_16 0
+#define LV_FONT_UNSCII_16 1
 
 /*Optionally declare custom fonts here.
  *You can use these fonts as default font too and they will be available globally.
@@ -414,7 +414,7 @@
 #define LV_FONT_CUSTOM_DECLARE
 
 /*Always set a default font*/
-#define LV_FONT_DEFAULT &lv_font_montserrat_14
+#define LV_FONT_DEFAULT &lv_font_unscii_16
 
 /*Enable handling large font and/or fonts with a lot of characters.
  *The limit depends on the font size, font face and bpp.

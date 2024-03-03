@@ -29,7 +29,11 @@ void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* co
 
     for (y = area->y1; y <= area->y2; y++) {
         for (x = area->x1; x <= area->x2; x++) {
-            uint32_t color = CONVERT_24BIT_COLOR((color_p->red << 16) | (color_p->green << 8) | color_p->blue);
+            volatile uint32_t r = color_p->red;
+            volatile uint32_t g = color_p->green;
+            volatile uint32_t b = color_p->blue;
+            uint32_t color = ((r & 0x3F) << 12) | ((g & 0x3F) << 6) | b;
+
             ER_TFT035_writePixelData(color);
             color_p++;
         }
@@ -50,8 +54,10 @@ void GUI_displayInfo() {
     if (infoLabel == NULL) {
         infoLabel = lv_label_create(mainScreen);
 
-        lv_obj_set_style_text_color(infoLabel, lv_color_hex(0xffffff), LV_PART_MAIN);
-        lv_obj_align(infoLabel, LV_ALIGN_CENTER, 0, 0);
+        lv_obj_set_style_text_color(infoLabel, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
+        lv_obj_align(infoLabel, LV_ALIGN_TOP_MID, 0, 16);
+        lv_obj_set_width(infoLabel, ER_TFT035_SCREEN_WIDTH * 0.9);
+        lv_obj_set_height(infoLabel, ER_TFT035_SCREEN_HEIGHT * 0.2);
     }
 
     lv_label_set_text(infoLabel, mainScreenState.infoMessage);
@@ -65,7 +71,7 @@ void GUI_displayError() {
     if (errorLabel == NULL) {
         errorLabel = lv_label_create(mainScreen);
 
-        lv_obj_set_style_text_color(errorLabel, lv_color_hex(0xff0000), LV_PART_MAIN);
+        lv_obj_set_style_text_color(errorLabel, lv_color_hex(0xFF0000), LV_PART_MAIN);
         lv_obj_align(errorLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
     }
 
@@ -78,7 +84,7 @@ void GUI_displayDifficulty(uint32_t difficulty) {
     if (difficultyLabel == NULL) {
         difficultyLabel = lv_label_create(mainScreen);
 
-        lv_obj_set_style_text_color(difficultyLabel, lv_color_hex(0xffffff), LV_PART_MAIN);
+        lv_obj_set_style_text_color(difficultyLabel, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
         lv_obj_align(difficultyLabel, LV_ALIGN_CENTER, 0, 0);
     }
 
@@ -91,7 +97,7 @@ void GUI_displayRpm(uint32_t rpm) {
     if (rpmLabel == NULL) {
         rpmLabel = lv_label_create(mainScreen);
 
-        lv_obj_set_style_text_color(rpmLabel, lv_color_hex(0xffffff), LV_PART_MAIN);
+        lv_obj_set_style_text_color(rpmLabel, lv_color_hex(0xFFFFFF), LV_PART_MAIN);
         lv_obj_align(rpmLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
     }
 
@@ -104,7 +110,7 @@ void GUI_initDisplay() {
     display = lv_display_create(ER_TFT035_SCREEN_WIDTH, ER_TFT035_SCREEN_HEIGHT);
 
     lv_display_set_buffers(display, buf1, NULL, sizeof(buf1), LV_DISPLAY_RENDER_MODE_PARTIAL);
-    lv_display_set_flush_cb(display, (lv_display_flush_cb_t) GUI_handleDisplay);
+    lv_display_set_flush_cb(display, (lv_display_flush_cb_t)GUI_handleDisplay);
 }
 
 void GUI_initMainScreen() {
@@ -112,7 +118,7 @@ void GUI_initMainScreen() {
 
     lv_screen_load(mainScreen);
 
-    lv_obj_set_style_bg_color(mainScreen, lv_color_hex(0x003a57), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(mainScreen, lv_color_hex(0x000000), LV_PART_MAIN);
 }
 
 void GUI_initInputs() {

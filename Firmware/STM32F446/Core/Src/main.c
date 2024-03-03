@@ -116,14 +116,14 @@ int main(void) {
 
     GUI_init();
     MCP3421_init(&hi2c2);
-    // MCP3421_config config = {0};
 
-    // config.mode = MCP3421_MODE_CONTINUOUS;
-    // config.sampleRate = MCP3421_RATE_003_75;
-    // config.gain = MCP3421_GAIN_1X;
-
-    // MCP3421_writeConfig(&hi2c2, &config);
-    HAL_Delay(100);
+    GUI_setInfo(
+        "Enim exercitation nostrud fugiat dolore ex laborum id eiusmod reprehenderit. Esse amet commodo commodo sunt "
+        "sint incididunt non fugiat velit. Sunt nulla ullamco dolor quis sit. Labore non eiusmod enim magna elit aute "
+        "esse elit do veniam sit. Exercitation labore magna deserunt incididunt duis eu sint mollit voluptate veniam "
+        "esse dolore aliqua ad. Excepteur sint occaecat eu reprehenderit in commodo officia proident incididunt "
+        "voluptate. Voluptate est ea proident excepteur ullamco consequat. Sit id sint elit minim dolor ullamco mollit "
+        "ipsum.");
 
     HAL_TIM_Base_Start_IT(&htim14);
 
