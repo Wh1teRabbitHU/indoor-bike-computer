@@ -33,23 +33,23 @@ cxxDefinitionsFile:
 asDefinitionsFile:
 
 # Compiler flags
-cFlags: 
+cFlags:
   - -Wall
   - -fdata-sections
   - -ffunction-sections
 
 cxxFlags: []
-assemblyFlags: 
+assemblyFlags:
   - -Wall
   - -fdata-sections
   - -ffunction-sections
 
-linkerFlags: 
+linkerFlags:
   - -Wl,--print-memory-usage
 
 
 # libraries to be included. The -l prefix to the library will be automatically added.
-libraries: 
+libraries:
   - c
   - m
 
@@ -60,17 +60,22 @@ libraryDirectories: []
 # Glob patterns (https://www.wikiwand.com/en/Glob_(programming)) can be used.
 # Do mind that double stars are reserved in yaml
 # these should be escaped with a: \ or the name should be in double quotes e.g. "**.test.**"
-excludes: 
+excludes:
   - "**/Examples/**"
   - "**/examples/**"
   - "**/Example/**"
   - "**/example/**"
   - "**_template.*"
+  - "Core/Lib/LVGL/examples/**"
+  - "Core/Lib/LVGL/demos/**"
+  - "Core/Lib/LVGL/docs/**"
+  - "Core/Lib/LVGL/src/draw/sw/blend/helium/lv_blend_helium.h"
+  - "Core/Lib/LVGL/src/draw/sw/blend/neon/lv_blend_neon.h"
 
 
 # Include directories (directories containing .h or .hpp files)
 # If a CubeMX makefile is present it will automatically include the include directories from that makefile.
-includeDirectories: 
+includeDirectories:
   - Inc/**
   - Core/Inc/**
   - Core/Lib/**
@@ -84,7 +89,7 @@ includeDirectories:
 # Glob patterns (https://www.wikiwand.com/en/Glob_(programming)) can be used.
 # Do mind that double stars are reserved in yaml
 # these should be escaped with a: \ or the name should be in double quotes e.g. "HARDWARE_DRIVER*.c"
-sourceFiles:  
+sourceFiles:
   - Src/**
   - Core/Src/**
   - Core/Lib/**
@@ -100,10 +105,9 @@ suppressMakefileWarning: false
 customMakefileRules:
 # - command: sayhello
 #   rule: echo "hello"
-#   dependsOn: $(BUILD_DIR)/$(TARGET).elf # can be left out    
+#   dependsOn: $(BUILD_DIR)/$(TARGET).elf # can be left out
 
 # Additional flags which will be used when invoking the make command
 makeFlags:
 # - -O  # use this option when the output of make is mixed up only works for make version 4.0 and upwards
 # - --silent # use this option to silence the output of the build
-    

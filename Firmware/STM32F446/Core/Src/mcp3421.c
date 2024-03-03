@@ -3,6 +3,16 @@
 static MCP3421_config currentConfig =
     {ready : 0, mode : MCP3421_MODE_CONTINUOUS, sampleRate : MCP3421_RATE_240_00, gain : MCP3421_GAIN_1X};
 
+void MCP3421_init(I2C_HandleTypeDef* i2c) {
+    MCP3421_config config = {0};
+
+    config.mode = MCP3421_MODE_CONTINUOUS;
+    config.sampleRate = MCP3421_RATE_003_75;
+    config.gain = MCP3421_GAIN_1X;
+
+    MCP3421_writeConfig(i2c, &config);
+}
+
 void MCP3421_writeI2C(I2C_HandleTypeDef* i2c, uint8_t data) {
     uint8_t buffer[1];
 

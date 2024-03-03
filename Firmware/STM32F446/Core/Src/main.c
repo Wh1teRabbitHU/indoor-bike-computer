@@ -114,21 +114,15 @@ int main(void) {
     MX_TIM14_Init();
     /* USER CODE BEGIN 2 */
 
-    char textBuffer[32];
+    GUI_init();
+    MCP3421_init(&hi2c2);
+    // MCP3421_config config = {0};
 
-    ER_TFT035_init();
-    ER_TFT035_clearScreen(0x00);
-    ER_TFT035_fillRectangle(10, 10, 50, 50, CONVERT_24BIT_COLOR(0xFF0000));
-    ER_TFT035_fillRectangle(50, 50, 150, 150, CONVERT_24BIT_COLOR(0x0000FF));
-    ER_TFT035_fillRectangle(100, 100, 250, 250, CONVERT_24BIT_COLOR(0x00FF00));
+    // config.mode = MCP3421_MODE_CONTINUOUS;
+    // config.sampleRate = MCP3421_RATE_003_75;
+    // config.gain = MCP3421_GAIN_1X;
 
-    MCP3421_config config = {0};
-
-    config.mode = MCP3421_MODE_CONTINUOUS;
-    config.sampleRate = MCP3421_RATE_003_75;
-    config.gain = MCP3421_GAIN_1X;
-
-    MCP3421_writeConfig(&hi2c2, &config);
+    // MCP3421_writeConfig(&hi2c2, &config);
     HAL_Delay(100);
 
     HAL_TIM_Base_Start_IT(&htim14);
@@ -141,13 +135,8 @@ int main(void) {
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-
-        // uint32_t measurement = MCP3421_readMeasurement(&hi2c2);
-        // sprintf(textBuffer, "V: %ldmV       \n", measurement);
-
-        // GUI_logInfo(textBuffer);
-
-        HAL_Delay(200);
+        GUI_tick();
+        HAL_Delay(5);
     }
     /* USER CODE END 3 */
 }

@@ -29,6 +29,8 @@ typedef struct MCP3421_config {
     uint8_t gain;
 } MCP3421_config;
 
+void MCP3421_init(I2C_HandleTypeDef* i2c);
+
 void MCP3421_readConfig(I2C_HandleTypeDef* i2c, MCP3421_config* config);
 void MCP3421_writeConfig(I2C_HandleTypeDef* i2c, MCP3421_config* config);
 uint32_t MCP3421_readMeasurement(I2C_HandleTypeDef* i2c);

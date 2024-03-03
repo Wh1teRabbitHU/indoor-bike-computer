@@ -28,6 +28,7 @@ void ER_TFT035_init(void);
 void ER_TFT035_clearScreen(uint32_t bgColor);
 void ER_TFT035_setCursorToPixel(uint16_t x, uint16_t y);
 void ER_TFT035_setCursorToRange(uint16_t xStart, uint16_t xEnd, uint16_t yStart, uint16_t yEnd);
+void ER_TFT035_writePixelData(uint32_t data);
 void ER_TFT035_drawPixel(int16_t x, int16_t y, uint32_t color);
 void ER_TFT035_drawLine(int16_t xStart, int16_t yStart, int16_t xEnd, int16_t yEnd, uint32_t color);
 void ER_TFT035_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color);

@@ -3,17 +3,92 @@
 #include "font_6_12.h"
 
 static char textBuffer[32];
+static uint32_t lastTick = 0;
+
+// LVGL
+static lv_display_t* display;
+static lv_color_t buf1[ER_TFT035_SCREEN_WIDTH * ER_TFT035_SCREEN_HEIGHT / 10];
+static lv_obj_t* infoLabel = NULL;
+
+// This is for LVGL
+void GUI_displayFlush(lv_display_t* disp, const lv_area_t* area, lv_color_t* color_p) {
+    int32_t x, y;
+
+    ER_TFT035_setCursorToRange(area->x1, area->x2, area->y1, area->y2);
+
+    for (y = area->y1; y <= area->y2; y++) {
+        for (x = area->x1; x <= area->x2; x++) {
+            uint32_t color = CONVERT_24BIT_COLOR((color_p->red << 16) | (color_p->green << 8) | color_p->blue);
+            ER_TFT035_writePixelData(color);
+            color_p++;
+        }
+    }
+
+    lv_display_flush_ready(disp); /* Indicate you are ready with the flushing*/
+}
+
+void GUI_keyboardRead(lv_indev_t* indev, lv_indev_data_t* data) {
+    // TODO: keyboard implementation
+    // data->key = last_key();
+
+    // if (key_pressed())
+    //     data->state = LV_INDEV_STATE_PRESSED;
+    // else
+    //     data->state = LV_INDEV_STATE_RELEASED;
+    data->state = LV_INDEV_STATE_RELEASED;
+}
+
+void GUI_init() {
+    ER_TFT035_init();
+    ER_TFT035_clearScreen(0x00);
+
+    HAL_Delay(100);
+
+    lv_init();
+
+    display = lv_display_create(ER_TFT035_SCREEN_WIDTH, ER_TFT035_SCREEN_HEIGHT);
+
+    lv_display_set_buffers(display, buf1, NULL, sizeof(buf1), LV_DISPLAY_RENDER_MODE_PARTIAL);
+    lv_display_set_flush_cb(display, GUI_displayFlush);
+
+    lv_indev_t* indev = lv_indev_create();
+    lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD); /*See below.*/
+    lv_indev_set_read_cb(indev, GUI_keyboardRead);
+
+    lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x003a57), LV_PART_MAIN);
+}
+
+void GUI_tick() {
+    uint32_t currentTick = HAL_GetTick();
+
+    if (lastTick > 0) {
+        lv_tick_inc(currentTick - lastTick);
+    }
+
+    lastTick = HAL_GetTick();
+
+    lv_timer_handler();
+}
 
 void GUI_logInfo(char* info) {
-    ER_TFT035_textProps infoText = {.font = fontData,
-                                    .text = info,
-                                    .posX = 10,
-                                    .posY = 10,
-                                    .fontSize = 2,
-                                    .fontColor = CONVERT_24BIT_COLOR(0x000000),
-                                    .backgroundColor = CONVERT_24BIT_COLOR(0xFFFFFF)};
+    // ER_TFT035_textProps infoText = {.font = fontData,
+    //                                 .text = info,
+    //                                 .posX = 10,
+    //                                 .posY = 10,
+    //                                 .fontSize = 2,
+    //                                 .fontColor = CONVERT_24BIT_COLOR(0x000000),
+    //                                 .backgroundColor = CONVERT_24BIT_COLOR(0xFFFFFF)};
 
-    ER_TFT035_drawText(&infoText);
+    // ER_TFT035_drawText(&infoText);
+
+    if (infoLabel == NULL) {
+        infoLabel = lv_label_create(lv_screen_active());
+
+        lv_obj_set_style_text_color(lv_screen_active(), lv_color_hex(0xffffff), LV_PART_MAIN);
+        lv_obj_align(infoLabel, LV_ALIGN_CENTER, 0, 0);
+    }
+
+    lv_label_set_text(infoLabel, info);
 }
 
 void GUI_logError(char* error) {
