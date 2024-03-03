@@ -8,10 +8,18 @@ static uint32_t lastTick = 0;
 // LVGL
 static lv_display_t* display;
 static lv_color_t buf1[ER_TFT035_SCREEN_WIDTH * ER_TFT035_SCREEN_HEIGHT / 10];
-static lv_obj_t* infoLabel = NULL;
 
-// This is for LVGL
-void GUI_displayFlush(lv_display_t* disp, const lv_area_t* area, lv_color_t* color_p) {
+// LVGL - Components
+
+// Main screen
+static lv_obj_t* mainScreen = NULL;
+static lv_obj_t* infoLabel = NULL;
+static lv_obj_t* errorLabel = NULL;
+
+// Configuration screen
+// TODO
+
+void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* color_p) {
     int32_t x, y;
 
     ER_TFT035_setCursorToRange(area->x1, area->x2, area->y1, area->y2);
@@ -27,7 +35,7 @@ void GUI_displayFlush(lv_display_t* disp, const lv_area_t* area, lv_color_t* col
     lv_display_flush_ready(disp); /* Indicate you are ready with the flushing*/
 }
 
-void GUI_keyboardRead(lv_indev_t* indev, lv_indev_data_t* data) {
+void GUI_handleKeyboard(lv_indev_t* indev, lv_indev_data_t* data) {
     // TODO: keyboard implementation
     // data->key = last_key();
 
@@ -38,24 +46,36 @@ void GUI_keyboardRead(lv_indev_t* indev, lv_indev_data_t* data) {
     data->state = LV_INDEV_STATE_RELEASED;
 }
 
-void GUI_init() {
-    ER_TFT035_init();
-    ER_TFT035_clearScreen(0x00);
-
-    HAL_Delay(100);
-
+void GUI_initDisplay() {
     lv_init();
 
     display = lv_display_create(ER_TFT035_SCREEN_WIDTH, ER_TFT035_SCREEN_HEIGHT);
 
     lv_display_set_buffers(display, buf1, NULL, sizeof(buf1), LV_DISPLAY_RENDER_MODE_PARTIAL);
-    lv_display_set_flush_cb(display, GUI_displayFlush);
+    lv_display_set_flush_cb(display, GUI_handleDisplay);
+}
 
+void GUI_initMainScreen() {
+    mainScreen = lv_obj_create(NULL);
+
+    lv_screen_load(mainScreen);
+
+    lv_obj_set_style_bg_color(mainScreen, lv_color_hex(0x003a57), LV_PART_MAIN);
+}
+
+void GUI_initInputs() {
     lv_indev_t* indev = lv_indev_create();
     lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD); /*See below.*/
-    lv_indev_set_read_cb(indev, GUI_keyboardRead);
+    lv_indev_set_read_cb(indev, GUI_handleKeyboard);
+}
 
-    lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x003a57), LV_PART_MAIN);
+void GUI_init() {
+    ER_TFT035_init();
+    ER_TFT035_clearScreen(0x00);
+
+    GUI_initDisplay();
+    GUI_initMainScreen();
+    GUI_initInputs();
 }
 
 void GUI_tick() {
@@ -71,36 +91,25 @@ void GUI_tick() {
 }
 
 void GUI_logInfo(char* info) {
-    // ER_TFT035_textProps infoText = {.font = fontData,
-    //                                 .text = info,
-    //                                 .posX = 10,
-    //                                 .posY = 10,
-    //                                 .fontSize = 2,
-    //                                 .fontColor = CONVERT_24BIT_COLOR(0x000000),
-    //                                 .backgroundColor = CONVERT_24BIT_COLOR(0xFFFFFF)};
-
-    // ER_TFT035_drawText(&infoText);
-
     if (infoLabel == NULL) {
-        infoLabel = lv_label_create(lv_screen_active());
+        infoLabel = lv_label_create(mainScreen);
 
-        lv_obj_set_style_text_color(lv_screen_active(), lv_color_hex(0xffffff), LV_PART_MAIN);
-        lv_obj_align(infoLabel, LV_ALIGN_CENTER, 0, 0);
+        lv_obj_set_style_text_color(mainScreen, lv_color_hex(0xffffff), LV_PART_MAIN);
+        lv_obj_align(infoLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
     }
 
     lv_label_set_text(infoLabel, info);
 }
 
 void GUI_logError(char* error) {
-    ER_TFT035_textProps errorText = {.font = fontData,
-                                     .text = error,
-                                     .posX = 10,
-                                     .posY = 10,
-                                     .fontSize = 2,
-                                     .fontColor = CONVERT_24BIT_COLOR(0xFF0000),
-                                     .backgroundColor = CONVERT_24BIT_COLOR(0xFFFFFF)};
+    if (errorLabel == NULL) {
+        errorLabel = lv_label_create(mainScreen);
 
-    ER_TFT035_drawText(&errorText);
+        lv_obj_set_style_text_color(mainScreen, lv_color_hex(0xff0000), LV_PART_MAIN);
+        lv_obj_align(errorLabel, LV_ALIGN_BOTTOM_MID, 0, 0);
+    }
+
+    lv_label_set_text(errorLabel, error);
 }
 
 void GUI_displayDifficulty(uint32_t difficulty) {
