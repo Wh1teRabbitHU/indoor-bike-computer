@@ -4,8 +4,10 @@
       "name": "STM32",
       "includePath": [
         "Core/Inc",
+        "Core/Inc/Components",
+        "Core/Inc/Components/GUI/Elements",
+        "Core/Inc/Components/GUI/Screens",
         "Core/Inc/Drivers",
-        "Core/Inc/Handlers",
         "Core/Lib",
         "Core/Lib/LVGL",
         "Core/Lib/LVGL/src",

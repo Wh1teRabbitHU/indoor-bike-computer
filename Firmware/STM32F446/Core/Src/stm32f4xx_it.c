@@ -232,7 +232,7 @@ void USART3_IRQHandler(void) {
  */
 void EXTI15_10_IRQHandler(void) {
     /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-    uint8_t btn4Pressed = HAL_GPIO_ReadPin(USER_BTN_4_GPIO_Port, USER_BTN_4_Pin);
+    // uint8_t btn4Pressed = HAL_GPIO_ReadPin(USER_BTN_4_GPIO_Port, USER_BTN_4_Pin);
     uint8_t revolutionTriggered = HAL_GPIO_ReadPin(REVOLUTION_SIGNAL_GPIO_Port, REVOLUTION_SIGNAL_Pin);
 
     if (revolutionTriggered) {
