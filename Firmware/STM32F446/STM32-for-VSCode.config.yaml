@@ -79,9 +79,6 @@ includeDirectories:
   - Inc/**
   - Core/Inc/**
   - Core/Lib/**
-  - Src/**
-  - Core/Src/**
-  - Core/Lib/**
 
 
 # Files that should be included in the compilation.

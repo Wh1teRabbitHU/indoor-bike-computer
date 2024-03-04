@@ -319,12 +319,12 @@ Core/Lib/LVGL/src/widgets/tabview/lv_tabview.c \
 Core/Lib/LVGL/src/widgets/textarea/lv_textarea.c \
 Core/Lib/LVGL/src/widgets/tileview/lv_tileview.c \
 Core/Lib/LVGL/src/widgets/win/lv_win.c \
-Core/Src/bike.c \
-Core/Src/binary.c \
-Core/Src/er_tft035.c \
-Core/Src/gui.c \
+Core/Src/Drivers/er_tft035.c \
+Core/Src/Drivers/mcp3421.c \
+Core/Src/Handlers/bike.c \
+Core/Src/Handlers/binary.c \
+Core/Src/Handlers/gui.c \
 Core/Src/main.c \
-Core/Src/mcp3421.c \
 Core/Src/stm32f4xx_hal_msp.c \
 Core/Src/stm32f4xx_it.c \
 Core/Src/system_stm32f4xx.c \
@@ -466,6 +466,8 @@ AS_INCLUDES = \
 # C includes
 C_INCLUDES =  \
 -ICore/Inc \
+-ICore/Inc/Drivers \
+-ICore/Inc/Handlers \
 -ICore/Lib \
 -ICore/Lib/LVGL \
 -ICore/Lib/LVGL/src \
