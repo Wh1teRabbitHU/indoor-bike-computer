@@ -16,7 +16,7 @@ void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* co
             volatile uint32_t r = color_p->red;
             volatile uint32_t g = color_p->green;
             volatile uint32_t b = color_p->blue;
-            uint32_t color = ((r & 0x3F) << 12) | ((g & 0x3F) << 6) | b;
+            uint32_t color = ((r >> 2) << 12) | ((g >> 2) << 6) | (b >> 2);
 
             ER_TFT035_writePixelData(color);
             color_p++;

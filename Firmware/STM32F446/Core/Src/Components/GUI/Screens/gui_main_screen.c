@@ -6,19 +6,28 @@ static char textBuffer[32];
 
 static lv_obj_t* mainScreen = NULL;
 
-static GUI_BoxMeasurement_t difficultyBox;
-static GUI_BoxMeasurement_t speedBox;
-static GUI_BoxMeasurement_t revolutionBox;
-static GUI_BoxMeasurement_t heartRateBox;
+static GUI_BoxMeasurement difficultyBox;
+static GUI_BoxMeasurement speedBox;
+static GUI_BoxMeasurement revolutionBox;
+static GUI_BoxMeasurement heartRateBox;
 
 static GUI_MainScreen_State state = {
     .infoMessage = NULL, .errorMessage = NULL, .difficulty = 0, .speed = 0, .rpm = 0, .bpm = 0};
 
 void GUI_MainScreen_initElements(void) {
-    difficultyBox = GUI_BoxMeasurement_create(mainScreen, 10, 40);
-    speedBox = GUI_BoxMeasurement_create(mainScreen, 165, 40);
-    revolutionBox = GUI_BoxMeasurement_create(mainScreen, 10, 150);
-    heartRateBox = GUI_BoxMeasurement_create(mainScreen, 165, 150);
+    GUI_BoxMeasurement_Config difficultyBoxConfig = {
+        .screen = mainScreen, .title = "Difficulty", .x = 10, .y = 40, .bgColor = 0xBCC7FF};
+    GUI_BoxMeasurement_Config speedBoxConfig = {
+        .screen = mainScreen, .title = "Speed", .x = 165, .y = 40, .bgColor = 0x77EEE6};
+    GUI_BoxMeasurement_Config revolutionBoxConfig = {
+        .screen = mainScreen, .title = "Revolution", .x = 10, .y = 150, .bgColor = 0xBFFFA1};
+    GUI_BoxMeasurement_Config heartRateBoxConfig = {
+        .screen = mainScreen, .title = "Heart Rate", .x = 165, .y = 150, .bgColor = 0xFFA490};
+
+    difficultyBox = GUI_BoxMeasurement_create(&difficultyBoxConfig);
+    speedBox = GUI_BoxMeasurement_create(&speedBoxConfig);
+    revolutionBox = GUI_BoxMeasurement_create(&revolutionBoxConfig);
+    heartRateBox = GUI_BoxMeasurement_create(&heartRateBoxConfig);
 }
 
 void GUI_MainScreen_init(void) {
@@ -37,25 +46,25 @@ void GUI_MainScreen_init(void) {
 void GUI_displayDifficulty(uint32_t difficulty) {
     sprintf(textBuffer, "%ld\nmV", difficulty);
 
-    GUI_BoxMeasurement_setValue(&difficultyBox, textBuffer);
+    GUI_BoxMeasurement_setValue(&difficultyBox, textBuffer, textBuffer);
 }
 
 void GUI_displaySpeed(uint32_t speed) {
-    sprintf(textBuffer, "%ld\nkm/h", speed);
+    sprintf(textBuffer, "%ld\nkmh", speed);
 
-    GUI_BoxMeasurement_setValue(&speedBox, textBuffer);
+    GUI_BoxMeasurement_setValue(&speedBox, textBuffer, textBuffer);
 }
 
 void GUI_displayRevolution(uint32_t rpm) {
     sprintf(textBuffer, "%ld\nrpm", rpm);
 
-    GUI_BoxMeasurement_setValue(&revolutionBox, textBuffer);
+    GUI_BoxMeasurement_setValue(&revolutionBox, textBuffer, textBuffer);
 }
 
 void GUI_displayHeartRate(uint32_t bpm) {
     sprintf(textBuffer, "%ld\nbpm", bpm);
 
-    GUI_BoxMeasurement_setValue(&heartRateBox, textBuffer);
+    GUI_BoxMeasurement_setValue(&heartRateBox, textBuffer, textBuffer);
 }
 
 void GUI_MainScreen_updateStates(void) {
