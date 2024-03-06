@@ -17,5 +17,6 @@ void GUI_clearInfo(void);
 void GUI_clearError(void);
 void GUI_setDifficulty(uint32_t difficulty);
 void GUI_setRpm(uint32_t rpm);
+void GUI_setTime(RTC_TimeTypeDef* rtcTime);
 
 #endif

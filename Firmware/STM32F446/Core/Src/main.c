@@ -117,14 +117,6 @@ int main(void) {
     GUI_init();
     MCP3421_init(&hi2c2);
 
-    GUI_setInfo(
-        "Enim exercitation nostrud fugiat dolore ex laborum id eiusmod reprehenderit. Esse amet commodo commodo sunt "
-        "sint incididunt non fugiat velit. Sunt nulla ullamco dolor quis sit. Labore non eiusmod enim magna elit aute "
-        "esse elit do veniam sit. Exercitation labore magna deserunt incididunt duis eu sint mollit voluptate veniam "
-        "esse dolore aliqua ad. Excepteur sint occaecat eu reprehenderit in commodo officia proident incididunt "
-        "voluptate. Voluptate est ea proident excepteur ullamco consequat. Sit id sint elit minim dolor ullamco mollit "
-        "ipsum.");
-
     HAL_TIM_Base_Start_IT(&htim14);
 
     /* USER CODE END 2 */
@@ -262,6 +254,9 @@ static void MX_RTC_Init(void) {
 
     /* USER CODE END RTC_Init 0 */
 
+    RTC_TimeTypeDef sTime = {0};
+    RTC_DateTypeDef sDate = {0};
+
     /* USER CODE BEGIN RTC_Init 1 */
 
     /* USER CODE END RTC_Init 1 */
@@ -276,6 +271,35 @@ static void MX_RTC_Init(void) {
     hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
     hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
     if (HAL_RTC_Init(&hrtc) != HAL_OK) {
+        Error_Handler();
+    }
+
+    /* USER CODE BEGIN Check_RTC_BKUP */
+
+    /* USER CODE END Check_RTC_BKUP */
+
+    /** Initialize RTC and set the Time and Date
+     */
+    sTime.Hours = 0;
+    sTime.Minutes = 0;
+    sTime.Seconds = 0;
+    sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+    sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+    if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK) {
+        Error_Handler();
+    }
+    sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+    sDate.Month = RTC_MONTH_JANUARY;
+    sDate.Date = 1;
+    sDate.Year = 0;
+
+    if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK) {
+        Error_Handler();
+    }
+
+    /** Enable the WakeUp
+     */
+    if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_CK_SPRE_16BITS) != HAL_OK) {
         Error_Handler();
     }
     /* USER CODE BEGIN RTC_Init 2 */
