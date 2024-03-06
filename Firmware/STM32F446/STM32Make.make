@@ -321,6 +321,7 @@ Core/Lib/LVGL/src/widgets/tileview/lv_tileview.c \
 Core/Lib/LVGL/src/widgets/win/lv_win.c \
 Core/Src/Components/GUI/Elements/gui_box_measurement.c \
 Core/Src/Components/GUI/Elements/gui_chart_measurement.c \
+Core/Src/Components/GUI/Elements/gui_label_timer.c \
 Core/Src/Components/GUI/Elements/gui_log_modal.c \
 Core/Src/Components/GUI/Screens/gui_main_screen.c \
 Core/Src/Components/bike.c \

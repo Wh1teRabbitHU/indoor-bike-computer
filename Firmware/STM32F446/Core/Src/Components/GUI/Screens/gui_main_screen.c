@@ -2,6 +2,7 @@
 
 #include "gui_box_measurement.h"
 #include "gui_chart_measurement.h"
+#include "gui_label_timer.h"
 
 static char textBuffer[32];
 
@@ -12,6 +13,7 @@ static GUI_BoxMeasurement speedBox;
 static GUI_BoxMeasurement revolutionBox;
 static GUI_BoxMeasurement heartRateBox;
 static GUI_ChartMeasurement measurementChart;
+static GUI_LabelTimer timerLabel;
 
 static GUI_MainScreen_State state = {
     .infoMessage = NULL, .errorMessage = NULL, .difficulty = 0, .speed = 0, .rpm = 0, .bpm = 0};
@@ -31,12 +33,15 @@ void GUI_MainScreen_initElements(void) {
                                                           .y = 230,
                                                           .mainColor = 0xE1F6FF,
                                                           .series1Color = 0x39B200};
+    GUI_LabelTimer_Config timerLabelConfig = {
+        .screen = mainScreen, .name = "Timer: ", .x = 10, .y = 368, .bgColor = 0xC993FF};
 
     difficultyBox = GUI_BoxMeasurement_create(&difficultyBoxConfig);
     speedBox = GUI_BoxMeasurement_create(&speedBoxConfig);
     revolutionBox = GUI_BoxMeasurement_create(&revolutionBoxConfig);
     heartRateBox = GUI_BoxMeasurement_create(&heartRateBoxConfig);
     measurementChart = GUI_ChartMeasurement_create(&measurementChartConfig);
+    timerLabel = GUI_LabelTimer_create(&timerLabelConfig);
 }
 
 void GUI_MainScreen_init(void) {
@@ -81,12 +86,15 @@ void GUI_displayMeasurementChart() {
     GUI_ChartMeasurement_setValue(&measurementChart, lv_rand(70, 90));
 }
 
+void GUI_displayTimerLabel(char* time) { GUI_LabelTimer_setValue(&timerLabel, time); }
+
 void GUI_MainScreen_updateStates(void) {
     GUI_displayDifficulty(state.difficulty);
     GUI_displaySpeed(state.speed);
     GUI_displayRevolution(state.rpm);
     GUI_displayHeartRate(state.bpm);
     GUI_displayMeasurementChart();
+    GUI_displayTimerLabel(state.time);
 }
 
 GUI_MainScreen_State* GUI_MainScreen_getState(void) { return &state; }

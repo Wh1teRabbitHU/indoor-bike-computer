@@ -14,6 +14,7 @@ typedef struct GUI_MainScreen_State {
     uint32_t speed;
     uint32_t rpm;
     uint32_t bpm;
+    char* time;
 } GUI_MainScreen_State;
 
 void GUI_MainScreen_init(void);
