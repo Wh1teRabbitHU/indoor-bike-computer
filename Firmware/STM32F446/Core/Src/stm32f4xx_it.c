@@ -197,6 +197,7 @@ void RTC_WKUP_IRQHandler(void) {
     HAL_RTC_GetTime(&hrtc, &rtcTime, RTC_FORMAT_BIN);
     HAL_RTC_GetDate(&hrtc, &rtcDate, RTC_FORMAT_BIN);
     GUI_setTime(&rtcTime);
+
     /* USER CODE END RTC_WKUP_IRQn 0 */
     HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
     /* USER CODE BEGIN RTC_WKUP_IRQn 1 */

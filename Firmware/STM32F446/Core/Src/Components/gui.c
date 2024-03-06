@@ -4,8 +4,8 @@
 static lv_display_t* display;
 static lv_color_t buf1[ER_TFT035_SCREEN_WIDTH * ER_TFT035_SCREEN_HEIGHT / 20];
 static uint32_t lastTick = 0;
-static GUI_Screen_t activeScreen = GUI_SCREEN_MAIN;
-static char timeBuffer[10];
+static char timeBuffer[15];
+// static GUI_Screen_t activeScreen = GUI_SCREEN_MAIN;
 
 void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* color_p) {
     int32_t x, y;
@@ -80,4 +80,5 @@ void GUI_setTime(RTC_TimeTypeDef* rtcTime) {
     sprintf(timeBuffer, "%02d:%02d:%02d", rtcTime->Hours, rtcTime->Minutes, rtcTime->Seconds);
 
     GUI_MainScreen_getState()->time = timeBuffer;
+    GUI_MainScreen_getState()->updateChart = 1;
 }

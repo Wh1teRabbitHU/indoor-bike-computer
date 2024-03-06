@@ -14,11 +14,13 @@ typedef struct GUI_MainScreen_State {
     uint32_t speed;
     uint32_t rpm;
     uint32_t bpm;
+    uint8_t updateChart;
     char* time;
 } GUI_MainScreen_State;
 
 void GUI_MainScreen_init(void);
 void GUI_MainScreen_updateStates(void);
+void GUI_MainScreen_showNextChartValue();
 
 GUI_MainScreen_State* GUI_MainScreen_getState(void);
 

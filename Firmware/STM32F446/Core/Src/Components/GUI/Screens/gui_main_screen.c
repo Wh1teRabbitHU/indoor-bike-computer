@@ -6,6 +6,7 @@
 
 static char textBuffer[32];
 
+static uint8_t initialised = 0;
 static lv_obj_t* mainScreen = NULL;
 
 static GUI_BoxMeasurement difficultyBox;
@@ -55,6 +56,8 @@ void GUI_MainScreen_init(void) {
     lv_obj_set_style_bg_color(mainScreen, lv_color_hex(GUI_MAINSCREEN_BGCOLOR), LV_PART_MAIN);
 
     GUI_MainScreen_initElements();
+
+    initialised = 1;
 }
 
 void GUI_displayDifficulty(uint32_t difficulty) {
@@ -82,8 +85,12 @@ void GUI_displayHeartRate(uint32_t bpm) {
 }
 
 void GUI_displayMeasurementChart() {
-    // TODO: Replace with a proper implementation
-    GUI_ChartMeasurement_setValue(&measurementChart, lv_rand(70, 90));
+    if (state.updateChart) {
+        state.updateChart = 0;
+
+        // TODO: Replace with a proper implementation
+        GUI_ChartMeasurement_setValue(&measurementChart, lv_rand(70, 90));
+    }
 }
 
 void GUI_displayTimerLabel(char* time) { GUI_LabelTimer_setValue(&timerLabel, time); }
