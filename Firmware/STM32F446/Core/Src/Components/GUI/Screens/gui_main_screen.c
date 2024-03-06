@@ -1,6 +1,7 @@
 #include "gui_main_screen.h"
 
 #include "gui_box_measurement.h"
+#include "gui_chart_measurement.h"
 
 static char textBuffer[32];
 
@@ -10,6 +11,7 @@ static GUI_BoxMeasurement difficultyBox;
 static GUI_BoxMeasurement speedBox;
 static GUI_BoxMeasurement revolutionBox;
 static GUI_BoxMeasurement heartRateBox;
+static GUI_ChartMeasurement measurementChart;
 
 static GUI_MainScreen_State state = {
     .infoMessage = NULL, .errorMessage = NULL, .difficulty = 0, .speed = 0, .rpm = 0, .bpm = 0};
@@ -23,11 +25,14 @@ void GUI_MainScreen_initElements(void) {
         .screen = mainScreen, .title = "Revolution", .x = 10, .y = 150, .bgColor = 0xBFFFA1};
     GUI_BoxMeasurement_Config heartRateBoxConfig = {
         .screen = mainScreen, .title = "Heart Rate", .x = 165, .y = 150, .bgColor = 0xFFA490};
+    GUI_ChartMeasurement_Config measurementChartConfig = {
+        .screen = mainScreen, .x = 10, .y = 280, .mainColor = 0xEAEAEA, .series1Color = 0x39B200};
 
     difficultyBox = GUI_BoxMeasurement_create(&difficultyBoxConfig);
     speedBox = GUI_BoxMeasurement_create(&speedBoxConfig);
     revolutionBox = GUI_BoxMeasurement_create(&revolutionBoxConfig);
     heartRateBox = GUI_BoxMeasurement_create(&heartRateBoxConfig);
+    measurementChart = GUI_ChartMeasurement_create(&measurementChartConfig);
 }
 
 void GUI_MainScreen_init(void) {
@@ -67,11 +72,17 @@ void GUI_displayHeartRate(uint32_t bpm) {
     GUI_BoxMeasurement_setValue(&heartRateBox, textBuffer, textBuffer);
 }
 
+void GUI_displayMeasurementChart() {
+    // TODO: Replace with a proper implementation
+    GUI_ChartMeasurement_setValue(&measurementChart, lv_rand(50, 60));
+}
+
 void GUI_MainScreen_updateStates(void) {
     GUI_displayDifficulty(state.difficulty);
     GUI_displaySpeed(state.speed);
     GUI_displayRevolution(state.rpm);
     GUI_displayHeartRate(state.bpm);
+    GUI_displayMeasurementChart();
 }
 
 GUI_MainScreen_State* GUI_MainScreen_getState(void) { return &state; }
