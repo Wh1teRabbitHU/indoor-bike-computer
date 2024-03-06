@@ -11,6 +11,15 @@ GUI_ChartMeasurement GUI_ChartMeasurement_create(GUI_ChartMeasurement_Config* co
     lv_obj_set_style_bg_color(chart, lv_color_hex(config->mainColor), LV_PART_MAIN);
     lv_obj_set_style_border_color(chart, lv_color_hex(0x000000), LV_PART_MAIN);
 
+    lv_obj_t* titleLabel = lv_label_create(chart);
+
+    lv_obj_set_style_text_color(titleLabel, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_align(titleLabel, LV_ALIGN_TOP_RIGHT, 0, 0);
+    lv_obj_set_pos(titleLabel, 0, -5);
+    lv_obj_set_width(titleLabel, 160);
+    lv_obj_set_style_text_align(titleLabel, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
+    lv_label_set_text(titleLabel, config->title);
+
     lv_chart_series_t* series1 =
         lv_chart_add_series(chart, lv_color_hex(config->series1Color), LV_CHART_AXIS_PRIMARY_Y);
 
@@ -18,20 +27,21 @@ GUI_ChartMeasurement GUI_ChartMeasurement_create(GUI_ChartMeasurement_Config* co
     lv_chart_set_x_start_point(chart, series1, 1);
     lv_chart_set_point_count(chart, 20);
     lv_chart_set_type(chart, LV_CHART_TYPE_LINE);
-    lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, 40, 110);
+    lv_chart_set_range(chart, LV_CHART_AXIS_PRIMARY_Y, 50, 110);
 
     // Vertical scale
     lv_obj_t* verticalScale = lv_scale_create(config->screen);
+
     lv_scale_set_mode(verticalScale, LV_SCALE_MODE_VERTICAL_LEFT);
     lv_obj_set_size(verticalScale, 45, 120);
     lv_obj_set_pos(verticalScale, config->x, config->y);
-    lv_scale_set_total_tick_count(verticalScale, 8);
+    lv_scale_set_total_tick_count(verticalScale, 7);
     lv_scale_set_major_tick_every(verticalScale, 1);
     lv_obj_set_style_pad_left(verticalScale, 10, LV_PART_MAIN);
     lv_obj_set_style_pad_top(verticalScale, 10, LV_PART_MAIN);
     lv_obj_set_style_text_color(verticalScale, lv_color_hex(config->mainColor), LV_PART_MAIN);
 
-    static const char* rpms[] = {"40", "50", "60", "70", "80", "90", "100", "110", NULL};
+    static const char* rpms[] = {"50", "60", "70", "80", "90", "100", "110", NULL};
     lv_scale_set_text_src(verticalScale, rpms);
 
     lv_chart_refresh(chart);

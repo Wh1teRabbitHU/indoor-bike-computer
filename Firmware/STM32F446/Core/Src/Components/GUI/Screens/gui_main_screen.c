@@ -18,15 +18,19 @@ static GUI_MainScreen_State state = {
 
 void GUI_MainScreen_initElements(void) {
     GUI_BoxMeasurement_Config difficultyBoxConfig = {
-        .screen = mainScreen, .title = "Difficulty", .x = 10, .y = 40, .bgColor = 0xBCC7FF};
+        .screen = mainScreen, .title = "Difficulty", .x = 10, .y = 10, .bgColor = 0xBCC7FF};
     GUI_BoxMeasurement_Config speedBoxConfig = {
-        .screen = mainScreen, .title = "Speed", .x = 165, .y = 40, .bgColor = 0x77EEE6};
+        .screen = mainScreen, .title = "Speed", .x = 165, .y = 10, .bgColor = 0x77EEE6};
     GUI_BoxMeasurement_Config revolutionBoxConfig = {
-        .screen = mainScreen, .title = "Revolution", .x = 10, .y = 150, .bgColor = 0xBFFFA1};
+        .screen = mainScreen, .title = "Revolution", .x = 10, .y = 120, .bgColor = 0xBFFFA1};
     GUI_BoxMeasurement_Config heartRateBoxConfig = {
-        .screen = mainScreen, .title = "Heart Rate", .x = 165, .y = 150, .bgColor = 0xFFA490};
-    GUI_ChartMeasurement_Config measurementChartConfig = {
-        .screen = mainScreen, .x = 10, .y = 280, .mainColor = 0xEAEAEA, .series1Color = 0x39B200};
+        .screen = mainScreen, .title = "Heart Rate", .x = 165, .y = 120, .bgColor = 0xFFA490};
+    GUI_ChartMeasurement_Config measurementChartConfig = {.screen = mainScreen,
+                                                          .title = "Revolution",
+                                                          .x = 10,
+                                                          .y = 230,
+                                                          .mainColor = 0xE1F6FF,
+                                                          .series1Color = 0x39B200};
 
     difficultyBox = GUI_BoxMeasurement_create(&difficultyBoxConfig);
     speedBox = GUI_BoxMeasurement_create(&speedBoxConfig);
@@ -74,7 +78,7 @@ void GUI_displayHeartRate(uint32_t bpm) {
 
 void GUI_displayMeasurementChart() {
     // TODO: Replace with a proper implementation
-    GUI_ChartMeasurement_setValue(&measurementChart, lv_rand(50, 60));
+    GUI_ChartMeasurement_setValue(&measurementChart, lv_rand(70, 90));
 }
 
 void GUI_MainScreen_updateStates(void) {

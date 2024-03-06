@@ -11,6 +11,7 @@ typedef struct GUI_ChartMeasurement {
 
 typedef struct GUI_ChartMeasurement_Config {
     lv_obj_t* screen;
+    char* title;
     int32_t x;
     int32_t y;
     uint32_t mainColor;
