@@ -4,7 +4,6 @@
 #include "lvgl.h"
 
 typedef struct GUI_ChartMeasurement {
-    lv_obj_t* container;
     lv_obj_t* chart;
     lv_chart_series_t* series1;
 } GUI_ChartMeasurement;
