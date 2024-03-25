@@ -2,6 +2,10 @@
 #define __GUI_MAIN_SCREEN_H_
 
 #include "er_tft035.h"
+#include "gui_box_measurement.h"
+#include "gui_chart_measurement.h"
+#include "gui_label_timer.h"
+#include "gui_tab_main.h"
 #include "lvgl.h"
 #include "stdio.h"
 
@@ -15,6 +19,7 @@ typedef struct GUI_MainScreen_State {
     uint32_t rpm;
     uint32_t bpm;
     uint8_t updateChart;
+    GUI_TabMain_t activeTab;
     char* time;
 } GUI_MainScreen_State;
 

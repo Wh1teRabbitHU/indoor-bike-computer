@@ -252,9 +252,14 @@ void EXTI15_10_IRQHandler(void) {
     /* USER CODE BEGIN EXTI15_10_IRQn 0 */
     // uint8_t btn4Pressed = HAL_GPIO_ReadPin(USER_BTN_4_GPIO_Port, USER_BTN_4_Pin);
     uint8_t revolutionTriggered = HAL_GPIO_ReadPin(REVOLUTION_SIGNAL_GPIO_Port, REVOLUTION_SIGNAL_Pin);
+    uint8_t btn4Pressed = !HAL_GPIO_ReadPin(USER_BTN_4_GPIO_Port, USER_BTN_4_Pin);
 
     if (revolutionTriggered) {
         Bike_updateRevolution();
+    }
+
+    if (btn4Pressed) {
+        GUI_nextTab();
     }
 
     /* USER CODE END EXTI15_10_IRQn 0 */
@@ -278,5 +283,23 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void) {
 }
 
 /* USER CODE BEGIN 1 */
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == USER_BTN_1_Pin) {
+        GUI_prevTab();
+    }
+
+    if (GPIO_Pin == USER_BTN_2_Pin) {
+        GUI_prevTab();
+    }
+
+    if (GPIO_Pin == USER_BTN_3_Pin) {
+        GUI_nextTab();
+    }
+
+    if (GPIO_Pin == USER_BTN_4_Pin) {
+        GUI_nextTab();
+    }
+}
 
 /* USER CODE END 1 */

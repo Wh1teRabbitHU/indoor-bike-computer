@@ -14,9 +14,9 @@ void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* co
 
     for (y = area->y1; y <= area->y2; y++) {
         for (x = area->x1; x <= area->x2; x++) {
-            volatile uint32_t r = color_p->red;
-            volatile uint32_t g = color_p->green;
-            volatile uint32_t b = color_p->blue;
+            uint32_t r = color_p->red;
+            uint32_t g = color_p->green;
+            uint32_t b = color_p->blue;
             uint32_t color = ((r >> 2) << 12) | ((g >> 2) << 6) | (b >> 2);
 
             ER_TFT035_writePixelData(color);
@@ -81,4 +81,26 @@ void GUI_setTime(RTC_TimeTypeDef* rtcTime) {
 
     GUI_MainScreen_getState()->time = timeBuffer;
     GUI_MainScreen_getState()->updateChart = 1;
+}
+void GUI_prevTab() {
+    uint32_t current = GUI_MainScreen_getState()->activeTab;
+
+    if (current == 0) {
+        current = GUI_TABVIEW_TABCOUNT - 1;
+    } else {
+        current--;
+    }
+
+    GUI_MainScreen_getState()->activeTab = current;
+}
+void GUI_nextTab() {
+    uint32_t current = GUI_MainScreen_getState()->activeTab;
+
+    if (current == (GUI_TABVIEW_TABCOUNT - 1)) {
+        current = 0;
+    } else {
+        current++;
+    }
+
+    GUI_MainScreen_getState()->activeTab = current;
 }

@@ -1,14 +1,11 @@
 #include "gui_main_screen.h"
 
-#include "gui_box_measurement.h"
-#include "gui_chart_measurement.h"
-#include "gui_label_timer.h"
-
 static char textBuffer[32];
 
 static uint8_t initialised = 0;
 static lv_obj_t* mainScreen = NULL;
 
+static GUI_TabMain mainTab;
 static GUI_BoxMeasurement difficultyBox;
 static GUI_BoxMeasurement speedBox;
 static GUI_BoxMeasurement revolutionBox;
@@ -20,22 +17,29 @@ static GUI_MainScreen_State state = {
     .infoMessage = NULL, .errorMessage = NULL, .difficulty = 0, .speed = 0, .rpm = 0, .bpm = 0};
 
 void GUI_MainScreen_initElements(void) {
+    GUI_TabMain_Config mainTabConfig = {.screen = mainScreen, .height = 40};
+
+    mainTab = GUI_TabMain_create(&mainTabConfig);
+
+    lv_obj_t* mainTabObj = mainTab.tabs[GUI_TAB_MAIN];
+
+    // Elements in the main tab
     GUI_BoxMeasurement_Config difficultyBoxConfig = {
-        .screen = mainScreen, .title = "Difficulty", .x = 10, .y = 10, .bgColor = 0xBCC7FF};
+        .screen = mainTabObj, .title = "Difficulty", .x = 10, .y = 10, .bgColor = 0xBCC7FF};
     GUI_BoxMeasurement_Config speedBoxConfig = {
-        .screen = mainScreen, .title = "Speed", .x = 165, .y = 10, .bgColor = 0x77EEE6};
+        .screen = mainTabObj, .title = "Speed", .x = 165, .y = 10, .bgColor = 0x77EEE6};
     GUI_BoxMeasurement_Config revolutionBoxConfig = {
-        .screen = mainScreen, .title = "Revolution", .x = 10, .y = 120, .bgColor = 0xBFFFA1};
+        .screen = mainTabObj, .title = "Revolution", .x = 10, .y = 120, .bgColor = 0xBFFFA1};
     GUI_BoxMeasurement_Config heartRateBoxConfig = {
-        .screen = mainScreen, .title = "Heart Rate", .x = 165, .y = 120, .bgColor = 0xFFA490};
-    GUI_ChartMeasurement_Config measurementChartConfig = {.screen = mainScreen,
+        .screen = mainTabObj, .title = "Heart Rate", .x = 165, .y = 120, .bgColor = 0xFFA490};
+    GUI_ChartMeasurement_Config measurementChartConfig = {.screen = mainTabObj,
                                                           .title = "Revolution",
                                                           .x = 10,
                                                           .y = 230,
                                                           .mainColor = 0xE1F6FF,
                                                           .series1Color = 0x39B200};
     GUI_LabelTimer_Config timerLabelConfig = {
-        .screen = mainScreen, .name = "Timer: ", .x = 10, .y = 368, .bgColor = 0xC993FF};
+        .screen = mainTabObj, .name = "Timer: ", .x = 10, .y = 368, .bgColor = 0xC993FF};
 
     difficultyBox = GUI_BoxMeasurement_create(&difficultyBoxConfig);
     speedBox = GUI_BoxMeasurement_create(&speedBoxConfig);
@@ -43,6 +47,14 @@ void GUI_MainScreen_initElements(void) {
     heartRateBox = GUI_BoxMeasurement_create(&heartRateBoxConfig);
     measurementChart = GUI_ChartMeasurement_create(&measurementChartConfig);
     timerLabel = GUI_LabelTimer_create(&timerLabelConfig);
+
+    // Elements in the history tab
+
+    // TODO
+
+    // Elements in the settings tab
+
+    // TODO
 }
 
 void GUI_MainScreen_init(void) {
@@ -95,6 +107,14 @@ void GUI_displayMeasurementChart() {
 
 void GUI_displayTimerLabel(char* time) { GUI_LabelTimer_setValue(&timerLabel, time); }
 
+void GUI_displayActiveTab(GUI_TabMain_t activeTab) {
+    if (mainTab.active == activeTab) {
+        return;
+    }
+
+    GUI_TabMain_setActive(&mainTab, activeTab);
+}
+
 void GUI_MainScreen_updateStates(void) {
     GUI_displayDifficulty(state.difficulty);
     GUI_displaySpeed(state.speed);
@@ -102,6 +122,7 @@ void GUI_MainScreen_updateStates(void) {
     GUI_displayHeartRate(state.bpm);
     GUI_displayMeasurementChart();
     GUI_displayTimerLabel(state.time);
+    GUI_displayActiveTab(state.activeTab);
 }
 
 GUI_MainScreen_State* GUI_MainScreen_getState(void) { return &state; }
