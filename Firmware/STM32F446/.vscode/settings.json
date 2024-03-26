@@ -5,6 +5,7 @@
 		"*.cpp": "cpp",
 		"gui_tab_main.h": "c",
 		"gui_main_screen.h": "c",
-		"lvgl.h": "c"
+		"lvgl.h": "c",
+		"gui_screen_main.h": "c"
 	}
 }

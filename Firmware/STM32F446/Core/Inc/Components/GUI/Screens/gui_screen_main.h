@@ -11,7 +11,7 @@
 
 #define GUI_MAINSCREEN_BGCOLOR 0x000000
 
-typedef struct GUI_MainScreen_State {
+typedef struct GUI_ScreenMain_State {
     char* infoMessage;
     char* errorMessage;
     uint32_t difficulty;
@@ -21,12 +21,12 @@ typedef struct GUI_MainScreen_State {
     uint8_t updateChart;
     GUI_TabMain_t activeTab;
     char* time;
-} GUI_MainScreen_State;
+} GUI_ScreenMain_State;
 
-void GUI_MainScreen_init(void);
-void GUI_MainScreen_updateStates(void);
-void GUI_MainScreen_showNextChartValue();
+void GUI_ScreenMain_init(void);
+void GUI_ScreenMain_updateStates(void);
+void GUI_ScreenMain_showNextChartValue();
 
-GUI_MainScreen_State* GUI_MainScreen_getState(void);
+GUI_ScreenMain_State* GUI_ScreenMain_getState(void);
 
 #endif

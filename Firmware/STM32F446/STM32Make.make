@@ -324,7 +324,7 @@ Core/Src/Components/GUI/Elements/gui_chart_measurement.c \
 Core/Src/Components/GUI/Elements/gui_label_timer.c \
 Core/Src/Components/GUI/Elements/gui_log_modal.c \
 Core/Src/Components/GUI/Elements/gui_tab_main.c \
-Core/Src/Components/GUI/Screens/gui_main_screen.c \
+Core/Src/Components/GUI/Screens/gui_screen_main.c \
 Core/Src/Components/bike.c \
 Core/Src/Components/binary.c \
 Core/Src/Components/gui.c \

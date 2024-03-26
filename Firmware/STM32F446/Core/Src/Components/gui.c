@@ -53,7 +53,7 @@ void GUI_init() {
     GUI_initDisplay();
     GUI_initInputs();
 
-    GUI_MainScreen_init();
+    GUI_ScreenMain_init();
 }
 
 uint32_t GUI_tick() {
@@ -63,27 +63,27 @@ uint32_t GUI_tick() {
         lv_tick_inc(currentTick - lastTick);
     }
 
-    GUI_MainScreen_updateStates();
+    GUI_ScreenMain_updateStates();
 
     lastTick = HAL_GetTick();
 
     return lv_timer_handler();
 }
 
-void GUI_setInfo(char* info) { GUI_MainScreen_getState()->infoMessage = info; }
-void GUI_setError(char* error) { GUI_MainScreen_getState()->errorMessage = error; }
-void GUI_clearInfo(void) { GUI_MainScreen_getState()->infoMessage = NULL; }
-void GUI_clearError(void) { GUI_MainScreen_getState()->errorMessage = NULL; }
-void GUI_setDifficulty(uint32_t difficulty) { GUI_MainScreen_getState()->difficulty = difficulty; }
-void GUI_setRpm(uint32_t rpm) { GUI_MainScreen_getState()->rpm = rpm; }
+void GUI_setInfo(char* info) { GUI_ScreenMain_getState()->infoMessage = info; }
+void GUI_setError(char* error) { GUI_ScreenMain_getState()->errorMessage = error; }
+void GUI_clearInfo(void) { GUI_ScreenMain_getState()->infoMessage = NULL; }
+void GUI_clearError(void) { GUI_ScreenMain_getState()->errorMessage = NULL; }
+void GUI_setDifficulty(uint32_t difficulty) { GUI_ScreenMain_getState()->difficulty = difficulty; }
+void GUI_setRpm(uint32_t rpm) { GUI_ScreenMain_getState()->rpm = rpm; }
 void GUI_setTime(RTC_TimeTypeDef* rtcTime) {
     sprintf(timeBuffer, "%02d:%02d:%02d", rtcTime->Hours, rtcTime->Minutes, rtcTime->Seconds);
 
-    GUI_MainScreen_getState()->time = timeBuffer;
-    GUI_MainScreen_getState()->updateChart = 1;
+    GUI_ScreenMain_getState()->time = timeBuffer;
+    GUI_ScreenMain_getState()->updateChart = 1;
 }
 void GUI_prevTab() {
-    uint32_t current = GUI_MainScreen_getState()->activeTab;
+    uint32_t current = GUI_ScreenMain_getState()->activeTab;
 
     if (current == 0) {
         current = GUI_TABVIEW_TABCOUNT - 1;
@@ -91,10 +91,10 @@ void GUI_prevTab() {
         current--;
     }
 
-    GUI_MainScreen_getState()->activeTab = current;
+    GUI_ScreenMain_getState()->activeTab = current;
 }
 void GUI_nextTab() {
-    uint32_t current = GUI_MainScreen_getState()->activeTab;
+    uint32_t current = GUI_ScreenMain_getState()->activeTab;
 
     if (current == (GUI_TABVIEW_TABCOUNT - 1)) {
         current = 0;
@@ -102,5 +102,5 @@ void GUI_nextTab() {
         current++;
     }
 
-    GUI_MainScreen_getState()->activeTab = current;
+    GUI_ScreenMain_getState()->activeTab = current;
 }

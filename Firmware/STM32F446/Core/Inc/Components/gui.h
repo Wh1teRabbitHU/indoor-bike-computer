@@ -2,7 +2,7 @@
 #define INC_GUI_H_
 
 #include "er_tft035.h"
-#include "gui_main_screen.h"
+#include "gui_screen_main.h"
 #include "lvgl.h"
 #include "stdio.h"
 

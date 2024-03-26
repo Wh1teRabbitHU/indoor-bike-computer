@@ -1,4 +1,4 @@
-#include "gui_main_screen.h"
+#include "gui_screen_main.h"
 
 static char textBuffer[32];
 
@@ -13,7 +13,7 @@ static GUI_BoxMeasurement heartRateBox;
 static GUI_ChartMeasurement measurementChart;
 static GUI_LabelTimer timerLabel;
 
-static GUI_MainScreen_State state = {
+static GUI_ScreenMain_State state = {
     .infoMessage = NULL, .errorMessage = NULL, .difficulty = 0, .speed = 0, .rpm = 0, .bpm = 0};
 
 void GUI_MainScreen_initElements(void) {
@@ -57,7 +57,7 @@ void GUI_MainScreen_initElements(void) {
     // TODO
 }
 
-void GUI_MainScreen_init(void) {
+void GUI_ScreenMain_init(void) {
     if (mainScreen != NULL) {
         return;
     }
@@ -115,7 +115,7 @@ void GUI_displayActiveTab(GUI_TabMain_t activeTab) {
     GUI_TabMain_setActive(&mainTab, activeTab);
 }
 
-void GUI_MainScreen_updateStates(void) {
+void GUI_ScreenMain_updateStates(void) {
     GUI_displayDifficulty(state.difficulty);
     GUI_displaySpeed(state.speed);
     GUI_displayRevolution(state.rpm);
@@ -125,4 +125,4 @@ void GUI_MainScreen_updateStates(void) {
     GUI_displayActiveTab(state.activeTab);
 }
 
-GUI_MainScreen_State* GUI_MainScreen_getState(void) { return &state; }
+GUI_ScreenMain_State* GUI_ScreenMain_getState(void) { return &state; }
