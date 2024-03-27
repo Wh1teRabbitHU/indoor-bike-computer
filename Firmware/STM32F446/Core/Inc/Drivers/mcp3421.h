@@ -1,8 +1,8 @@
 #ifndef __MCP3421_H
 #define __MCP3421_H
 
+#include "bike.h"
 #include "binary.h"
-#include "gui.h"
 #include "main.h"
 
 #define MCP3421_I2C_ADDR 0b1101000 << 1

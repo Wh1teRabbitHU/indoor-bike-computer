@@ -6,6 +6,8 @@
 		"gui_tab_main.h": "c",
 		"gui_main_screen.h": "c",
 		"lvgl.h": "c",
-		"gui_screen_main.h": "c"
+		"gui_screen_main.h": "c",
+		"bike.h": "c",
+		"mcp3421.h": "c"
 	}
 }

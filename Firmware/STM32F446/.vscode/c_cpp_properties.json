@@ -5,6 +5,7 @@
       "includePath": [
         "Core/Inc",
         "Core/Inc/Components",
+        "Core/Inc/Components/GUI",
         "Core/Inc/Components/GUI/Elements",
         "Core/Inc/Components/GUI/Screens",
         "Core/Inc/Drivers",

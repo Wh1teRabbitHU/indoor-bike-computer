@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bike.h"
+#include "controls.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -196,7 +197,7 @@ void RTC_WKUP_IRQHandler(void) {
     /* USER CODE BEGIN RTC_WKUP_IRQn 0 */
     HAL_RTC_GetTime(&hrtc, &rtcTime, RTC_FORMAT_BIN);
     HAL_RTC_GetDate(&hrtc, &rtcDate, RTC_FORMAT_BIN);
-    GUI_setTime(&rtcTime);
+    Bike_setTime(&rtcTime);
 
     /* USER CODE END RTC_WKUP_IRQn 0 */
     HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
@@ -250,17 +251,6 @@ void USART3_IRQHandler(void) {
  */
 void EXTI15_10_IRQHandler(void) {
     /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-    // uint8_t btn4Pressed = HAL_GPIO_ReadPin(USER_BTN_4_GPIO_Port, USER_BTN_4_Pin);
-    uint8_t revolutionTriggered = HAL_GPIO_ReadPin(REVOLUTION_SIGNAL_GPIO_Port, REVOLUTION_SIGNAL_Pin);
-    uint8_t btn4Pressed = !HAL_GPIO_ReadPin(USER_BTN_4_GPIO_Port, USER_BTN_4_Pin);
-
-    if (revolutionTriggered) {
-        Bike_updateRevolution();
-    }
-
-    if (btn4Pressed) {
-        GUI_nextTab();
-    }
 
     /* USER CODE END EXTI15_10_IRQn 0 */
     HAL_GPIO_EXTI_IRQHandler(USER_BTN_4_Pin);
@@ -286,19 +276,23 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void) {
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     if (GPIO_Pin == USER_BTN_1_Pin) {
-        GUI_prevTab();
+        Controls_pressCancel();
     }
 
     if (GPIO_Pin == USER_BTN_2_Pin) {
-        GUI_prevTab();
+        Controls_pressSelect();
     }
 
     if (GPIO_Pin == USER_BTN_3_Pin) {
-        GUI_nextTab();
+        Controls_pressPrev();
     }
 
     if (GPIO_Pin == USER_BTN_4_Pin) {
-        GUI_nextTab();
+        Controls_pressNext();
+    }
+
+    if (GPIO_Pin == REVOLUTION_SIGNAL_Pin) {
+        Bike_updateRevolution();
     }
 }
 

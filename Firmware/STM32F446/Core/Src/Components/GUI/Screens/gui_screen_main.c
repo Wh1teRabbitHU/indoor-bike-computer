@@ -16,7 +16,7 @@ static GUI_LabelTimer timerLabel;
 static GUI_ScreenMain_State state = {
     .infoMessage = NULL, .errorMessage = NULL, .difficulty = 0, .speed = 0, .rpm = 0, .bpm = 0};
 
-void GUI_MainScreen_initElements(void) {
+void GUI_ScreenMain_initElements(void) {
     GUI_TabMain_Config mainTabConfig = {.screen = mainScreen, .height = 40};
 
     mainTab = GUI_TabMain_create(&mainTabConfig);
@@ -67,7 +67,7 @@ void GUI_ScreenMain_init(void) {
     lv_screen_load(mainScreen);
     lv_obj_set_style_bg_color(mainScreen, lv_color_hex(GUI_MAINSCREEN_BGCOLOR), LV_PART_MAIN);
 
-    GUI_MainScreen_initElements();
+    GUI_ScreenMain_initElements();
 
     initialised = 1;
 }
@@ -107,7 +107,7 @@ void GUI_displayMeasurementChart() {
 
 void GUI_displayTimerLabel(char* time) { GUI_LabelTimer_setValue(&timerLabel, time); }
 
-void GUI_displayActiveTab(GUI_TabMain_t activeTab) {
+void GUI_displayActiveTab(GUI_Tab_t activeTab) {
     if (mainTab.active == activeTab) {
         return;
     }

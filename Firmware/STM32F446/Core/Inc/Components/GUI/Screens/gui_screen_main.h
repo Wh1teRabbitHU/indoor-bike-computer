@@ -19,7 +19,7 @@ typedef struct GUI_ScreenMain_State {
     uint32_t rpm;
     uint32_t bpm;
     uint8_t updateChart;
-    GUI_TabMain_t activeTab;
+    GUI_Tab_t activeTab;
     char* time;
 } GUI_ScreenMain_State;
 

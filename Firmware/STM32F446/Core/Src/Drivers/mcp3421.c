@@ -24,7 +24,7 @@ void MCP3421_writeI2C(uint8_t data) {
     HAL_StatusTypeDef result = HAL_I2C_Master_Transmit(i2c, MCP3421_I2C_ADDR, buffer, 1, 100);
 
     if (result != HAL_OK) {
-        GUI_setError("Error: Couldn't write to the ADC register");
+        Bike_setError("Error: Couldn't write to the ADC register");
     }
 }
 
@@ -33,7 +33,7 @@ void MCP3421_readI2C(uint8_t* buffer) {
     HAL_StatusTypeDef result = HAL_I2C_Master_Receive(i2c, MCP3421_I2C_ADDR, buffer, dataLength, 100);
 
     if (result != HAL_OK) {
-        GUI_setError("Error: Couldn't read from the ADC register");
+        Bike_setError("Error: Couldn't read from the ADC register");
     }
 }
 

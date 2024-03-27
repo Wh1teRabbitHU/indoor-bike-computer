@@ -327,6 +327,7 @@ Core/Src/Components/GUI/Elements/gui_tab_main.c \
 Core/Src/Components/GUI/Screens/gui_screen_main.c \
 Core/Src/Components/bike.c \
 Core/Src/Components/binary.c \
+Core/Src/Components/controls.c \
 Core/Src/Components/gui.c \
 Core/Src/Drivers/er_tft035.c \
 Core/Src/Drivers/mcp3421.c \
@@ -473,6 +474,7 @@ AS_INCLUDES = \
 C_INCLUDES =  \
 -ICore/Inc \
 -ICore/Inc/Components \
+-ICore/Inc/Components/GUI \
 -ICore/Inc/Components/GUI/Elements \
 -ICore/Inc/Components/GUI/Screens \
 -ICore/Inc/Drivers \

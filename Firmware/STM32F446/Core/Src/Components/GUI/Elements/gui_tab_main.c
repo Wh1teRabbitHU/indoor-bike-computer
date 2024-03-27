@@ -1,6 +1,6 @@
 #include "gui_tab_main.h"
 
-static GUI_TabMain_t active = GUI_TAB_MAIN;
+static GUI_Tab_t active = GUI_TAB_MAIN;
 
 GUI_TabMain GUI_TabMain_create(GUI_TabMain_Config* config) {
     GUI_TabMain tabInstance = {.tabs = {0}};
@@ -40,7 +40,7 @@ GUI_TabMain GUI_TabMain_create(GUI_TabMain_Config* config) {
     return tabInstance;
 }
 
-void GUI_TabMain_setActive(GUI_TabMain* instance, GUI_TabMain_t tab) {
+void GUI_TabMain_setActive(GUI_TabMain* instance, GUI_Tab_t tab) {
     instance->active = tab;
 
     lv_tabview_set_active(instance->tabView, instance->active, LV_ANIM_OFF);

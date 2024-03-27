@@ -4,7 +4,6 @@
 static lv_display_t* display;
 static lv_color_t buf1[ER_TFT035_SCREEN_WIDTH * ER_TFT035_SCREEN_HEIGHT / 20];
 static uint32_t lastTick = 0;
-static char timeBuffer[15];
 // static GUI_Screen_t activeScreen = GUI_SCREEN_MAIN;
 
 void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* color_p) {
@@ -40,19 +39,11 @@ void GUI_initDisplay() {
     lv_display_set_flush_cb(display, (lv_display_flush_cb_t)GUI_handleDisplay);
 }
 
-void GUI_initInputs() {
-    lv_indev_t* indev = lv_indev_create();
-    lv_indev_set_type(indev, LV_INDEV_TYPE_KEYPAD); /*See below.*/
-    lv_indev_set_read_cb(indev, GUI_handleKeyboard);
-}
-
 void GUI_init() {
     ER_TFT035_init();
     ER_TFT035_clearScreen(0x00);
 
     GUI_initDisplay();
-    GUI_initInputs();
-
     GUI_ScreenMain_init();
 }
 
@@ -68,39 +59,4 @@ uint32_t GUI_tick() {
     lastTick = HAL_GetTick();
 
     return lv_timer_handler();
-}
-
-void GUI_setInfo(char* info) { GUI_ScreenMain_getState()->infoMessage = info; }
-void GUI_setError(char* error) { GUI_ScreenMain_getState()->errorMessage = error; }
-void GUI_clearInfo(void) { GUI_ScreenMain_getState()->infoMessage = NULL; }
-void GUI_clearError(void) { GUI_ScreenMain_getState()->errorMessage = NULL; }
-void GUI_setDifficulty(uint32_t difficulty) { GUI_ScreenMain_getState()->difficulty = difficulty; }
-void GUI_setRpm(uint32_t rpm) { GUI_ScreenMain_getState()->rpm = rpm; }
-void GUI_setTime(RTC_TimeTypeDef* rtcTime) {
-    sprintf(timeBuffer, "%02d:%02d:%02d", rtcTime->Hours, rtcTime->Minutes, rtcTime->Seconds);
-
-    GUI_ScreenMain_getState()->time = timeBuffer;
-    GUI_ScreenMain_getState()->updateChart = 1;
-}
-void GUI_prevTab() {
-    uint32_t current = GUI_ScreenMain_getState()->activeTab;
-
-    if (current == 0) {
-        current = GUI_TABVIEW_TABCOUNT - 1;
-    } else {
-        current--;
-    }
-
-    GUI_ScreenMain_getState()->activeTab = current;
-}
-void GUI_nextTab() {
-    uint32_t current = GUI_ScreenMain_getState()->activeTab;
-
-    if (current == (GUI_TABVIEW_TABCOUNT - 1)) {
-        current = 0;
-    } else {
-        current++;
-    }
-
-    GUI_ScreenMain_getState()->activeTab = current;
 }
