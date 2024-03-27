@@ -44,7 +44,8 @@ void GUI_init() {
     ER_TFT035_clearScreen(0x00);
 
     GUI_initDisplay();
-    GUI_ScreenMain_init();
+
+    ScreenMain_init();
 }
 
 uint32_t GUI_tick() {
@@ -54,7 +55,7 @@ uint32_t GUI_tick() {
         lv_tick_inc(currentTick - lastTick);
     }
 
-    GUI_ScreenMain_updateStates();
+    ScreenMain_updateStates();
 
     lastTick = HAL_GetTick();
 

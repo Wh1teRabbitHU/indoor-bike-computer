@@ -8,6 +8,13 @@
 		"lvgl.h": "c",
 		"gui_screen_main.h": "c",
 		"bike.h": "c",
-		"mcp3421.h": "c"
+		"mcp3421.h": "c",
+		"tabview_main.h": "c",
+		"screen_main.h": "c",
+		"gui_box_measurement.h": "c",
+		"gui_chart_measurement.h": "c",
+		"gui.h": "c",
+		"controls.h": "c",
+		"gui_label_timer.h": "c"
 	}
 }

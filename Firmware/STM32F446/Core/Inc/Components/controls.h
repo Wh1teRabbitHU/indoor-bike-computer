@@ -7,7 +7,7 @@ typedef enum Controls_MenuLevel_t { MENU_LEVEL_TABS, MENU_LEVEL_TAB_CONTROL } Co
 
 typedef struct Controls_State {
     GUI_Screen_t screen;
-    GUI_Tab_t tab;
+    TabView_Main_Tab_t tab;
     Controls_MenuLevel_t level;
 } Controls_State;
 

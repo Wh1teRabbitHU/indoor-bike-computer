@@ -323,8 +323,11 @@ Core/Src/Components/GUI/Elements/gui_box_measurement.c \
 Core/Src/Components/GUI/Elements/gui_chart_measurement.c \
 Core/Src/Components/GUI/Elements/gui_label_timer.c \
 Core/Src/Components/GUI/Elements/gui_log_modal.c \
-Core/Src/Components/GUI/Elements/gui_tab_main.c \
-Core/Src/Components/GUI/Screens/gui_screen_main.c \
+Core/Src/Components/GUI/Screens/screen_main.c \
+Core/Src/Components/GUI/Tabs/tabview_main.c \
+Core/Src/Components/GUI/Tabs/tabview_main_tab_history.c \
+Core/Src/Components/GUI/Tabs/tabview_main_tab_live.c \
+Core/Src/Components/GUI/Tabs/tabview_main_tab_settings.c \
 Core/Src/Components/bike.c \
 Core/Src/Components/binary.c \
 Core/Src/Components/controls.c \
@@ -474,9 +477,9 @@ AS_INCLUDES = \
 C_INCLUDES =  \
 -ICore/Inc \
 -ICore/Inc/Components \
--ICore/Inc/Components/GUI \
 -ICore/Inc/Components/GUI/Elements \
 -ICore/Inc/Components/GUI/Screens \
+-ICore/Inc/Components/GUI/Tabs \
 -ICore/Inc/Drivers \
 -ICore/Lib \
 -ICore/Lib/LVGL \

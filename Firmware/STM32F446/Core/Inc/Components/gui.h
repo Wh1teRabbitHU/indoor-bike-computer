@@ -2,8 +2,8 @@
 #define INC_GUI_H_
 
 #include "er_tft035.h"
-#include "gui_screen_main.h"
 #include "lvgl.h"
+#include "screen_main.h"
 #include "stdio.h"
 
 typedef enum GUI_Screen_t { GUI_SCREEN_MAIN = 0 } GUI_Screen_t;

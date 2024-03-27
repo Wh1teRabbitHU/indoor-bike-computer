@@ -6,20 +6,20 @@ uint32_t rpm = 0;
 
 static char timeBuffer[15];
 
-void Bike_setInfo(char* info) { GUI_ScreenMain_getState()->infoMessage = info; }
-void Bike_setError(char* error) { GUI_ScreenMain_getState()->errorMessage = error; }
-void Bike_clearInfo(void) { GUI_ScreenMain_getState()->infoMessage = NULL; }
-void Bike_clearError(void) { GUI_ScreenMain_getState()->errorMessage = NULL; }
+void Bike_setInfo(char* info) { ScreenMain_getState()->infoMessage = info; }
+void Bike_setError(char* error) { ScreenMain_getState()->errorMessage = error; }
+void Bike_clearInfo(void) { ScreenMain_getState()->infoMessage = NULL; }
+void Bike_clearError(void) { ScreenMain_getState()->errorMessage = NULL; }
 void Bike_setTime(RTC_TimeTypeDef* rtcTime) {
     sprintf(timeBuffer, "%02d:%02d:%02d", rtcTime->Hours, rtcTime->Minutes, rtcTime->Seconds);
 
-    GUI_ScreenMain_getState()->time = timeBuffer;
-    GUI_ScreenMain_getState()->updateChart = 1;
+    ScreenMain_getState()->time = timeBuffer;
+    ScreenMain_getState()->updateChart = 1;
 }
 
 void Bike_updateDifficulty(void) {
     difficulty = MCP3421_readMeasurement();
-    GUI_ScreenMain_getState()->difficulty = difficulty;
+    ScreenMain_getState()->difficulty = difficulty;
 }
 
 void Bike_updateRevolution(void) {
@@ -31,5 +31,5 @@ void Bike_updateRevolution(void) {
 
     lastRevolutionTimestamp = currentTimestamp;
 
-    GUI_ScreenMain_getState()->rpm = rpm;
+    ScreenMain_getState()->rpm = rpm;
 }
