@@ -1,57 +1,7 @@
 #include "tabview_main.h"
 
 static TabView_Main mainTabView;
-static GUI_BoxMeasurement difficultyBox;
-static GUI_BoxMeasurement speedBox;
-static GUI_BoxMeasurement revolutionBox;
-static GUI_BoxMeasurement heartRateBox;
-static GUI_ChartMeasurement measurementChart;
-static GUI_LabelTimer timerLabel;
-
 static TabView_Main_Tab_t active = TABVIEW_MAIN_TAB_LIVE;
-
-static char textBuffer[32] = {0};
-
-TabView_Main TabView_Main_create(TabView_Main_Config* config);
-
-void TabView_Main_init(TabView_Main_Config* config) {
-    mainTabView = TabView_Main_create(config);
-
-    lv_obj_t* mainTabObj = mainTabView.tabs[TABVIEW_MAIN_TAB_LIVE];
-
-    // Elements in the main tab
-    GUI_BoxMeasurement_Config difficultyBoxConfig = {
-        .screen = mainTabObj, .title = "Difficulty", .x = 10, .y = 10, .bgColor = 0xBCC7FF};
-    GUI_BoxMeasurement_Config speedBoxConfig = {
-        .screen = mainTabObj, .title = "Speed", .x = 165, .y = 10, .bgColor = 0x77EEE6};
-    GUI_BoxMeasurement_Config revolutionBoxConfig = {
-        .screen = mainTabObj, .title = "Revolution", .x = 10, .y = 120, .bgColor = 0xBFFFA1};
-    GUI_BoxMeasurement_Config heartRateBoxConfig = {
-        .screen = mainTabObj, .title = "Heart Rate", .x = 165, .y = 120, .bgColor = 0xFFA490};
-    GUI_ChartMeasurement_Config measurementChartConfig = {.screen = mainTabObj,
-                                                          .title = "Revolution",
-                                                          .x = 10,
-                                                          .y = 230,
-                                                          .mainColor = 0xE1F6FF,
-                                                          .series1Color = 0x39B200};
-    GUI_LabelTimer_Config timerLabelConfig = {
-        .screen = mainTabObj, .name = "Timer: ", .x = 10, .y = 368, .bgColor = 0xC993FF};
-
-    difficultyBox = GUI_BoxMeasurement_create(&difficultyBoxConfig);
-    speedBox = GUI_BoxMeasurement_create(&speedBoxConfig);
-    revolutionBox = GUI_BoxMeasurement_create(&revolutionBoxConfig);
-    heartRateBox = GUI_BoxMeasurement_create(&heartRateBoxConfig);
-    measurementChart = GUI_ChartMeasurement_create(&measurementChartConfig);
-    timerLabel = GUI_LabelTimer_create(&timerLabelConfig);
-
-    // Elements in the history tab
-
-    // TODO
-
-    // Elements in the settings tab
-
-    // TODO
-}
 
 TabView_Main TabView_Main_create(TabView_Main_Config* config) {
     TabView_Main tabInstance = {.tabs = {0}};
@@ -121,42 +71,7 @@ void TabView_Main_nextTab(TabView_Main* instance) {
     TabView_Main_setActive(instance, current);
 }
 
-void TabView_Main_displayDifficulty(uint32_t difficulty) {
-    sprintf(textBuffer, "%ld\nmV", difficulty);
-
-    GUI_BoxMeasurement_setValue(&difficultyBox, textBuffer, textBuffer);
-}
-
-void TabView_Main_displaySpeed(uint32_t speed) {
-    sprintf(textBuffer, "%ld\nkmh", speed);
-
-    GUI_BoxMeasurement_setValue(&speedBox, textBuffer, textBuffer);
-}
-
-void TabView_Main_displayRevolution(uint32_t rpm) {
-    sprintf(textBuffer, "%ld\nrpm", rpm);
-
-    GUI_BoxMeasurement_setValue(&revolutionBox, textBuffer, textBuffer);
-}
-
-void TabView_Main_displayHeartRate(uint32_t bpm) {
-    sprintf(textBuffer, "%ld\nbpm", bpm);
-
-    GUI_BoxMeasurement_setValue(&heartRateBox, textBuffer, textBuffer);
-}
-
-void TabView_Main_displayMeasurementChart(TabView_Main_State* state) {
-    if (state->updateChart) {
-        state->updateChart = 0;
-
-        // TODO: Replace with a proper implementation
-        GUI_ChartMeasurement_setValue(&measurementChart, lv_rand(70, 90));
-    }
-}
-
-void TabView_Main_displayTimerLabel(char* time) { GUI_LabelTimer_setValue(&timerLabel, time); }
-
-void TabView_Main_displayActiveTab(TabView_Main_Tab_t activeTab) {
+void TabView_Main_showTab(TabView_Main_Tab_t activeTab) {
     if (mainTabView.active == activeTab) {
         return;
     }
@@ -164,12 +79,31 @@ void TabView_Main_displayActiveTab(TabView_Main_Tab_t activeTab) {
     TabView_Main_setActive(&mainTabView, activeTab);
 }
 
+void TabView_Main_updateTabLive(TabView_Main_State* state) {
+    if (state->activeTab != TABVIEW_MAIN_TAB_LIVE) {
+        return;
+    }
+
+    TabView_Main_Tab_Live_updateDifficulty(state->difficulty);
+    TabView_Main_Tab_Live_updateSpeed(state->speed);
+    TabView_Main_Tab_Live_updateRevolution(state->rpm);
+    TabView_Main_Tab_Live_updateHeartRate(state->bpm);
+    TabView_Main_Tab_Live_updateChart(state->updateChart);
+    TabView_Main_Tab_Live_updateTimer(state->time);
+
+    state->updateChart = 0;
+}
+
+void TabView_Main_init(TabView_Main_Config* config) {
+    mainTabView = TabView_Main_create(config);
+
+    lv_obj_t* tabLiveObj = mainTabView.tabs[TABVIEW_MAIN_TAB_LIVE];
+
+    TabView_Main_Tab_Live_Config tabLiveConfig = {.tab = tabLiveObj};
+    TabView_Main_Tab_Live_init(&tabLiveConfig);
+}
+
 void TabView_Main_updateStates(TabView_Main_State* state) {
-    TabView_Main_displayActiveTab(state->activeTab);
-    TabView_Main_displayDifficulty(state->difficulty);
-    TabView_Main_displaySpeed(state->speed);
-    TabView_Main_displayRevolution(state->rpm);
-    TabView_Main_displayHeartRate(state->bpm);
-    TabView_Main_displayMeasurementChart(state);
-    TabView_Main_displayTimerLabel(state->time);
+    TabView_Main_showTab(state->activeTab);
+    TabView_Main_updateTabLive(state);
 }

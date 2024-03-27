@@ -1,11 +1,8 @@
 #ifndef __TABVIEW_MAIN___H_
 #define __TABVIEW_MAIN___H_
 
-#include "gui_box_measurement.h"
-#include "gui_chart_measurement.h"
-#include "gui_label_timer.h"
 #include "lvgl.h"
-#include "stdio.h"
+#include "tabview_main_tab_live.h"
 
 #define GUI_TABVIEW_TABCOUNT 3
 #define GUI_TABVIEW_TABMAIN_BGCOLOR 0x000000
