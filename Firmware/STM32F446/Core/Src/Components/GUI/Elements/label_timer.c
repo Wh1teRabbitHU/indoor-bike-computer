@@ -1,7 +1,7 @@
-#include "gui_label_timer.h"
+#include "label_timer.h"
 
-GUI_LabelTimer GUI_LabelTimer_create(GUI_LabelTimer_Config* config) {
-    GUI_LabelTimer timerInstance = {};
+LabelTimer LabelTimer_create(LabelTimer_Config* config) {
+    LabelTimer timerInstance = {};
 
     lv_obj_t* box = lv_obj_create(config->screen);
 
@@ -35,4 +35,4 @@ GUI_LabelTimer GUI_LabelTimer_create(GUI_LabelTimer_Config* config) {
     return timerInstance;
 }
 
-void GUI_LabelTimer_setValue(GUI_LabelTimer* instance, char* time) { lv_label_set_text(instance->timeLabel, time); }
+void LabelTimer_setValue(LabelTimer* instance, char* time) { lv_label_set_text(instance->timeLabel, time); }

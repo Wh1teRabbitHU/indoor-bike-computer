@@ -319,10 +319,10 @@ Core/Lib/LVGL/src/widgets/tabview/lv_tabview.c \
 Core/Lib/LVGL/src/widgets/textarea/lv_textarea.c \
 Core/Lib/LVGL/src/widgets/tileview/lv_tileview.c \
 Core/Lib/LVGL/src/widgets/win/lv_win.c \
-Core/Src/Components/GUI/Elements/gui_box_measurement.c \
-Core/Src/Components/GUI/Elements/gui_chart_measurement.c \
-Core/Src/Components/GUI/Elements/gui_label_timer.c \
-Core/Src/Components/GUI/Elements/gui_log_modal.c \
+Core/Src/Components/GUI/Elements/box_measurement.c \
+Core/Src/Components/GUI/Elements/chart_measurement.c \
+Core/Src/Components/GUI/Elements/label_timer.c \
+Core/Src/Components/GUI/Elements/modal_log.c \
 Core/Src/Components/GUI/Screens/screen_main.c \
 Core/Src/Components/GUI/Tabs/tabview_main.c \
 Core/Src/Components/GUI/Tabs/tabview_main_tab_history.c \

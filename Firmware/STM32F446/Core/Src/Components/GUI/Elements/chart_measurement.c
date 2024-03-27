@@ -1,7 +1,7 @@
-#include "gui_chart_measurement.h"
+#include "chart_measurement.h"
 
-GUI_ChartMeasurement GUI_ChartMeasurement_create(GUI_ChartMeasurement_Config* config) {
-    GUI_ChartMeasurement chartInstance = {};
+ChartMeasurement ChartMeasurement_create(ChartMeasurement_Config* config) {
+    ChartMeasurement chartInstance = {};
 
     lv_obj_t* chart = lv_chart_create(config->screen);
 
@@ -52,7 +52,7 @@ GUI_ChartMeasurement GUI_ChartMeasurement_create(GUI_ChartMeasurement_Config* co
     return chartInstance;
 }
 
-void GUI_ChartMeasurement_setValue(GUI_ChartMeasurement* instance, uint32_t value1) {
+void ChartMeasurement_setValue(ChartMeasurement* instance, uint32_t value1) {
     lv_chart_set_next_value(instance->chart, instance->series1, value1);
 
     lv_chart_refresh(instance->chart);

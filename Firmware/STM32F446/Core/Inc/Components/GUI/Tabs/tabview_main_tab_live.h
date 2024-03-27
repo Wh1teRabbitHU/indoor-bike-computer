@@ -1,9 +1,9 @@
 #ifndef __TABVIEW_MAIN_TAB_LIVE_H_
 #define __TABVIEW_MAIN_TAB_LIVE_H_
 
-#include "gui_box_measurement.h"
-#include "gui_chart_measurement.h"
-#include "gui_label_timer.h"
+#include "box_measurement.h"
+#include "chart_measurement.h"
+#include "label_timer.h"
 #include "stdio.h"
 
 typedef struct TabView_Main_Tab_Live_Config {

@@ -1,7 +1,7 @@
-#include "gui_box_measurement.h"
+#include "box_measurement.h"
 
-GUI_BoxMeasurement GUI_BoxMeasurement_create(GUI_BoxMeasurement_Config* config) {
-    GUI_BoxMeasurement boxInstance = {};
+BoxMeasurement BoxMeasurement_create(BoxMeasurement_Config* config) {
+    BoxMeasurement boxInstance = {};
 
     lv_obj_t* box = lv_obj_create(config->screen);
 
@@ -74,7 +74,7 @@ GUI_BoxMeasurement GUI_BoxMeasurement_create(GUI_BoxMeasurement_Config* config) 
     return boxInstance;
 }
 
-void GUI_BoxMeasurement_setValue(GUI_BoxMeasurement* instance, char* avgVal, char* curVal) {
+void BoxMeasurement_setValue(BoxMeasurement* instance, char* avgVal, char* curVal) {
     lv_label_set_text(instance->avgValueLabel, avgVal);
     lv_label_set_text(instance->curValueLabel, curVal);
 }

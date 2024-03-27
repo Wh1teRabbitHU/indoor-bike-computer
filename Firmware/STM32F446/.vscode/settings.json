@@ -15,6 +15,9 @@
 		"gui_chart_measurement.h": "c",
 		"gui.h": "c",
 		"controls.h": "c",
-		"gui_label_timer.h": "c"
+		"gui_label_timer.h": "c",
+		"tabview_main_tab_live.h": "c",
+		"chart_measurement.h": "c",
+		"modal_log.h": "c"
 	}
 }
