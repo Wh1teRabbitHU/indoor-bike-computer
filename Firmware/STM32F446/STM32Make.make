@@ -481,6 +481,7 @@ C_INCLUDES =  \
 -ICore/Inc/Components/GUI/Screens \
 -ICore/Inc/Components/GUI/Tabs \
 -ICore/Inc/Drivers \
+-ICore/Inc/Utils \
 -ICore/Lib \
 -ICore/Lib/LVGL \
 -ICore/Lib/LVGL/src \

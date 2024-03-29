@@ -2,9 +2,11 @@
 #define __TABVIEW_MAIN___H_
 
 #include "lvgl.h"
+#include "macros.h"
 #include "tabview_main_tab_live.h"
 
-#define GUI_TABVIEW_TABCOUNT 3
+#define GUI_TABVIEW_TAB_COUNT 3
+#define GUI_TABVIEW_TAB_HEIGHT 40
 #define GUI_TABVIEW_TABMAIN_BGCOLOR 0x000000
 #define GUI_TABVIEW_TABHISTORY_BGCOLOR 0x000000
 #define GUI_TABVIEW_TABSETTINGS_BGCOLOR 0x000000
@@ -22,14 +24,12 @@ typedef enum TabView_Main_Tab_t {
 
 typedef struct TabView_Main {
     lv_obj_t* tabView;
-    lv_obj_t* tabs[GUI_TABVIEW_TABCOUNT];
+    lv_obj_t* tabs[GUI_TABVIEW_TAB_COUNT];
     TabView_Main_Tab_t active;
 } TabView_Main;
 
 typedef struct TabView_Main_Config {
     lv_obj_t* screen;
-    int32_t height;
-    uint32_t bgColor;
 } TabView_Main_Config;
 
 typedef struct TabView_Main_State {
@@ -40,6 +40,7 @@ typedef struct TabView_Main_State {
     uint32_t rpm;
     uint32_t bpm;
     uint8_t updateChart;
+    uint8_t updateLevel;
     char* time;
 } TabView_Main_State;
 

@@ -13,7 +13,7 @@ void ScreenMain_init(void) {
     lv_screen_load(mainScreen);
     lv_obj_set_style_bg_color(mainScreen, lv_color_hex(SCREENMAIN_BGCOLOR), LV_PART_MAIN);
 
-    TabView_Main_Config mainTabConfig = {.screen = mainScreen, .height = 40};
+    TabView_Main_Config mainTabConfig = {.screen = mainScreen};
 
     TabView_Main_init(&mainTabConfig);
 }

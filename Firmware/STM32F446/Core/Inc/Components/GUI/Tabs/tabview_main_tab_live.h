@@ -19,4 +19,12 @@ void TabView_Main_Tab_Live_updateHeartRate(uint32_t bpm);
 void TabView_Main_Tab_Live_updateChart(uint8_t updateChart);
 void TabView_Main_Tab_Live_updateTimer(char* time);
 
+void TabView_Main_Tab_Live_stepIn();
+void TabView_Main_Tab_Live_stepOut();
+
+// Control handlers
+void TabView_Main_Tab_Live_execute(void);
+void TabView_Main_Tab_Live_handlePrev(void);
+void TabView_Main_Tab_Live_handleNext(void);
+
 #endif
