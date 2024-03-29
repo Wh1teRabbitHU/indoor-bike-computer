@@ -1,14 +1,21 @@
 #ifndef __SCREEN_MAIN_H_
 #define __SCREEN_MAIN_H_
 
-#include "tabview_main.h"
 #include "lvgl.h"
 #include "stdio.h"
+#include "tabview_main.h"
 
 #define SCREENMAIN_BGCOLOR 0x000000
 
+typedef enum ScreenMain_TabView_t { SCREENMAIN_TABVIEW_MAIN = 0 } ScreenMain_TabView_t;
+
 void ScreenMain_init(void);
 void ScreenMain_updateStates(void);
-TabView_Main_State* ScreenMain_getState(void);
+
+// Control handlers
+void ScreenMain_handleSelect(void);
+void ScreenMain_handleCancel(void);
+void ScreenMain_handlePrev(void);
+void ScreenMain_handleNext(void);
 
 #endif

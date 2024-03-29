@@ -9,6 +9,11 @@
 #define GUI_TABVIEW_TABHISTORY_BGCOLOR 0x000000
 #define GUI_TABVIEW_TABSETTINGS_BGCOLOR 0x000000
 
+typedef enum TabView_Main_TabLevel_t {
+    TABVIEW_MAIN_TABLEVEL_TAB = 0,
+    TABVIEW_MAIN_TABLEVEL_CONTENT = 1
+} TabView_Main_TabLevel_t;
+
 typedef enum TabView_Main_Tab_t {
     TABVIEW_MAIN_TAB_LIVE = 0,
     TABVIEW_MAIN_TAB_HISTORY = 1,
@@ -36,13 +41,18 @@ typedef struct TabView_Main_State {
     uint32_t bpm;
     uint8_t updateChart;
     char* time;
-    TabView_Main_Tab_t activeTab;
 } TabView_Main_State;
 
 void TabView_Main_init(TabView_Main_Config* config);
-void TabView_Main_setActive(TabView_Main* instance, TabView_Main_Tab_t tab);
-void TabView_Main_prevTab(TabView_Main* instance);
-void TabView_Main_nextTab(TabView_Main* instance);
-void TabView_Main_updateStates(TabView_Main_State* state);
+void TabView_Main_prevTab();
+void TabView_Main_nextTab();
+TabView_Main_State* TabView_Main_getState(void);
+void TabView_Main_updateStates(void);
+
+// Control handlers
+void TabView_Main_handleSelect(void);
+void TabView_Main_handleCancel(void);
+void TabView_Main_handlePrev(void);
+void TabView_Main_handleNext(void);
 
 #endif

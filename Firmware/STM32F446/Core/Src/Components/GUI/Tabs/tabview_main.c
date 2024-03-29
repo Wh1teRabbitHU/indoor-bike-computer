@@ -1,7 +1,16 @@
 #include "tabview_main.h"
 
 static TabView_Main mainTabView;
-static TabView_Main_Tab_t active = TABVIEW_MAIN_TAB_LIVE;
+static TabView_Main_Tab_t activeTab = TABVIEW_MAIN_TAB_LIVE;
+static TabView_Main_TabLevel_t activeTabLevel = TABVIEW_MAIN_TABLEVEL_TAB;
+static TabView_Main_State state = {
+    .infoMessage = NULL, .errorMessage = NULL, .difficulty = 0, .speed = 0, .rpm = 0, .bpm = 0};
+
+void TabView_Main_setActiveTab(TabView_Main_Tab_t tab) {
+    mainTabView.active = tab;
+
+    lv_tabview_set_active(mainTabView.tabView, mainTabView.active, LV_ANIM_OFF);
+}
 
 TabView_Main TabView_Main_create(TabView_Main_Config* config) {
     TabView_Main tabInstance = {.tabs = {0}};
@@ -36,19 +45,11 @@ TabView_Main TabView_Main_create(TabView_Main_Config* config) {
 
     tabInstance.active = TABVIEW_MAIN_TAB_LIVE;
 
-    TabView_Main_setActive(&tabInstance, active);
-
     return tabInstance;
 }
 
-void TabView_Main_setActive(TabView_Main* instance, TabView_Main_Tab_t tab) {
-    instance->active = tab;
-
-    lv_tabview_set_active(instance->tabView, instance->active, LV_ANIM_OFF);
-}
-
-void TabView_Main_prevTab(TabView_Main* instance) {
-    uint32_t current = instance->active;
+void TabView_Main_prevTab() {
+    uint32_t current = mainTabView.active;
 
     if (current == 0) {
         current = GUI_TABVIEW_TABCOUNT - 1;
@@ -56,11 +57,11 @@ void TabView_Main_prevTab(TabView_Main* instance) {
         current--;
     }
 
-    TabView_Main_setActive(instance, current);
+    activeTab = current;
 }
 
-void TabView_Main_nextTab(TabView_Main* instance) {
-    uint32_t current = instance->active;
+void TabView_Main_nextTab() {
+    uint32_t current = mainTabView.active;
 
     if (current == (GUI_TABVIEW_TABCOUNT - 1)) {
         current = 0;
@@ -68,19 +69,11 @@ void TabView_Main_nextTab(TabView_Main* instance) {
         current++;
     }
 
-    TabView_Main_setActive(instance, current);
-}
-
-void TabView_Main_showTab(TabView_Main_Tab_t activeTab) {
-    if (mainTabView.active == activeTab) {
-        return;
-    }
-
-    TabView_Main_setActive(&mainTabView, activeTab);
+    activeTab = current;
 }
 
 void TabView_Main_updateTabLive(TabView_Main_State* state) {
-    if (state->activeTab != TABVIEW_MAIN_TAB_LIVE) {
+    if (activeTab != TABVIEW_MAIN_TAB_LIVE) {
         return;
     }
 
@@ -97,13 +90,64 @@ void TabView_Main_updateTabLive(TabView_Main_State* state) {
 void TabView_Main_init(TabView_Main_Config* config) {
     mainTabView = TabView_Main_create(config);
 
+    TabView_Main_setActiveTab(activeTab);
+
     lv_obj_t* tabLiveObj = mainTabView.tabs[TABVIEW_MAIN_TAB_LIVE];
 
     TabView_Main_Tab_Live_Config tabLiveConfig = {.tab = tabLiveObj};
     TabView_Main_Tab_Live_init(&tabLiveConfig);
 }
 
-void TabView_Main_updateStates(TabView_Main_State* state) {
-    TabView_Main_showTab(state->activeTab);
-    TabView_Main_updateTabLive(state);
+TabView_Main_State* TabView_Main_getState(void) { return &state; }
+
+void TabView_Main_updateStates() {
+    if (mainTabView.active != activeTab) {
+        TabView_Main_setActiveTab(activeTab);
+    }
+
+    TabView_Main_updateTabLive(&state);
+}
+
+void TabView_Main_handleSelect(void) {
+    switch (activeTabLevel) {
+        case TABVIEW_MAIN_TABLEVEL_TAB:
+            activeTabLevel = TABVIEW_MAIN_TABLEVEL_CONTENT;
+            break;
+        case TABVIEW_MAIN_TABLEVEL_CONTENT:
+            // TODO
+            break;
+    }
+}
+
+void TabView_Main_handleCancel(void) {
+    switch (activeTabLevel) {
+        case TABVIEW_MAIN_TABLEVEL_TAB:
+            // Do nothing
+            break;
+        case TABVIEW_MAIN_TABLEVEL_CONTENT:
+            activeTabLevel = TABVIEW_MAIN_TABLEVEL_TAB;
+            break;
+    }
+}
+
+void TabView_Main_handlePrev(void) {
+    switch (activeTabLevel) {
+        case TABVIEW_MAIN_TABLEVEL_TAB:
+            TabView_Main_prevTab();
+            break;
+        case TABVIEW_MAIN_TABLEVEL_CONTENT:
+            // TODO
+            break;
+    }
+}
+
+void TabView_Main_handleNext(void) {
+    switch (activeTabLevel) {
+        case TABVIEW_MAIN_TABLEVEL_TAB:
+            TabView_Main_nextTab();
+            break;
+        case TABVIEW_MAIN_TABLEVEL_CONTENT:
+            // TODO
+            break;
+    }
 }
