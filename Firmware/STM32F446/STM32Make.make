@@ -321,6 +321,7 @@ Core/Lib/LVGL/src/widgets/tileview/lv_tileview.c \
 Core/Lib/LVGL/src/widgets/win/lv_win.c \
 Core/Src/Components/GUI/Elements/box_measurement.c \
 Core/Src/Components/GUI/Elements/chart_measurement.c \
+Core/Src/Components/GUI/Elements/control_live.c \
 Core/Src/Components/GUI/Elements/label_timer.c \
 Core/Src/Components/GUI/Elements/modal_log.c \
 Core/Src/Components/GUI/Screens/screen_main.c \

@@ -31,6 +31,7 @@ PRIVATE void TabView_Main_updateTabLive(TabView_Main_State* state) {
     TabView_Main_Tab_Live_updateHeartRate(state->bpm);
     TabView_Main_Tab_Live_updateChart(state->updateChart);
     TabView_Main_Tab_Live_updateTimer(state->time);
+    TabView_Main_Tab_Live_updateControl();
 
     state->updateChart = 0;
 }

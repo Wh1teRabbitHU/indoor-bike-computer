@@ -6,8 +6,21 @@ static BoxMeasurement revolutionBox;
 static BoxMeasurement heartRateBox;
 static ChartMeasurement measurementChart;
 static LabelTimer timerLabel;
+static ControlLive controlLive;
 
 static char textBuffer[32] = {0};
+
+PRIVATE void TabView_Main_Tab_Live_executeStart() {
+    // TODO
+}
+
+PRIVATE void TabView_Main_Tab_Live_executeEnd() {
+    // TODO
+}
+
+PRIVATE void TabView_Main_Tab_Live_executeReset() {
+    // TODO
+}
 
 void TabView_Main_Tab_Live_init(TabView_Main_Tab_Live_Config* config) {
     BoxMeasurement_Config difficultyBoxConfig = {
@@ -26,6 +39,7 @@ void TabView_Main_Tab_Live_init(TabView_Main_Tab_Live_Config* config) {
                                                       .series1Color = 0x39B200};
     LabelTimer_Config timerLabelConfig = {
         .screen = config->tab, .name = "Timer: ", .x = 10, .y = 368, .bgColor = 0xC993FF};
+    ControlLive_Config controlLiveConfig = {.screen = config->tab, .x = 10, .y = 410, .bgColor = 0xEAEAEA};
 
     difficultyBox = BoxMeasurement_create(&difficultyBoxConfig);
     speedBox = BoxMeasurement_create(&speedBoxConfig);
@@ -33,6 +47,7 @@ void TabView_Main_Tab_Live_init(TabView_Main_Tab_Live_Config* config) {
     heartRateBox = BoxMeasurement_create(&heartRateBoxConfig);
     measurementChart = ChartMeasurement_create(&measurementChartConfig);
     timerLabel = LabelTimer_create(&timerLabelConfig);
+    controlLive = ControlLive_create(&controlLiveConfig);
 }
 
 void TabView_Main_Tab_Live_updateDifficulty(uint32_t difficulty) {
@@ -70,10 +85,50 @@ void TabView_Main_Tab_Live_updateChart(uint8_t updateChart) {
 
 void TabView_Main_Tab_Live_updateTimer(char* time) { LabelTimer_setValue(&timerLabel, time); }
 
+void TabView_Main_Tab_Live_updateControl(void) { ControlLive_updateState(&controlLive); }
+
 void TabView_Main_Tab_Live_stepIn() {}
 void TabView_Main_Tab_Live_stepOut() {}
 
 // Control handlers
-void TabView_Main_Tab_Live_execute(void) {}
-void TabView_Main_Tab_Live_handlePrev(void) {}
-void TabView_Main_Tab_Live_handleNext(void) {}
+void TabView_Main_Tab_Live_execute(void) {
+    switch (controlLive.selected) {
+        case CONTROLLIVE_START:
+            TabView_Main_Tab_Live_executeStart();
+            break;
+        case CONTROLLIVE_END:
+            TabView_Main_Tab_Live_executeEnd();
+            break;
+        case CONTROLLIVE_RESET:
+            TabView_Main_Tab_Live_executeReset();
+            break;
+    }
+}
+
+void TabView_Main_Tab_Live_handlePrev(void) {
+    uint32_t current = controlLive.selected;
+
+    do {
+        if (current == 0) {
+            current = CONTROLLIVE_BUTTON_COUNT - 1;
+        } else {
+            current--;
+        }
+    } while (!controlLive.enabled[current] || current != controlLive.selected);
+
+    controlLive.selected = current;
+}
+
+void TabView_Main_Tab_Live_handleNext(void) {
+    uint32_t current = controlLive.selected;
+
+    do {
+        if (current == (CONTROLLIVE_BUTTON_COUNT - 1)) {
+            current = 0;
+        } else {
+            current++;
+        }
+    } while (!controlLive.enabled[current] || current != controlLive.selected);
+
+    controlLive.selected = current;
+}

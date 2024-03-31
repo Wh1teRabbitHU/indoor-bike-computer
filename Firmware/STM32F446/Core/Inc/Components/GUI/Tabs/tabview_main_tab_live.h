@@ -3,7 +3,9 @@
 
 #include "box_measurement.h"
 #include "chart_measurement.h"
+#include "control_live.h"
 #include "label_timer.h"
+#include "macros.h"
 #include "stdio.h"
 
 typedef struct TabView_Main_Tab_Live_Config {
@@ -18,6 +20,7 @@ void TabView_Main_Tab_Live_updateRevolution(uint32_t rpm);
 void TabView_Main_Tab_Live_updateHeartRate(uint32_t bpm);
 void TabView_Main_Tab_Live_updateChart(uint8_t updateChart);
 void TabView_Main_Tab_Live_updateTimer(char* time);
+void TabView_Main_Tab_Live_updateControl(void);
 
 void TabView_Main_Tab_Live_stepIn();
 void TabView_Main_Tab_Live_stepOut();

@@ -6,25 +6,32 @@ static lv_color_t buf1[ER_TFT035_SCREEN_WIDTH * ER_TFT035_SCREEN_HEIGHT / 20];
 static uint32_t lastTick = 0;
 // static GUI_Screen_t activeScreen = GUI_SCREEN_MAIN;
 
+PRIVATE uint32_t GUI_getColor(lv_color_t* color_p) {
+    uint32_t r = color_p->red;
+    uint32_t g = color_p->green;
+    uint32_t b = color_p->blue;
+    uint32_t color = ((r >> 2) << 12) | ((g >> 2) << 6) | (b >> 2);
+
+    return color;
+}
+
 void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* color_p) {
-    int32_t x, y, prevColor;
+    int32_t x, y;
+    uint32_t prevColor = GUI_getColor(color_p) + 1;  // Making sure that the first time it's a different color
 
     ER_TFT035_setCursorToRange(area->x1, area->x2, area->y1, area->y2);
 
     for (y = area->y1; y <= area->y2; y++) {
         for (x = area->x1; x <= area->x2; x++) {
-            uint32_t r = color_p->red;
-            uint32_t g = color_p->green;
-            uint32_t b = color_p->blue;
-            uint32_t color = ((r >> 2) << 12) | ((g >> 2) << 6) | (b >> 2);
+            uint32_t currentColor = GUI_getColor(color_p);
 
-            if (color == prevColor) {
+            if (currentColor == prevColor) {
                 ER_TFT035_repeatData();
             } else {
-                ER_TFT035_writePixelData(color);
+                ER_TFT035_writePixelData(currentColor);
             }
 
-            prevColor = color;
+            prevColor = currentColor;
             color_p++;
         }
     }

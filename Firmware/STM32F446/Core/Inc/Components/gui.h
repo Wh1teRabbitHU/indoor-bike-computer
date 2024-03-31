@@ -3,6 +3,7 @@
 
 #include "er_tft035.h"
 #include "lvgl.h"
+#include "macros.h"
 #include "screen_main.h"
 #include "stdio.h"
 
