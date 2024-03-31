@@ -7,7 +7,7 @@ static uint32_t lastTick = 0;
 // static GUI_Screen_t activeScreen = GUI_SCREEN_MAIN;
 
 void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* color_p) {
-    int32_t x, y;
+    int32_t x, y, prevColor;
 
     ER_TFT035_setCursorToRange(area->x1, area->x2, area->y1, area->y2);
 
@@ -18,7 +18,13 @@ void GUI_handleDisplay(lv_display_t* disp, const lv_area_t* area, lv_color_t* co
             uint32_t b = color_p->blue;
             uint32_t color = ((r >> 2) << 12) | ((g >> 2) << 6) | (b >> 2);
 
-            ER_TFT035_writePixelData(color);
+            if (color == prevColor) {
+                ER_TFT035_repeatData();
+            } else {
+                ER_TFT035_writePixelData(color);
+            }
+
+            prevColor = color;
             color_p++;
         }
     }

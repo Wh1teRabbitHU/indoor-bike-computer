@@ -24,42 +24,34 @@ void ER_TFT035_setDataPort(uint32_t data) {
 
 void ER_TFT035_writePixelData(uint32_t data) {
     HAL_GPIO_WritePin(DISPLAY_DC_GPIO_Port, DISPLAY_DC_Pin, 1);
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 0);
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 0);
 
     ER_TFT035_setDataPort(data);
 
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 1);
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 1);
 }
 
 void ER_TFT035_writeCommand(uint8_t command) {
     HAL_GPIO_WritePin(DISPLAY_DC_GPIO_Port, DISPLAY_DC_Pin, 0);
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 0);
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 0);
 
     ER_TFT035_setDataPort(command);
 
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 1);
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 1);
 }
 
 void ER_TFT035_writeCommandData(uint8_t data) {
     HAL_GPIO_WritePin(DISPLAY_DC_GPIO_Port, DISPLAY_DC_Pin, 1);
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 0);
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 0);
 
     ER_TFT035_setDataPort(data);
 
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 1);
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 1);
 }
 
-void ER_TFT040_repeatData() {
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 0);
+void ER_TFT035_repeatData(void) {
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 0);
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 1);
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 1);
 }
 
 void ER_TFT035_clearScreen(uint32_t bColor) {
@@ -101,7 +93,6 @@ void ER_TFT035_setCursorToRange(uint16_t xStart, uint16_t xEnd, uint16_t yStart,
 void ER_TFT035_drawPixel(int16_t x, int16_t y, uint32_t color) {
     ER_TFT035_setCursorToPixel(x, y);
 
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 0);
     HAL_GPIO_WritePin(DISPLAY_RD_GPIO_Port, DISPLAY_RD_Pin, 1);
     HAL_GPIO_WritePin(DISPLAY_DC_GPIO_Port, DISPLAY_DC_Pin, 1);
 
@@ -109,7 +100,6 @@ void ER_TFT035_drawPixel(int16_t x, int16_t y, uint32_t color) {
 
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 0);
     HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 1);
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 1);
 }
 
 void ER_TFT035_drawLine(int16_t xStart, int16_t yStart, int16_t xEnd, int16_t yEnd, uint32_t color) {
@@ -162,7 +152,6 @@ void ER_TFT035_drawRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 void ER_TFT035_fillRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color) {
     ER_TFT035_setCursorToRange(x, x + width - 1, y, y + height - 1);
 
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 0);
     HAL_GPIO_WritePin(DISPLAY_RD_GPIO_Port, DISPLAY_RD_Pin, 1);
     HAL_GPIO_WritePin(DISPLAY_DC_GPIO_Port, DISPLAY_DC_Pin, 1);
 
@@ -174,8 +163,6 @@ void ER_TFT035_fillRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t he
             HAL_GPIO_WritePin(DISPLAY_WR_GPIO_Port, DISPLAY_WR_Pin, 1);
         }
     }
-
-    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 1);
 }
 
 void ER_TFT035_drawCircle(int16_t x0, int16_t y0, int16_t r, uint32_t color) {
@@ -284,6 +271,7 @@ void ER_TFT035_init(void) {
     HAL_Delay(120);
 
     HAL_GPIO_WritePin(DISPLAY_RD_GPIO_Port, DISPLAY_RD_Pin, 1);
+    HAL_GPIO_WritePin(DISPLAY_CS_GPIO_Port, DISPLAY_CS_Pin, 0);
 
     ER_TFT035_writeCommand(0xE0);
     ER_TFT035_writeCommandData(0x00);
