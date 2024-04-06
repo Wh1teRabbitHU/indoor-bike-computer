@@ -10,7 +10,7 @@
 typedef enum ScreenMain_TabView_t { SCREENMAIN_TABVIEW_MAIN = 0 } ScreenMain_TabView_t;
 
 void ScreenMain_init(void);
-void ScreenMain_updateStates(void);
+void ScreenMain_update(void);
 
 // Control handlers
 void ScreenMain_handleSelect(void);

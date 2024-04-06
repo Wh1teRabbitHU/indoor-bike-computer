@@ -1,6 +1,7 @@
 #ifndef __TABVIEW_MAIN___H_
 #define __TABVIEW_MAIN___H_
 
+#include "app-state.h"
 #include "lvgl.h"
 #include "macros.h"
 #include "tabview_main_tab_live.h"
@@ -47,8 +48,7 @@ typedef struct TabView_Main_State {
 void TabView_Main_init(TabView_Main_Config* config);
 void TabView_Main_prevTab();
 void TabView_Main_nextTab();
-TabView_Main_State* TabView_Main_getState(void);
-void TabView_Main_updateStates(void);
+void TabView_Main_update(void);
 
 // Control handlers
 void TabView_Main_handleSelect(void);

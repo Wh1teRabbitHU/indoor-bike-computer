@@ -3,14 +3,6 @@
 static TabView_Main mainTabView;
 static TabView_Main_Tab_t activeTab = TABVIEW_MAIN_TAB_LIVE;
 static TabView_Main_TabLevel_t activeTabLevel = TABVIEW_MAIN_TABLEVEL_TAB;
-static TabView_Main_State state = {.infoMessage = NULL,
-                                   .errorMessage = NULL,
-                                   .difficulty = 0,
-                                   .speed = 0,
-                                   .rpm = 0,
-                                   .bpm = 0,
-                                   .updateChart = 0,
-                                   .updateLevel = 0};
 
 // PRIVATE METHODS
 
@@ -20,10 +12,12 @@ PRIVATE void TabView_Main_setActiveTab(TabView_Main_Tab_t tab) {
     lv_tabview_set_active(mainTabView.tabView, mainTabView.active, LV_ANIM_OFF);
 }
 
-PRIVATE void TabView_Main_updateTabLive(TabView_Main_State* state) {
+PRIVATE void TabView_Main_updateTabLive() {
     if (activeTab != TABVIEW_MAIN_TAB_LIVE) {
         return;
     }
+
+    App_State* state = App_State_get();
 
     TabView_Main_Tab_Live_updateDifficulty(state->difficulty);
     TabView_Main_Tab_Live_updateSpeed(state->speed);
@@ -87,7 +81,7 @@ PRIVATE void TabView_Main_TabLevel_stepIn() {
             break;
     }
 
-    state.updateLevel = 1;
+    App_State_get()->updateLevel = 1;
 }
 
 PRIVATE void TabView_Main_TabLevel_stepOut() {
@@ -105,7 +99,7 @@ PRIVATE void TabView_Main_TabLevel_stepOut() {
             break;
     }
 
-    state.updateLevel = 1;
+    App_State_get()->updateLevel = 1;
 }
 
 PRIVATE void TabView_Main_TabLevel_execute() {
@@ -187,22 +181,20 @@ void TabView_Main_nextTab() {
     activeTab = current;
 }
 
-TabView_Main_State* TabView_Main_getState(void) { return &state; }
-
-void TabView_Main_updateStates() {
+void TabView_Main_update() {
     if (mainTabView.active != activeTab) {
         TabView_Main_setActiveTab(activeTab);
     }
 
-    TabView_Main_updateTabLive(&state);
+    TabView_Main_updateTabLive();
 
-    if (state.updateLevel) {
+    if (App_State_get()->updateLevel) {
         // Change the tab based on the level
         int32_t tabViewHeight = activeTabLevel == TABVIEW_MAIN_TABLEVEL_TAB ? GUI_TABVIEW_TAB_HEIGHT : 0;
 
         lv_tabview_set_tab_bar_size(mainTabView.tabView, tabViewHeight);
 
-        state.updateLevel = 0;
+        App_State_get()->updateLevel = 0;
     }
 }
 

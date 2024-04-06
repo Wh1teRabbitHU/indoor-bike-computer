@@ -335,6 +335,7 @@ Core/Src/Components/controls.c \
 Core/Src/Components/gui.c \
 Core/Src/Drivers/er_tft035.c \
 Core/Src/Drivers/mcp3421.c \
+Core/Src/State/app-state.c \
 Core/Src/main.c \
 Core/Src/stm32f4xx_hal_msp.c \
 Core/Src/stm32f4xx_it.c \
@@ -482,6 +483,7 @@ C_INCLUDES =  \
 -ICore/Inc/Components/GUI/Screens \
 -ICore/Inc/Components/GUI/Tabs \
 -ICore/Inc/Drivers \
+-ICore/Inc/State \
 -ICore/Inc/Utils \
 -ICore/Lib \
 -ICore/Lib/LVGL \

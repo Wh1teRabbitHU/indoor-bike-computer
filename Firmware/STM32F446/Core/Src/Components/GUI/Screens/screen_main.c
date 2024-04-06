@@ -18,7 +18,7 @@ void ScreenMain_init(void) {
     TabView_Main_init(&mainTabConfig);
 }
 
-void ScreenMain_updateStates(void) { TabView_Main_updateStates(); }
+void ScreenMain_update(void) { TabView_Main_update(); }
 
 void ScreenMain_handleSelect(void) {
     switch (active) {

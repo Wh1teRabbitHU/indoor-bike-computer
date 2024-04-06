@@ -68,7 +68,7 @@ uint32_t GUI_tick() {
         lv_tick_inc(currentTick - lastTick);
     }
 
-    ScreenMain_updateStates();
+    ScreenMain_update();
 
     lastTick = HAL_GetTick();
 

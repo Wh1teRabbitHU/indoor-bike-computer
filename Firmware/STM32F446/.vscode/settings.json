@@ -21,6 +21,8 @@
 		"modal_log.h": "c",
 		"control_live.h": "c",
 		"er_tft035.h": "c",
-		"label_timer.h": "c"
+		"label_timer.h": "c",
+		"app-state.h": "c",
+		"macros.h": "c"
 	}
 }
