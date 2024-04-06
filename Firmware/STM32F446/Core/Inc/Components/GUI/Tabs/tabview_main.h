@@ -1,9 +1,9 @@
 #ifndef __TABVIEW_MAIN___H_
 #define __TABVIEW_MAIN___H_
 
-#include "app-state.h"
 #include "lvgl.h"
 #include "macros.h"
+#include "state-handler.h"
 #include "tabview_main_tab_live.h"
 
 #define GUI_TABVIEW_TAB_COUNT 3

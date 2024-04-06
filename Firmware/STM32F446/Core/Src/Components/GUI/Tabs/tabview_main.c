@@ -17,7 +17,7 @@ PRIVATE void TabView_Main_updateTabLive() {
         return;
     }
 
-    App_State* state = App_State_get();
+    State_Live* state = State_Live_get();
 
     TabView_Main_Tab_Live_updateDifficulty(state->difficulty);
     TabView_Main_Tab_Live_updateSpeed(state->speed);
@@ -81,7 +81,7 @@ PRIVATE void TabView_Main_TabLevel_stepIn() {
             break;
     }
 
-    App_State_get()->updateLevel = 1;
+    State_Live_get()->updateLevel = 1;
 }
 
 PRIVATE void TabView_Main_TabLevel_stepOut() {
@@ -99,7 +99,7 @@ PRIVATE void TabView_Main_TabLevel_stepOut() {
             break;
     }
 
-    App_State_get()->updateLevel = 1;
+    State_Live_get()->updateLevel = 1;
 }
 
 PRIVATE void TabView_Main_TabLevel_execute() {
@@ -188,13 +188,13 @@ void TabView_Main_update() {
 
     TabView_Main_updateTabLive();
 
-    if (App_State_get()->updateLevel) {
+    if (State_Live_get()->updateLevel) {
         // Change the tab based on the level
         int32_t tabViewHeight = activeTabLevel == TABVIEW_MAIN_TABLEVEL_TAB ? GUI_TABVIEW_TAB_HEIGHT : 0;
 
         lv_tabview_set_tab_bar_size(mainTabView.tabView, tabViewHeight);
 
-        App_State_get()->updateLevel = 0;
+        State_Live_get()->updateLevel = 0;
     }
 }
 

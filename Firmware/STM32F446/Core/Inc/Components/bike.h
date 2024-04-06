@@ -1,9 +1,9 @@
 #ifndef __BIKE_H
 #define __BIKE_H
 
-#include "app-state.h"
 #include "gui.h"
 #include "mcp3421.h"
+#include "state-handler.h"
 #include "stdint.h"
 #include "stdio.h"
 
