@@ -33,18 +33,6 @@ typedef struct TabView_Main_Config {
     lv_obj_t* screen;
 } TabView_Main_Config;
 
-typedef struct TabView_Main_State {
-    char* infoMessage;
-    char* errorMessage;
-    uint32_t difficulty;
-    uint32_t speed;
-    uint32_t rpm;
-    uint32_t bpm;
-    uint8_t updateChart;
-    uint8_t updateLevel;
-    char* time;
-} TabView_Main_State;
-
 void TabView_Main_init(TabView_Main_Config* config);
 void TabView_Main_prevTab();
 void TabView_Main_nextTab();

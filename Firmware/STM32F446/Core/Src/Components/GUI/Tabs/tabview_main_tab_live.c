@@ -11,15 +11,39 @@ static ControlLive controlLive;
 static char textBuffer[32] = {0};
 
 PRIVATE void TabView_Main_Tab_Live_executeStart() {
-    // TODO
+    State_Live_Session sessionState = State_Live_get()->sessionState;
+
+    switch (sessionState) {
+        case APP_LIVESTATE_SESSION_STOPPED:
+        case APP_LIVESTATE_SESSION_PAUSED:
+            State_Live_get()->sessionState = APP_LIVESTATE_SESSION_RUNNING;
+            Stoptimer_start();
+            break;
+        case APP_LIVESTATE_SESSION_RUNNING:
+            State_Live_get()->sessionState = APP_LIVESTATE_SESSION_PAUSED;
+            Stoptimer_pause();
+            break;
+    }
 }
 
 PRIVATE void TabView_Main_Tab_Live_executeEnd() {
-    // TODO
+    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_STOPPED;
+    Stoptimer_stop();
+    // TODO: Handle finishing the current session:
+    // TODO: Confirm the decision with the user
+    // TODO: Store remaining measurement on the SD card
+    // TODO: Reset state
+    // TODO: Update screen?
 }
 
 PRIVATE void TabView_Main_Tab_Live_executeReset() {
-    // TODO
+    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_STOPPED;
+    Stoptimer_stop();
+    // TODO: Handle reseting the current session:
+    // TODO: Confirm the decision with the user
+    // TODO: Delete measurement data from SD card
+    // TODO: Reset state
+    // TODO: Update screen?
 }
 
 void TabView_Main_Tab_Live_init(TabView_Main_Tab_Live_Config* config) {

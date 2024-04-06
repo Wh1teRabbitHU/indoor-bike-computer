@@ -335,6 +335,7 @@ Core/Src/Components/controls.c \
 Core/Src/Components/gui.c \
 Core/Src/Drivers/er_tft035.c \
 Core/Src/Drivers/mcp3421.c \
+Core/Src/Drivers/stoptimer.c \
 Core/Src/State/state-handler.c \
 Core/Src/main.c \
 Core/Src/stm32f4xx_hal_msp.c \

@@ -6,7 +6,9 @@
 #include "control_live.h"
 #include "label_timer.h"
 #include "macros.h"
+#include "state-handler.h"
 #include "stdio.h"
+#include "stoptimer.h"
 
 typedef struct TabView_Main_Tab_Live_Config {
     lv_obj_t* tab;

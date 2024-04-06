@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "bike.h"
 #include "controls.h"
+#include "stoptimer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,8 +55,6 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static RTC_DateTypeDef rtcDate = {0};
-static RTC_TimeTypeDef rtcTime = {0};
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -195,9 +194,8 @@ void SysTick_Handler(void) {
  */
 void RTC_WKUP_IRQHandler(void) {
     /* USER CODE BEGIN RTC_WKUP_IRQn 0 */
-    HAL_RTC_GetTime(&hrtc, &rtcTime, RTC_FORMAT_BIN);
-    HAL_RTC_GetDate(&hrtc, &rtcDate, RTC_FORMAT_BIN);
-    Bike_setTime(&rtcTime);
+
+    Stoptimer_handleInterrupt();
 
     /* USER CODE END RTC_WKUP_IRQn 0 */
     HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);

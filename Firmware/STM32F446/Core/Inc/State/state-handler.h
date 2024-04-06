@@ -13,6 +13,7 @@ typedef enum State_Live_Session {
 typedef struct State_Global {
     char* infoMessage;
     char* errorMessage;
+    uint8_t updateLevel;  // This tells the GUI to update the menu level
 } State_Global;
 
 typedef struct State_Live {
@@ -20,13 +21,13 @@ typedef struct State_Live {
     uint32_t speed;
     uint32_t rpm;
     uint32_t bpm;
-    uint8_t updateChart;
-    uint8_t updateLevel;
+    uint8_t updateChart;  //
     char* time;
-    State_Live_Session liveState;
+    State_Live_Session sessionState;
 } State_Live;
 
 State_Global* State_Global_get(void);
 State_Live* State_Live_get(void);
+void State_Live_reset(void);
 
 #endif
