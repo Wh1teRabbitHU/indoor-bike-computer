@@ -2,28 +2,18 @@
 
 static const char* buttonMatrixMap[] = {"Start", "End", "Reset", ""};
 
-PRIVATE void ControlLive_updateSelected(ControlLive* controlInstance) {
-    for (uint8_t i = 0; i < CONTROLLIVE_BUTTON_COUNT; i++) {
-        if (i == controlInstance->selected) {
-            lv_buttonmatrix_set_button_ctrl(controlInstance->buttonMatrix, i, LV_BUTTONMATRIX_CTRL_CHECKED);
-        } else {
-            lv_buttonmatrix_clear_button_ctrl(controlInstance->buttonMatrix, i, LV_BUTTONMATRIX_CTRL_CHECKED);
-        }
-    }
+PRIVATE void ControlLive_showButton(ControlLive* instance, uint8_t index) {
+    lv_buttonmatrix_set_button_width(instance->buttonMatrix, index, 100);
+    lv_buttonmatrix_clear_button_ctrl(instance->buttonMatrix, index, LV_BUTTONMATRIX_CTRL_HIDDEN);
 }
 
-PRIVATE void ControlLive_updateEnabledState(ControlLive* controlInstance) {
-    for (uint8_t i = 0; i < CONTROLLIVE_BUTTON_COUNT; i++) {
-        if (controlInstance->enabled[i]) {
-            lv_buttonmatrix_clear_button_ctrl(controlInstance->buttonMatrix, i, LV_BUTTONMATRIX_CTRL_DISABLED);
-        } else {
-            lv_buttonmatrix_set_button_ctrl(controlInstance->buttonMatrix, i, LV_BUTTONMATRIX_CTRL_DISABLED);
-        }
-    }
+PRIVATE void ControlLive_hideButton(ControlLive* instance, uint8_t index) {
+    lv_buttonmatrix_set_button_width(instance->buttonMatrix, index, 0);
+    lv_buttonmatrix_set_button_ctrl(instance->buttonMatrix, index, LV_BUTTONMATRIX_CTRL_HIDDEN);
 }
 
 ControlLive ControlLive_create(ControlLive_Config* config) {
-    ControlLive controlInstance = {.selected = CONTROLLIVE_START, .enabled = {1, 0, 0}};
+    ControlLive controlInstance = {.selected = CONTROLLIVE_START, .enabled = {1, 1, 1}};
 
     lv_obj_t* buttonMatrix = lv_buttonmatrix_create(config->screen);
 
@@ -35,19 +25,38 @@ ControlLive ControlLive_create(ControlLive_Config* config) {
     lv_obj_remove_flag(buttonMatrix, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_buttonmatrix_set_map(buttonMatrix, buttonMatrixMap);
-    lv_buttonmatrix_set_button_ctrl(buttonMatrix, 0, LV_BUTTONMATRIX_CTRL_CHECKABLE);
-    lv_buttonmatrix_set_button_ctrl(buttonMatrix, 1, LV_BUTTONMATRIX_CTRL_CHECKABLE);
-    lv_buttonmatrix_set_button_ctrl(buttonMatrix, 2, LV_BUTTONMATRIX_CTRL_CHECKABLE);
+
+    for (uint8_t i = 0; i < CONTROLLIVE_BUTTON_COUNT; i++) {
+        lv_buttonmatrix_set_button_ctrl(buttonMatrix, i, LV_BUTTONMATRIX_CTRL_CHECKABLE);
+    }
 
     controlInstance.buttonMatrix = buttonMatrix;
 
-    ControlLive_updateSelected(&controlInstance);
-    ControlLive_updateEnabledState(&controlInstance);
+    ControlLive_updateState(&controlInstance);
 
     return controlInstance;
 }
 
 void ControlLive_updateState(ControlLive* instance) {
-    ControlLive_updateSelected(instance);
-    ControlLive_updateEnabledState(instance);
+    for (uint8_t i = 0; i < CONTROLLIVE_BUTTON_COUNT; i++) {
+        if (i == instance->selected) {
+            lv_buttonmatrix_set_button_ctrl(instance->buttonMatrix, i, LV_BUTTONMATRIX_CTRL_CHECKED);
+        } else {
+            lv_buttonmatrix_clear_button_ctrl(instance->buttonMatrix, i, LV_BUTTONMATRIX_CTRL_CHECKED);
+        }
+
+        if (instance->enabled[i]) {
+            lv_buttonmatrix_clear_button_ctrl(instance->buttonMatrix, i, LV_BUTTONMATRIX_CTRL_DISABLED);
+        } else {
+            lv_buttonmatrix_set_button_ctrl(instance->buttonMatrix, i, LV_BUTTONMATRIX_CTRL_DISABLED);
+        }
+    }
+}
+
+void ControlLive_updateBtnText(uint8_t index, char* text) {
+    if (index >= CONTROLLIVE_BUTTON_COUNT) {
+        return;
+    }
+
+    buttonMatrixMap[index] = text;
 }

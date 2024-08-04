@@ -13,17 +13,33 @@ static char textBuffer[32] = {0};
 PRIVATE void TabView_Main_Tab_Live_executeStart() {
     State_Live_Session sessionState = State_Live_get()->sessionState;
 
-    switch (sessionState) {
-        case APP_LIVESTATE_SESSION_STOPPED:
-        case APP_LIVESTATE_SESSION_PAUSED:
-            State_Live_get()->sessionState = APP_LIVESTATE_SESSION_RUNNING;
-            Stoptimer_start();
-            break;
-        case APP_LIVESTATE_SESSION_RUNNING:
-            State_Live_get()->sessionState = APP_LIVESTATE_SESSION_PAUSED;
-            Stoptimer_pause();
-            break;
+    if (sessionState == APP_LIVESTATE_SESSION_RUNNING) {
+        return;
     }
+
+    controlLive.enabled[CONTROLLIVE_END] = 0;
+    controlLive.enabled[CONTROLLIVE_RESET] = 0;
+
+    ControlLive_updateBtnText(0, "Pause");
+
+    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_RUNNING;
+    Stoptimer_start();
+}
+
+PRIVATE void TabView_Main_Tab_Live_executePause() {
+    State_Live_Session sessionState = State_Live_get()->sessionState;
+
+    if (sessionState == APP_LIVESTATE_SESSION_PAUSED || sessionState == APP_LIVESTATE_SESSION_STOPPED) {
+        return;
+    }
+
+    controlLive.enabled[CONTROLLIVE_END] = 1;
+    controlLive.enabled[CONTROLLIVE_RESET] = 1;
+
+    ControlLive_updateBtnText(0, "Start");
+
+    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_PAUSED;
+    Stoptimer_pause();
 }
 
 PRIVATE void TabView_Main_Tab_Live_executeEnd() {
@@ -118,7 +134,11 @@ void TabView_Main_Tab_Live_stepOut() {}
 void TabView_Main_Tab_Live_execute(void) {
     switch (controlLive.selected) {
         case CONTROLLIVE_START:
-            TabView_Main_Tab_Live_executeStart();
+            if (State_Live_get()->sessionState == APP_LIVESTATE_SESSION_RUNNING) {
+                TabView_Main_Tab_Live_executePause();
+            } else {
+                TabView_Main_Tab_Live_executeStart();
+            }
             break;
         case CONTROLLIVE_END:
             TabView_Main_Tab_Live_executeEnd();
@@ -138,7 +158,11 @@ void TabView_Main_Tab_Live_handlePrev(void) {
         } else {
             current--;
         }
-    } while (!controlLive.enabled[current] || current != controlLive.selected);
+
+        if (current == controlLive.selected) {
+            break;
+        }
+    } while (!controlLive.enabled[current]);
 
     controlLive.selected = current;
 }
@@ -152,7 +176,11 @@ void TabView_Main_Tab_Live_handleNext(void) {
         } else {
             current++;
         }
-    } while (!controlLive.enabled[current] || current != controlLive.selected);
+
+        if (current == controlLive.selected) {
+            break;
+        }
+    } while (!controlLive.enabled[current]);
 
     controlLive.selected = current;
 }

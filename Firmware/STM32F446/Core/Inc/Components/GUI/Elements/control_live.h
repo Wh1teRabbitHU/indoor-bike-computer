@@ -27,5 +27,6 @@ typedef struct ControlLive_Config {
 
 ControlLive ControlLive_create(ControlLive_Config* config);
 void ControlLive_updateState(ControlLive* instance);
+void ControlLive_updateBtnText(uint8_t index, char* text);
 
 #endif
