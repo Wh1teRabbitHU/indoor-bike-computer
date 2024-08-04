@@ -335,6 +335,7 @@ Core/Src/Components/controls.c \
 Core/Src/Components/gui.c \
 Core/Src/Drivers/er_tft035.c \
 Core/Src/Drivers/mcp3421.c \
+Core/Src/Drivers/sd_card.c \
 Core/Src/Drivers/stoptimer.c \
 Core/Src/State/state-handler.c \
 Core/Src/main.c \
@@ -370,6 +371,7 @@ FATFS/Target/sd_diskio.c \
 Middlewares/Third_Party/FatFs/src/diskio.c \
 Middlewares/Third_Party/FatFs/src/ff.c \
 Middlewares/Third_Party/FatFs/src/ff_gen_drv.c \
+Middlewares/Third_Party/FatFs/src/option/ccsbcs.c \
 Middlewares/Third_Party/FatFs/src/option/syscall.c
 
 

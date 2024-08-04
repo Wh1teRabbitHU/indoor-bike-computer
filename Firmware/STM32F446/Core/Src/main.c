@@ -26,6 +26,7 @@
 #include "er_tft035.h"
 #include "gui.h"
 #include "mcp3421.h"
+#include "sd_card.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -116,8 +117,9 @@ int main(void) {
 
     GUI_init();
     MCP3421_init(&hi2c2);
-
     HAL_TIM_Base_Start_IT(&htim14);
+
+    // SDCard_writeLine("/test_long_filename.txt", "Testing the SD card library...\n");
 
     /* USER CODE END 2 */
 
@@ -324,9 +326,9 @@ static void MX_SDIO_SD_Init(void) {
     hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
     hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
     hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
-    hsd.Init.BusWide = SDIO_BUS_WIDE_4B;
+    hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
     hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
-    hsd.Init.ClockDiv = 0;
+    hsd.Init.ClockDiv = 24;
     /* USER CODE BEGIN SDIO_Init 2 */
 
     /* USER CODE END SDIO_Init 2 */
