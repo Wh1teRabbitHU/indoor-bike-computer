@@ -1,0 +1,36 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cortex-debug.armToolchainPath": "/Users/tom/Library/Application Support/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-tools/arm-none-eabi-gcc/12.2.1-1.2.1/.content/bin",
+		"cortex-debug.openocdPath": "/Users/tom/Library/Application Support/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-tools/openocd/0.12.0-1.1/.content/bin/openocd",
+		"files.associations": {
+			"*.cpp": "cpp",
+			"gui_tab_main.h": "c",
+			"gui_main_screen.h": "c",
+			"lvgl.h": "c",
+			"gui_screen_main.h": "c",
+			"bike.h": "c",
+			"mcp3421.h": "c",
+			"tabview_main.h": "c",
+			"screen_main.h": "c",
+			"gui_box_measurement.h": "c",
+			"gui_chart_measurement.h": "c",
+			"gui.h": "c",
+			"controls.h": "c",
+			"gui_label_timer.h": "c",
+			"tabview_main_tab_live.h": "c",
+			"chart_measurement.h": "c",
+			"modal_log.h": "c",
+			"control_live.h": "c",
+			"er_tft035.h": "c",
+			"label_timer.h": "c",
+			"app-state.h": "c",
+			"macros.h": "c",
+			"sd_card.h": "c"
+		}
+	}
+}

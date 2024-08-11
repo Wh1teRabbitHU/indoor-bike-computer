@@ -332,6 +332,7 @@ Core/Src/Components/GUI/Tabs/tabview_main_tab_settings.c \
 Core/Src/Components/bike.c \
 Core/Src/Components/binary.c \
 Core/Src/Components/controls.c \
+Core/Src/Components/data.c \
 Core/Src/Components/gui.c \
 Core/Src/Drivers/er_tft035.c \
 Core/Src/Drivers/mcp3421.c \

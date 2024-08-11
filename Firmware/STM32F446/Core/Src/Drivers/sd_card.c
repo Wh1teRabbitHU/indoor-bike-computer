@@ -1,271 +1,418 @@
 #include "sd_card.h"
 
 FATFS fs;  // file system
-FIL fil;   // File
-FILINFO fno;
-FRESULT fresult;  // result
-UINT br, bw;      // File read/write count
-
-/**** capacity related *****/
 FATFS *pfs;
-DWORD fre_clust;
 
-FRESULT SDCard_mount(const TCHAR *path) {
-    fresult = f_mount(&fs, path, 1);
+const char *newLine = "\n";
 
-    return fresult;
+PRIVATE void handleError(FRESULT result, char *message) {
+#ifdef SD_CARD_DEBUG
+    SDCard_handleError(result, message);
+#endif
 }
 
-FRESULT SDCard_unmount(const TCHAR *path) {
-    fresult = f_mount(NULL, path, 1);
-
-    return fresult;
+PRIVATE void handleErrorWithParam(FRESULT result, char *message, char *param) {
+#ifdef SD_CARD_DEBUG
+    char *buf = malloc(100 * sizeof(char));
+    sprintf(buf, message, param);
+    SDCard_handleError(result, buf);
+    free(buf);
+#endif
 }
 
-FRESULT SDCard_checkCapacity(SDCard_capacity *capacity) {
-    FRESULT fresult = f_getfree("", &fre_clust, &pfs);
+FRESULT SDCard_mount(const char *path) {
+    FRESULT result = f_mount(&fs, path, 1);
 
-    if (fresult != FR_OK) {
-        return fresult;
+    if (result != FR_OK) {
+        handleError(result, "Couldn't mount filesystem!");
     }
 
-    uint32_t total_capacity = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
-    uint32_t free_space = (uint32_t)(fre_clust * pfs->csize * 0.5);
-    uint32_t used_space = total_capacity - free_space;
-
-    capacity->total = total_capacity;
-    capacity->free = free_space;
-    capacity->used = used_space;
-
-    return fresult;
+    return result;
 }
 
-/* Only supports removing files from home directory */
-FRESULT SDCard_removeFiles(void) {
-    DIR dir;
-    char *path = malloc(20 * sizeof(char));
-    sprintf(path, "%s", "/");
+FRESULT SDCard_unmount(const char *path) {
+    FRESULT result = f_mount(NULL, path, 1);
 
-    fresult = f_opendir(&dir, path); /* Open the directory */
-
-    if (fresult == FR_OK) {
-        while (1) {
-            fresult = f_readdir(&dir, &fno);                  /* Read a directory item */
-            if (fresult != FR_OK || fno.fname[0] == 0) break; /* Break on error or end of dir */
-
-            if (fno.fattrib & AM_DIR) { /* It is a directory */
-                if (!(strcmp("SYSTEM~1", fno.fname))) continue;
-                fresult = f_unlink(fno.fname);
-                if (fresult == FR_DENIED) continue;
-            } else { /* It is a file. */
-                fresult = f_unlink(fno.fname);
-            }
-        }
-
-        f_closedir(&dir);
+    if (result != FR_OK) {
+        handleError(result, "Couldn't unmount filesystem!");
     }
 
-    free(path);
-
-    return fresult;
+    return result;
 }
 
-FRESULT SDCard_writeFile(char *name, char *data) {
-    /**** check whether the file exists or not ****/
-    fresult = f_stat(name, &fno);
-    if (fresult != FR_OK) {
-        char *buf = malloc(100 * sizeof(char));
-        sprintf(buf, "ERROR!!! *%s* does not exists\n\n", name);
-        free(buf);
-        return fresult;
+FRESULT SDCard_checkCapacity(SDCard_Capacity *capacity) {
+    DWORD fre_clust;
+    FRESULT result = f_getfree("", &fre_clust, &pfs);
+
+    if (result == FR_OK) {
+        uint32_t total_capacity = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
+        uint32_t free_space = (uint32_t)(fre_clust * pfs->csize * 0.5);
+        uint32_t used_space = total_capacity - free_space;
+
+        capacity->total = total_capacity;
+        capacity->free = free_space;
+        capacity->used = used_space;
     } else {
-        /* Create a file with read write access and open it */
-        fresult = f_open(&fil, name, FA_OPEN_EXISTING | FA_WRITE);
-
-        if (fresult != FR_OK) {
-            char *buf = malloc(100 * sizeof(char));
-            sprintf(buf, "ERROR!!! No. %d in opening file *%s*\n\n", fresult, name);
-            free(buf);
-            return fresult;
-        } else {
-            fresult = f_write(&fil, data, strlen(data), &bw);
-
-            if (fresult != FR_OK) {
-                char *buf = malloc(100 * sizeof(char));
-                sprintf(buf, "ERROR!!! No. %d while writing to the FILE *%s*\n\n", fresult, name);
-                free(buf);
-            }
-
-            /* Close file */
-            fresult = f_close(&fil);
-            if (fresult != FR_OK) {
-                char *buf = malloc(100 * sizeof(char));
-                sprintf(buf, "ERROR!!! No. %d in closing file *%s* after writing it\n\n", fresult, name);
-                free(buf);
-            } else {
-                char *buf = malloc(100 * sizeof(char));
-                sprintf(buf, "File *%s* is WRITTEN and CLOSED successfully\n", name);
-                free(buf);
-            }
-        }
-
-        return fresult;
-    }
-}
-
-FRESULT SDCard_readFile(char *name) {
-    /**** check whether the file exists or not ****/
-    fresult = f_stat(name, &fno);
-    if (fresult != FR_OK) {
-        char *buf = malloc(100 * sizeof(char));
-        sprintf(buf, "ERRROR!!! *%s* does not exists\n\n", name);
-        free(buf);
-        return fresult;
-    } else {
-        /* Open file to read */
-        fresult = f_open(&fil, name, FA_READ);
-
-        if (fresult != FR_OK) {
-            char *buf = malloc(100 * sizeof(char));
-            sprintf(buf, "ERROR!!! No. %d in opening file *%s*\n\n", fresult, name);
-            free(buf);
-            return fresult;
-        }
-
-        /* Read data from the file
-         * see the function details for the arguments */
-
-        char *buffer = malloc(sizeof(f_size(&fil)));
-        fresult = f_read(&fil, buffer, f_size(&fil), &br);
-
-        if (fresult != FR_OK) {
-            char *buf = malloc(100 * sizeof(char));
-            free(buffer);
-            sprintf(buf, "ERROR!!! No. %d in reading file *%s*\n\n", fresult, name);
-            free(buf);
-        } else {
-            free(buffer);
-
-            /* Close file */
-            fresult = f_close(&fil);
-            if (fresult != FR_OK) {
-                char *buf = malloc(100 * sizeof(char));
-                sprintf(buf, "ERROR!!! No. %d in closing file *%s*\n\n", fresult, name);
-                free(buf);
-            } else {
-                char *buf = malloc(100 * sizeof(char));
-                sprintf(buf, "File *%s* CLOSED successfully\n", name);
-                free(buf);
-            }
-        }
-
-        return fresult;
-    }
-}
-
-FRESULT SDCard_createFile(char *name) {
-    fresult = f_stat(name, &fno);
-
-    if (fresult == FR_OK) {
-        char *buf = malloc(100 * sizeof(char));
-        sprintf(buf, "ERROR!!! *%s* already exists!!!!\n use Update_File \n\n", name);
-        free(buf);
-        return fresult;
-    } else {
-        fresult = f_open(&fil, name, FA_CREATE_ALWAYS | FA_READ | FA_WRITE);
-
-        if (fresult != FR_OK) {
-            char *buf = malloc(100 * sizeof(char));
-            sprintf(buf, "ERROR!!! No. %d in creating file *%s*\n\n", fresult, name);
-            free(buf);
-            return fresult;
-        } else {
-            char *buf = malloc(100 * sizeof(char));
-            sprintf(buf, "*%s* created successfully\n Now use Write_File to write data\n", name);
-            free(buf);
-        }
-
-        fresult = f_close(&fil);
-
-        if (fresult != FR_OK) {
-            char *buf = malloc(100 * sizeof(char));
-            sprintf(buf, "ERROR No. %d in closing file *%s*\n\n", fresult, name);
-            free(buf);
-        } else {
-            char *buf = malloc(100 * sizeof(char));
-            sprintf(buf, "File *%s* CLOSED successfully\n", name);
-            free(buf);
-        }
+        handleError(result, "Couldn't load capacity details!");
     }
 
-    return fresult;
-}
-
-FRESULT SDCard_updateFile(char *name, char *data) {
-    /**** check whether the file exists or not ****/
-    fresult = f_stat(name, &fno);
-
-    if (fresult != FR_OK) {
-        char *buf = malloc(100 * sizeof(char));
-        sprintf(buf, "ERROR!!! *%s* does not exists\n\n", name);
-        free(buf);
-        return fresult;
-    } else {
-        /* Create a file with read write access and open it */
-        fresult = f_open(&fil, name, FA_OPEN_APPEND | FA_WRITE);
-
-        if (fresult != FR_OK) {
-            return fresult;
-        }
-
-        /* Writing text */
-        fresult = f_write(&fil, data, strlen(data), &bw);
-
-        /* Close file */
-        fresult = f_close(&fil);
-    }
-
-    return fresult;
-}
-
-FRESULT SDCard_removeFile(char *name) {
-    /**** check whether the file exists or not ****/
-    fresult = f_stat(name, &fno);
-
-    if (fresult != FR_OK) {
-        return fresult;
-    } else {
-        fresult = f_unlink(name);
-    }
-
-    return fresult;
+    return result;
 }
 
 FRESULT SDCard_createDirectory(char *name) {
-    fresult = f_mkdir(name);
+    FRESULT result = f_mkdir(name);
 
-    return fresult;
+    return result;
 }
 
-FRESULT SDCard_writeLine(char *fileName, char *line) {
+FRESULT SDCard_createFile(char *name) {
+    FIL file;
+    FILINFO fileInfo;
+    FRESULT result = f_stat(name, &fileInfo);
+
+    if (result == FR_OK) {
+        handleErrorWithParam(FR_EXIST, "File '%s' already exists!", name);
+
+        return FR_EXIST;
+    }
+
+    result = f_open(&file, name, FA_CREATE_ALWAYS | FA_READ | FA_WRITE);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be opened!", name);
+
+        return result;
+    }
+
+    result = f_close(&file);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be closed!", name);
+    }
+
+    return result;
+}
+
+FRESULT SDCard_removeFile(char *name) {
+    FILINFO fileInfo;
+    /**** check whether the file exists or not ****/
+    FRESULT result = f_stat(name, &fileInfo);
+
+    if (result != FR_OK) {
+        return result;
+    } else {
+        result = f_unlink(name);
+    }
+
+    return result;
+}
+
+FRESULT SDCard_removeFiles(void) {
+    DIR dir;
+    FILINFO fileInfo;
+    char *path = malloc(20 * sizeof(char));
+    sprintf(path, "%s", "/");
+
+    FRESULT result = f_opendir(&dir, path);
+
+    free(path);
+
+    if (result != FR_OK) {
+        handleError(result, "Couldn't open root directory!");
+
+        return result;
+    }
+
+    while (1) {
+        result = f_readdir(&dir, &fileInfo);
+
+        if (result != FR_OK || fileInfo.fname[0] == 0) {
+            handleError(result, "Couldn't read file or directory in the root filesystem!");
+            break;
+        }
+
+        if (SDCARD_IS_DIRECTORY(fileInfo)) {
+            if (!(strcmp("SYSTEM~1", fileInfo.fname))) {
+                continue;
+            }
+
+            result = f_unlink(fileInfo.fname);
+        } else { /* It is a file. */
+            result = f_unlink(fileInfo.fname);
+        }
+
+        if (result != FR_OK) {
+            handleErrorWithParam(result, "File/Directory '%s' cannot be deleted!", fileInfo.fname);
+        }
+    }
+
+    result = f_closedir(&dir);
+
+    if (result != FR_OK) {
+        handleError(result, "Couldn't close root directory!");
+    }
+
+    return result;
+}
+
+FRESULT SDCard_readFile(char *name, char *readBuffer, uint32_t readLength) {
+    FIL file;
+    FILINFO fileInfo;
+    UINT bytesRead;
+
+    FRESULT result = f_stat(name, &fileInfo);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' doesn't exist!", name);
+
+        return result;
+    }
+
+    result = f_open(&file, name, FA_READ);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be opened!", name);
+
+        return result;
+    }
+
+    result = f_read(&file, readBuffer, readLength, &bytesRead);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "Couldn't read from file '%s'!", name);
+    }
+
+    result = f_close(&file);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be closed!", name);
+    }
+
+    return result;
+}
+
+FRESULT SDCard_writeFile(char *name, char *data) {
+    FIL file;
+    FILINFO fileInfo;
+    UINT bytesWritten;
+
+    FRESULT result = f_stat(name, &fileInfo);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' does not exists!", name);
+
+        return result;
+    }
+
+    result = f_open(&file, name, FA_OPEN_EXISTING | FA_WRITE);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be opened!", name);
+
+        return result;
+    }
+
+    result = f_write(&file, data, strlen(data), &bytesWritten);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "Couldn't write into file '%s'!", name);
+    }
+
+    result = f_close(&file);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be closed!", name);
+    }
+
+    return result;
+}
+
+FRESULT SDCard_appendFile(char *name, char *data) {
+    FIL file;
+    FILINFO fileInfo;
+    UINT bytesWritten;
+
+    FRESULT result = f_stat(name, &fileInfo);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' doesn't exist!", name);
+
+        return result;
+    }
+
+    result = f_open(&file, name, FA_OPEN_APPEND | FA_WRITE);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be opened!", name);
+
+        return result;
+    }
+
+    result = f_write(&file, data, strlen(data), &bytesWritten);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "Couldn't write to file '%s'!", name);
+    }
+
+    result = f_close(&file);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be closed!", name);
+    }
+
+    return result;
+}
+
+/**
+ * Advanced functions
+ */
+
+FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
+    FIL file;
+    FILINFO fileInfo;
+    FRESULT result;
+
+    result = f_stat(name, &fileInfo);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' doesn't exist!", name);
+
+        return result;
+    }
+
+    result = f_open(&file, name, FA_READ);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be opened!", name);
+
+        return result;
+    }
+
+    uint32_t lineCount = 0;
+    uint8_t bufferSize = 32;
+    UINT bytesRead = bufferSize;
+    char readBuffer[bufferSize];
+    char *searchBuffer;
+
+    while (bytesRead == bufferSize) {
+        result = f_read(&file, readBuffer, bufferSize, &bytesRead);
+
+        if (result != FR_OK) {
+            handleErrorWithParam(result, "Couldn't read from file '%s'!", name);
+            break;
+        }
+
+        searchBuffer = readBuffer;
+
+        while ((searchBuffer = strstr(searchBuffer, newLine))) {
+            lineCount++;
+            searchBuffer += strlen(newLine);
+        }
+    }
+
+    statistics->size = fileInfo.fsize;
+    statistics->lines = lineCount + 1;
+
+    return result;
+}
+
+FRESULT SDCard_appendLine(char *name, char *writeBuffer) {
     FRESULT result;
 
     result = SDCard_mount("/");
 
     if (result != FR_OK) {
-        // TODO: Log error message to screen
-        return 0;
+        return result;
     }
 
-    result = SDCard_createFile(fileName);
-    result = SDCard_writeFile(fileName, line);
+    result = SDCard_createFile(name);
 
     if (result != FR_OK) {
-        // TODO: Log error message to screen
-        return 0;
+        return result;
     }
 
-    SDCard_unmount("/");
+    result = SDCard_writeFile(name, writeBuffer);
 
-    return 1;
+    if (result != FR_OK) {
+        return result;
+    }
+
+    result = SDCard_unmount("/");
+
+    return result;
+}
+
+FRESULT SDCard_readLine(char *name, char *resultBuffer, uint32_t lineNumber) {
+    FIL file;
+    FILINFO fileInfo;
+    FRESULT result;
+
+    result = f_stat(name, &fileInfo);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' doesn't exist!", name);
+
+        return result;
+    }
+
+    result = f_open(&file, name, FA_READ);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be opened!", name);
+
+        return result;
+    }
+
+    uint32_t lineCount = 0;
+    uint32_t lineCurPos = 0, lineStartPos = 0, lineEndPos = 0;
+    uint8_t bufferSize = 4;
+    UINT bytesRead = bufferSize;
+    uint8_t found = 0;
+    char readBuffer[bufferSize];
+    char *searchBuffer;
+
+    while (bytesRead == bufferSize) {
+        result = f_read(&file, readBuffer, bufferSize, &bytesRead);
+
+        if (result != FR_OK) {
+            handleErrorWithParam(result, "Couldn't read from file '%s'!", name);
+            break;
+        }
+
+        searchBuffer = readBuffer;
+
+        while ((searchBuffer = strstr(searchBuffer, newLine))) {
+            uint8_t lineSubPos = (uint8_t)(searchBuffer - readBuffer);
+
+            if (lineNumber > 0 && lineStartPos == 0 && lineNumber - 1 == lineCount) {
+                lineStartPos = lineCurPos + lineSubPos + 1;
+            } else if (lineNumber == 0 || lineStartPos > 0) {
+                lineEndPos = lineCurPos + lineSubPos;
+                found = 1;
+                break;
+            }
+
+            lineCount++;
+
+            searchBuffer += strlen(newLine);
+        }
+
+        if (found) {
+            break;
+        }
+
+        lineCurPos += bufferSize;
+    }
+
+    if (lineStartPos != lineEndPos) {
+        f_lseek(&file, lineStartPos);
+        f_read(&file, resultBuffer, lineEndPos - lineStartPos, &bytesRead);
+    }
+
+    return result;
+}
+
+FRESULT SDCard_searchInFile(char *name, char *data, SDCard_SearchResult *result) {
+    // TODO: Implement
+    return FR_OK;
 }

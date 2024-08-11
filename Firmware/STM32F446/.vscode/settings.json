@@ -24,5 +24,6 @@
 		"label_timer.h": "c",
 		"app-state.h": "c",
 		"macros.h": "c"
-	}
+	},
+	"C_Cpp.default.compilerPath": "/usr/bin/clang++"
 }
