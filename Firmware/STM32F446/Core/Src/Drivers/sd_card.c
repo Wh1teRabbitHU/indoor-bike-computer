@@ -20,6 +20,8 @@ PRIVATE void handleErrorWithParam(FRESULT result, char *message, char *param) {
 #endif
 }
 
+PRIVATE void storeFileExtension(const char *fileName, char *extension) {}
+
 FRESULT SDCard_mount(const char *path) {
     FRESULT result = f_mount(&fs, path, 1);
 
@@ -57,6 +59,13 @@ FRESULT SDCard_checkCapacity(SDCard_Capacity *capacity) {
     }
 
     return result;
+}
+
+uint8_t SDCard_pathExists(char *path) {
+    FILINFO fileInfo;
+    FRESULT result = f_stat(path, &fileInfo);
+
+    return result == FR_OK ? 1 : 0;
 }
 
 FRESULT SDCard_createDirectory(char *name) {
@@ -266,6 +275,85 @@ FRESULT SDCard_appendFile(char *name, char *data) {
 /**
  * Advanced functions
  */
+
+FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage) {
+    DIR dir;
+    FILINFO fileInfo;
+    FRESULT result = f_opendir(&dir, dirPath);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "Couldn't open directory '%s'!", dirPath);
+
+        return result;
+    }
+
+    dirPage->endOfDir = 0;
+    dirPage->resultSize = 0;
+
+    // Move the pointer to the start of the page
+    for (uint8_t i = 0; i < dirPage->startIndex; i++) {
+        result = f_readdir(&dir, &fileInfo);
+        uint8_t isDir = SDCARD_IS_DIRECTORY(fileInfo);
+
+        // Skip if readmode limits the read items
+        if ((dirPage->readMode == SDCARD_READMODE_ONLY_FILES && isDir) ||
+            (dirPage->readMode == SDCARD_READMODE_ONLY_DIRECTORIES && !isDir)) {
+            i--;
+        }
+
+        if (result != FR_OK) {
+            handleError(result, "Error reading file on the storage!");
+            result = f_closedir(&dir);
+
+            return result;
+        } else if (SDCARD_END_OF_SCAN(fileInfo)) {
+            dirPage->endOfDir = 1;
+
+            result = f_closedir(&dir);
+
+            return result;
+        }
+    }
+
+    for (uint8_t i = 0; i < SDCARD_DIR_PAGE_SIZE; i++) {
+        result = f_readdir(&dir, &fileInfo);
+
+        if (result != FR_OK) {
+            handleError(result, "Error reading file on the storage!");
+            break;
+        } else if (SDCARD_END_OF_SCAN(fileInfo)) {
+            dirPage->endOfDir = 1;
+            break;
+        }
+
+        uint8_t isDir = SDCARD_IS_DIRECTORY(fileInfo);
+
+        // Skip if readmode limits the read items
+        if ((dirPage->readMode == SDCARD_READMODE_ONLY_FILES && isDir) ||
+            (dirPage->readMode == SDCARD_READMODE_ONLY_DIRECTORIES && !isDir)) {
+            i--;
+            continue;
+        }
+
+        SDCard_FSItem *item = &dirPage->items[i];
+
+        item->directory = isDir > 0 ? 1 : 0;
+        item->size = fileInfo.fsize;
+
+        strcpy(item->name, fileInfo.fname);
+        storeFileExtension(fileInfo.fname, item->extension);
+
+        dirPage->resultSize++;
+    }
+
+    result = f_closedir(&dir);
+
+    if (result != FR_OK) {
+        handleError(result, "Couldn't close root directory!");
+    }
+
+    return result;
+}
 
 FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
     FIL file;

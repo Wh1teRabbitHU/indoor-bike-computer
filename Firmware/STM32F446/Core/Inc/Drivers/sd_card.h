@@ -6,7 +6,18 @@
 #include "stdio.h"
 #include "string.h"
 
+#define SDCARD_END_OF_SCAN(fileInfo) (fileInfo.fname[0] == 0)
 #define SDCARD_IS_DIRECTORY(fileInfo) (fileInfo.fattrib & AM_DIR)
+
+#define SDCARD_DIR_PAGE_SIZE 10
+#define SDCARD_MAX_FILE_NAME_SIZE _MAX_LFN
+#define SDCARD_MAX_FILE_EXTENSION_SIZE 8
+
+typedef enum SDCard_ReadMode {
+    SDCARD_READMODE_ALL = 0,
+    SDCARD_READMODE_ONLY_FILES = 1,
+    SDCARD_READMODE_ONLY_DIRECTORIES = 2
+} SDCard_ReadMode;
 
 typedef struct SDCard_Capacity {
     uint32_t total;
@@ -24,12 +35,28 @@ typedef struct SDCard_SearchResult {
     uint32_t *indexes;
 } SDCard_SearchResult;
 
+typedef struct SDCard_FSItem {
+    uint8_t directory;
+    char name[SDCARD_MAX_FILE_NAME_SIZE];
+    uint32_t size;
+    char extension[SDCARD_MAX_FILE_EXTENSION_SIZE];
+} SDCard_FSItem;
+
+typedef struct SDCard_DirPage {
+    SDCard_ReadMode readMode;
+    SDCard_FSItem items[SDCARD_DIR_PAGE_SIZE];
+    uint32_t startIndex;
+    uint8_t resultSize;
+    uint8_t endOfDir;
+} SDCard_DirPage;
+
 extern void SDCard_handleError(FRESULT result, char *message);
 
 // Basic functions
 FRESULT SDCard_mount(const char *path);
 FRESULT SDCard_unmount(const char *path);
 FRESULT SDCard_checkCapacity(SDCard_Capacity *capacity);
+uint8_t SDCard_pathExists(char *path);
 FRESULT SDCard_createDirectory(char *name);
 FRESULT SDCard_createFile(char *name);
 FRESULT SDCard_removeFile(char *name);
@@ -39,6 +66,7 @@ FRESULT SDCard_writeFile(char *name, char *data);
 FRESULT SDCard_appendFile(char *name, char *data);
 
 // Advanced functions
+FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage);
 FRESULT SDCard_fileStatistics(char *fileName, SDCard_FileStatistics *statistics);
 FRESULT SDCard_appendLine(char *fileName, char *writeBuffer);
 FRESULT SDCard_readLine(char *fileName, char *readBuffer, uint32_t lineNumber);
