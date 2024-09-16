@@ -423,6 +423,49 @@ FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
     return result;
 }
 
+FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *statistics) {
+    DIR dir;
+    FILINFO fileInfo;
+    FRESULT result = f_opendir(&dir, dirPath);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "Couldn't open directory '%s'!", dirPath);
+
+        return result;
+    }
+
+    statistics->files = 0;
+    statistics->folders = 0;
+
+    for (uint8_t i = 0; i < SDCARD_DIR_PAGE_SIZE; i++) {
+        result = f_readdir(&dir, &fileInfo);
+
+        if (result != FR_OK) {
+            handleError(result, "Error reading file on the storage!");
+            break;
+        } else if (SDCARD_END_OF_SCAN(fileInfo)) {
+            break;
+        }
+
+        uint8_t isDir = SDCARD_IS_DIRECTORY(fileInfo);
+
+        if (isDir) {
+            statistics->folders += 1;
+        } else {
+            statistics->files += 1;
+        }
+        statistics->size += fileInfo.fsize;
+    }
+
+    result = f_closedir(&dir);
+
+    if (result != FR_OK) {
+        handleError(result, "Couldn't close directory!");
+    }
+
+    return result;
+}
+
 FRESULT SDCard_readLine(char *name, char *resultBuffer, uint32_t lineNumber) {
     FIL file;
     FILINFO fileInfo;

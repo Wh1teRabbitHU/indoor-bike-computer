@@ -120,14 +120,12 @@ int main(void) {
     HAL_TIM_Base_Start_IT(&htim14);
 
     // SDCard_writeLine("/test_long_filename.txt", "Testing the SD card library...\n");
+    // SDCard_DirPage dirPage = {0};
 
-    SDCard_DirPage dirPage = {0};
+    // dirPage.readMode = SDCARD_READMODE_ONLY_DIRECTORIES;
+    // dirPage.startIndex = 2;
 
-    dirPage.readMode = SDCARD_READMODE_ONLY_DIRECTORIES;
-    dirPage.startIndex = 2;
-
-    Data_Run run = {.index = 0,
-                    .name = "run_0001",
+    Data_Run run = {.name = "run_0001",
                     .created = "2024-09-11 16:20:01",
                     .sessionLength = 420,
                     .distance = 33123,
@@ -138,6 +136,7 @@ int main(void) {
 
     Data_initStorage();
     Data_storeRun(&run);
+    Data_countRuns();
 
     /* USER CODE END 2 */
 

@@ -25,7 +25,21 @@ uint8_t Data_initStorage() {
     return 1;
 }
 
-uint32_t Data_countRuns(void) { return 0; }
+uint32_t Data_countRuns(void) {
+    FRESULT result;
+    SDCard_DirectoryStatistics stats = {0};
+
+    result = SDCard_mount("/");
+
+    if (result != FR_OK) {
+        return 0;
+    }
+
+    SDCard_directoryStatistics(DATA_RUNS_DIRECTORY_PATH, &stats);
+    SDCard_unmount("/");
+
+    return stats.folders;
+}
 
 uint32_t Data_countRunMeasurements(uint32_t runIndex) { return 0; }
 
@@ -59,8 +73,8 @@ uint8_t Data_storeRun(Data_Run* run) {
     }
 
     sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUNS_SUMMARY_FILENAME);
-    sprintf(dataBuffer, "%lu;%s;%s;%lu;%lu;%lu;%lu;%lu;%lu", run->index, run->name, run->created, run->sessionLength,
-            run->distance, run->avgDifficulty, run->avgSpeed, run->avgRpm, run->avgBpm);
+    sprintf(dataBuffer, "%s;%s;%lu;%lu;%lu;%lu;%lu;%lu", run->name, run->created, run->sessionLength, run->distance,
+            run->avgDifficulty, run->avgSpeed, run->avgRpm, run->avgBpm);
 
     result = SDCard_writeFile(pathBuffer, dataBuffer);
 

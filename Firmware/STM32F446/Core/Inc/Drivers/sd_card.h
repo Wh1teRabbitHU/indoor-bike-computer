@@ -25,6 +25,12 @@ typedef struct SDCard_Capacity {
     uint32_t free;
 } SDCard_Capacity;
 
+typedef struct SDCard_DirectoryStatistics {
+    uint32_t files;
+    uint32_t fileSizes;
+    uint32_t folders;
+} SDCard_DirectoryStatistics;
+
 typedef struct SDCard_FileStatistics {
     uint32_t size;
     uint32_t lines;
@@ -68,6 +74,7 @@ FRESULT SDCard_appendFile(char *name, char *data);
 // Advanced functions
 FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage);
 FRESULT SDCard_fileStatistics(char *fileName, SDCard_FileStatistics *statistics);
+FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *statistics);
 FRESULT SDCard_readLine(char *fileName, char *readBuffer, uint32_t lineNumber);
 FRESULT SDCard_searchInFile(char *name, char *data, SDCard_SearchResult *result);
 
