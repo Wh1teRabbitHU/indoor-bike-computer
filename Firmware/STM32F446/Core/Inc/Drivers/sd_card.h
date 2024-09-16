@@ -68,7 +68,6 @@ FRESULT SDCard_appendFile(char *name, char *data);
 // Advanced functions
 FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage);
 FRESULT SDCard_fileStatistics(char *fileName, SDCard_FileStatistics *statistics);
-FRESULT SDCard_appendLine(char *fileName, char *writeBuffer);
 FRESULT SDCard_readLine(char *fileName, char *readBuffer, uint32_t lineNumber);
 FRESULT SDCard_searchInFile(char *name, char *data, SDCard_SearchResult *result);
 

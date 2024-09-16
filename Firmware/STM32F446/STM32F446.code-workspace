@@ -30,7 +30,10 @@
 			"label_timer.h": "c",
 			"app-state.h": "c",
 			"macros.h": "c",
-			"sd_card.h": "c"
+			"sd_card.h": "c",
+			"stoptimer.h": "c",
+			"main.h": "c",
+			"data.h": "c"
 		}
 	}
 }

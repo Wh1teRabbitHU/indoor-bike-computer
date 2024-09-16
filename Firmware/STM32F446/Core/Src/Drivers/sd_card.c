@@ -3,6 +3,7 @@
 FATFS fs;  // file system
 FATFS *pfs;
 
+const char *folderSeparator = "/";
 const char *newLine = "\n";
 
 PRIVATE void handleError(FRESULT result, char *message) {
@@ -69,7 +70,25 @@ uint8_t SDCard_pathExists(char *path) {
 }
 
 FRESULT SDCard_createDirectory(char *name) {
-    FRESULT result = f_mkdir(name);
+    FRESULT result = FR_OK;
+    char buffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+
+    strcpy(buffer, name);
+    char *folder = strtok(buffer, folderSeparator);
+
+    while (folder != NULL) {
+        strcat(pathBuffer, "/");
+        strcat(pathBuffer, folder);
+
+        result = f_mkdir(pathBuffer);
+
+        if (result != FR_OK && result != FR_EXIST) {
+            return result;
+        }
+
+        folder = strtok(NULL, folderSeparator);
+    }
 
     return result;
 }
@@ -208,12 +227,14 @@ FRESULT SDCard_writeFile(char *name, char *data) {
     FRESULT result = f_stat(name, &fileInfo);
 
     if (result != FR_OK) {
-        handleErrorWithParam(result, "File '%s' does not exists!", name);
+        result = SDCard_createFile(name);
 
-        return result;
+        if (result != FR_OK) {
+            return result;
+        }
     }
 
-    result = f_open(&file, name, FA_OPEN_EXISTING | FA_WRITE);
+    result = f_open(&file, name, FA_CREATE_ALWAYS | FA_WRITE);
 
     if (result != FR_OK) {
         handleErrorWithParam(result, "File '%s' cannot be opened!", name);
@@ -238,15 +259,13 @@ FRESULT SDCard_writeFile(char *name, char *data) {
 
 FRESULT SDCard_appendFile(char *name, char *data) {
     FIL file;
-    FILINFO fileInfo;
     UINT bytesWritten;
+    FRESULT result;
 
-    FRESULT result = f_stat(name, &fileInfo);
+    uint8_t fileExists = SDCard_pathExists(name);
 
-    if (result != FR_OK) {
-        handleErrorWithParam(result, "File '%s' doesn't exist!", name);
-
-        return result;
+    if (!fileExists) {
+        SDCard_createFile(name);
     }
 
     result = f_open(&file, name, FA_OPEN_APPEND | FA_WRITE);
@@ -400,32 +419,6 @@ FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
 
     statistics->size = fileInfo.fsize;
     statistics->lines = lineCount + 1;
-
-    return result;
-}
-
-FRESULT SDCard_appendLine(char *name, char *writeBuffer) {
-    FRESULT result;
-
-    result = SDCard_mount("/");
-
-    if (result != FR_OK) {
-        return result;
-    }
-
-    result = SDCard_createFile(name);
-
-    if (result != FR_OK) {
-        return result;
-    }
-
-    result = SDCard_writeFile(name, writeBuffer);
-
-    if (result != FR_OK) {
-        return result;
-    }
-
-    result = SDCard_unmount("/");
 
     return result;
 }

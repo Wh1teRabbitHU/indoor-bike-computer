@@ -18,7 +18,7 @@ typedef struct State_Global {
 
 typedef struct State_Live {
     uint32_t difficulty;
-    uint32_t speed;
+    float speed;
     uint32_t rpm;
     uint32_t bpm;
     uint8_t updateChart;  //

@@ -23,10 +23,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "data.h"
 #include "er_tft035.h"
 #include "gui.h"
 #include "mcp3421.h"
-#include "sd_card.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -126,9 +126,18 @@ int main(void) {
     dirPage.readMode = SDCARD_READMODE_ONLY_DIRECTORIES;
     dirPage.startIndex = 2;
 
-    SDCard_mount("/");
-    SDCard_readDirectory("/", &dirPage);
-    SDCard_unmount("/");
+    Data_Run run = {.index = 0,
+                    .name = "run_0001",
+                    .created = "2024-09-11 16:20:01",
+                    .sessionLength = 420,
+                    .distance = 33123,
+                    .avgDifficulty = 81,
+                    .avgSpeed = 24321,
+                    .avgRpm = 92,
+                    .avgBpm = 132};
+
+    Data_initStorage();
+    Data_storeRun(&run);
 
     /* USER CODE END 2 */
 
