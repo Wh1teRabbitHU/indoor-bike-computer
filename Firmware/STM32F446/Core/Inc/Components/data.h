@@ -5,6 +5,8 @@
 
 #define DATA_RUNS_DIRECTORY_PATH "/indoor-bike/runs"
 #define DATA_RUNS_SUMMARY_FILENAME "summary.txt"
+#define DATA_RUNS_MEASUREMENTS_FILENAME "measurements.txt"
+#define DATA_RUNS_NAME_PREFIX "run_"
 #define DATA_RUN_NAME_MAX_LENGTH 10
 #define DATA_RUN_TIMESTAMP_LENGTH 19
 
@@ -19,25 +21,24 @@ typedef struct Data_Run {
     char created[DATA_RUN_TIMESTAMP_LENGTH];  // Timestamp: 2024-01-01 00:00:00
     uint32_t sessionLength;                   // In seconds
     uint32_t distance;                        // In meters
-    uint32_t avgDifficulty;                   // Percentage value
+    uint8_t avgDifficulty;                    // Percentage value
     uint32_t avgSpeed;                        // Km/h / 100, example: 12.34km/h -> 1234
     uint32_t avgRpm;                          // Bike wheel rotation per minute
     uint32_t avgBpm;                          // Heartbeat per minute
 } Data_Run;
 
 typedef struct Data_RunMeasurement {
-    uint32_t runIndex;
-    uint32_t measurementIndex;
-
-    uint32_t timestamp;   // In seconds
-    uint32_t difficulty;  // Percentage value
-    uint32_t speed;       // Km/h / 100, example: 12.34km/h -> 1234
-    uint32_t rpm;         // Bike wheel rotation per minute
-    uint32_t bpm;         // Heartbeat per minute
+    uint32_t timestamp;  // In seconds
+    uint8_t difficulty;  // Percentage value
+    uint32_t speed;      // Km/h / 100, example: 12.34km/h -> 1234
+    uint32_t rpm;        // Bike wheel rotation per minute
+    uint32_t bpm;        // Heartbeat per minute
 } Data_RunMeasurement;
 
 /** Create folder structure on the SD card. It returns the state of the initialization. */
-uint8_t Data_initStorage();
+uint8_t Data_initStorage(void);
+
+void Data_initRun(Data_Run* run);
 
 /** Counts the available runs on the SD card.
  * This relies on unmodified folder structure inside the runs directory! */

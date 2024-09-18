@@ -398,7 +398,7 @@ FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
     uint32_t lineCount = 0;
     uint8_t bufferSize = 32;
     UINT bytesRead = bufferSize;
-    char readBuffer[bufferSize];
+    volatile char readBuffer[bufferSize];
     char *searchBuffer;
 
     while (bytesRead == bufferSize) {
@@ -418,7 +418,7 @@ FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
     }
 
     statistics->size = fileInfo.fsize;
-    statistics->lines = lineCount + 1;
+    statistics->lines = lineCount == 0 && bytesRead > 0 ? 1 : lineCount;
 
     return result;
 }
@@ -434,6 +434,7 @@ FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *st
         return result;
     }
 
+    statistics->fileSizes = 0;
     statistics->files = 0;
     statistics->folders = 0;
 
@@ -454,7 +455,7 @@ FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *st
         } else {
             statistics->files += 1;
         }
-        statistics->size += fileInfo.fsize;
+        statistics->fileSizes += fileInfo.fsize;
     }
 
     result = f_closedir(&dir);

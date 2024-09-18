@@ -125,18 +125,12 @@ int main(void) {
     // dirPage.readMode = SDCARD_READMODE_ONLY_DIRECTORIES;
     // dirPage.startIndex = 2;
 
-    Data_Run run = {.name = "run_0001",
-                    .created = "2024-09-11 16:20:01",
-                    .sessionLength = 420,
-                    .distance = 33123,
-                    .avgDifficulty = 81,
-                    .avgSpeed = 24321,
-                    .avgRpm = 92,
-                    .avgBpm = 132};
+    Data_Run run = {0};
 
     Data_initStorage();
-    Data_storeRun(&run);
-    Data_countRuns();
+    // Data_initRun(&run);
+    // Data_storeRun(&run);
+    // volatile uint32_t measurements = Data_countRunMeasurements(1);
 
     /* USER CODE END 2 */
 

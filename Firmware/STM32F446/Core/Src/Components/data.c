@@ -1,5 +1,7 @@
 #include "data.h"
 
+static Data_Statistics statistics = {0};
+
 uint8_t Data_initStorage() {
     FRESULT result;
 
@@ -20,9 +22,33 @@ uint8_t Data_initStorage() {
         }
     }
 
+    SDCard_DirectoryStatistics stats = {0};
+
+    SDCard_directoryStatistics(DATA_RUNS_DIRECTORY_PATH, &stats);
+
+    statistics.runs = stats.folders;
+
     SDCard_unmount("/");
 
     return 1;
+}
+
+void Data_initRun(Data_Run* run) {
+    char nameBuffer[DATA_RUN_NAME_MAX_LENGTH] = {0};
+
+    statistics.runs++;
+
+    sprintf(nameBuffer, "%s%05lu", DATA_RUNS_NAME_PREFIX, statistics.runs);
+
+    strcpy(run->name, nameBuffer);
+    strcpy(run->created, "2024-01-01 10:10:10");
+
+    run->sessionLength = 0;
+    run->distance = 0;
+    run->avgDifficulty = 0;
+    run->avgSpeed = 0;
+    run->avgRpm = 0;
+    run->avgBpm = 0;
 }
 
 uint32_t Data_countRuns(void) {
@@ -41,7 +67,25 @@ uint32_t Data_countRuns(void) {
     return stats.folders;
 }
 
-uint32_t Data_countRunMeasurements(uint32_t runIndex) { return 0; }
+uint32_t Data_countRunMeasurements(uint32_t runIndex) {
+    FRESULT result;
+    char pathBuffer[64] = {0};
+
+    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUNS_NAME_PREFIX, runIndex,
+            DATA_RUNS_MEASUREMENTS_FILENAME);
+
+    result = SDCard_mount("/");
+
+    if (!SDCard_pathExists(pathBuffer)) {
+        return 0;
+    }
+
+    SDCard_FileStatistics statistics = {0};
+
+    SDCard_fileStatistics(pathBuffer, &statistics);
+
+    return statistics.lines;
+}
 
 void Data_readRun(uint32_t runIndex, Data_Run* run) {}
 
