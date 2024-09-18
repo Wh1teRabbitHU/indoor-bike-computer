@@ -16,15 +16,16 @@ typedef struct Data_Statistics {
     uint32_t distanceSum;     // In meters
 } Data_Statistics;
 
+// Max data length: 53
 typedef struct Data_Run {
     char name[DATA_RUN_NAME_MAX_LENGTH];      // Maximum 10 char
-    char created[DATA_RUN_TIMESTAMP_LENGTH];  // Timestamp: 2024-01-01 00:00:00
-    uint32_t sessionLength;                   // In seconds
-    uint32_t distance;                        // In meters
-    uint8_t avgDifficulty;                    // Percentage value
-    uint32_t avgSpeed;                        // Km/h / 100, example: 12.34km/h -> 1234
-    uint32_t avgRpm;                          // Bike wheel rotation per minute
-    uint32_t avgBpm;                          // Heartbeat per minute
+    char created[DATA_RUN_TIMESTAMP_LENGTH];  // Timestamp: 2024-01-01 00:00:00, 19 char
+    uint32_t sessionLength;                   // In seconds, max 5 char long 99999
+    uint32_t distance;                        // In meters, max 6 char long: 999999
+    uint8_t avgDifficulty;                    // Percentage value, 3 char
+    uint32_t avgSpeed;                        // Km/h / 100, example: 12.34km/h -> 1234, 4 char
+    uint32_t avgRpm;                          // Bike wheel rotation per minute, 3 char
+    uint32_t avgBpm;                          // Heartbeat per minute, 3 char
 } Data_Run;
 
 typedef struct Data_RunMeasurement {

@@ -128,6 +128,7 @@ int main(void) {
     Data_Run run = {0};
 
     Data_initStorage();
+    Data_readRun(1, &run);
     // Data_initRun(&run);
     // Data_storeRun(&run);
     // volatile uint32_t measurements = Data_countRunMeasurements(1);
