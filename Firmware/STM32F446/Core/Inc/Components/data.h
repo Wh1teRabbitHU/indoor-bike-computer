@@ -1,6 +1,7 @@
 #ifndef INC_DATA_H_
 #define INC_DATA_H_
 
+#include "macros.h"
 #include "sd_card.h"
 
 #define DATA_RUNS_DIRECTORY_PATH "/indoor-bike/runs"
@@ -9,6 +10,7 @@
 #define DATA_RUNS_NAME_PREFIX "run_"
 #define DATA_RUN_NAME_MAX_LENGTH 10
 #define DATA_RUN_TIMESTAMP_LENGTH 19
+#define DATA_MEASUREMENTS_PAGE_SIZE SDCARD_CONTENT_PAGE_SIZE
 
 typedef struct Data_Statistics {
     uint32_t runs;            // Run count
@@ -36,6 +38,13 @@ typedef struct Data_RunMeasurement {
     uint32_t bpm;        // Heartbeat per minute
 } Data_RunMeasurement;
 
+typedef struct Data_RunMeasurementPage {
+    Data_RunMeasurement measurements[DATA_MEASUREMENTS_PAGE_SIZE];
+    uint32_t startIndex;
+    uint8_t resultSize;
+    uint8_t endOfRun;
+} Data_RunMeasurementPage;
+
 /** Create folder structure on the SD card. It returns the state of the initialization. */
 uint8_t Data_initStorage(void);
 
@@ -58,9 +67,9 @@ void Data_readRun(uint32_t runIndex, Data_Run* run);
  * Loads a measurement value from a run on the given index using the measurement index.
  * Measurements are stored in one file and the order of the measurement defines the indexed position! */
 void Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Data_RunMeasurement* measurement);
+void Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page);
 uint8_t Data_storeRun(Data_Run* run);
 void Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement);
 void Data_deleteRun(uint32_t runIndex);
-void Data_deleteRunMeasurement(uint32_t runIndex, uint32_t measurementIndex);
 
 #endif

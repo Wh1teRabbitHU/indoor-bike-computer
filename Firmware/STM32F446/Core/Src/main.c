@@ -122,7 +122,7 @@ int main(void) {
     // SDCard_writeLine("/test_long_filename.txt", "Testing the SD card library...\n");
     // SDCard_DirPage dirPage = {0};
 
-    // dirPage.readMode = SDCARD_READMODE_ONLY_DIRECTORIES;
+    // dirPage.readMode = SDCARD_DIR_READMODE_ONLY_DIRECTORIES;
     // dirPage.startIndex = 2;
 
     Data_Run run = {0};

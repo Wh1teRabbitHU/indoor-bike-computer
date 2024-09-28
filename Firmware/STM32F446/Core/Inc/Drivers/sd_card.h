@@ -10,14 +10,15 @@
 #define SDCARD_IS_DIRECTORY(fileInfo) (fileInfo.fattrib & AM_DIR)
 
 #define SDCARD_DIR_PAGE_SIZE 10
+#define SDCARD_CONTENT_PAGE_SIZE 10
 #define SDCARD_MAX_FILE_NAME_SIZE _MAX_LFN
 #define SDCARD_MAX_FILE_EXTENSION_SIZE 8
 
-typedef enum SDCard_ReadMode {
-    SDCARD_READMODE_ALL = 0,
-    SDCARD_READMODE_ONLY_FILES = 1,
-    SDCARD_READMODE_ONLY_DIRECTORIES = 2
-} SDCard_ReadMode;
+typedef enum SDCard_DirReadMode {
+    SDCARD_DIR_READMODE_ALL = 0,
+    SDCARD_DIR_READMODE_ONLY_FILES = 1,
+    SDCARD_DIR_READMODE_ONLY_DIRECTORIES = 2
+} SDCard_DirReadMode;
 
 typedef struct SDCard_Capacity {
     uint32_t total;
@@ -49,12 +50,19 @@ typedef struct SDCard_FSItem {
 } SDCard_FSItem;
 
 typedef struct SDCard_DirPage {
-    SDCard_ReadMode readMode;
+    SDCard_DirReadMode readMode;
     SDCard_FSItem items[SDCARD_DIR_PAGE_SIZE];
     uint32_t startIndex;
     uint8_t resultSize;
     uint8_t endOfDir;
 } SDCard_DirPage;
+
+typedef struct SDCard_LinesPage {
+    char *lines[SDCARD_CONTENT_PAGE_SIZE];
+    uint32_t startIndex;
+    uint8_t resultSize;
+    uint8_t endOfFile;
+} SDCard_LinesPage;
 
 extern void SDCard_handleError(FRESULT result, char *message);
 
@@ -76,6 +84,7 @@ FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage);
 FRESULT SDCard_fileStatistics(char *fileName, SDCard_FileStatistics *statistics);
 FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *statistics);
 FRESULT SDCard_readLine(char *fileName, char *readBuffer, uint32_t lineNumber);
+FRESULT SDCard_readLines(char *name, SDCard_LinesPage *page);
 FRESULT SDCard_searchInFile(char *name, char *data, SDCard_SearchResult *result);
 
 #endif

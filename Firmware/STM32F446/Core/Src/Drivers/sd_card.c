@@ -315,8 +315,8 @@ FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage) {
         uint8_t isDir = SDCARD_IS_DIRECTORY(fileInfo);
 
         // Skip if readmode limits the read items
-        if ((dirPage->readMode == SDCARD_READMODE_ONLY_FILES && isDir) ||
-            (dirPage->readMode == SDCARD_READMODE_ONLY_DIRECTORIES && !isDir)) {
+        if ((dirPage->readMode == SDCARD_DIR_READMODE_ONLY_FILES && isDir) ||
+            (dirPage->readMode == SDCARD_DIR_READMODE_ONLY_DIRECTORIES && !isDir)) {
             i--;
         }
 
@@ -348,8 +348,8 @@ FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage) {
         uint8_t isDir = SDCARD_IS_DIRECTORY(fileInfo);
 
         // Skip if readmode limits the read items
-        if ((dirPage->readMode == SDCARD_READMODE_ONLY_FILES && isDir) ||
-            (dirPage->readMode == SDCARD_READMODE_ONLY_DIRECTORIES && !isDir)) {
+        if ((dirPage->readMode == SDCARD_DIR_READMODE_ONLY_FILES && isDir) ||
+            (dirPage->readMode == SDCARD_DIR_READMODE_ONLY_DIRECTORIES && !isDir)) {
             i--;
             continue;
         }
@@ -398,7 +398,7 @@ FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
     uint32_t lineCount = 0;
     uint8_t bufferSize = 32;
     UINT bytesRead = bufferSize;
-    volatile char readBuffer[bufferSize];
+    char readBuffer[bufferSize];
     char *searchBuffer;
 
     while (bytesRead == bufferSize) {
@@ -532,6 +532,81 @@ FRESULT SDCard_readLine(char *name, char *resultBuffer, uint32_t lineNumber) {
     if (lineStartPos != lineEndPos) {
         f_lseek(&file, lineStartPos);
         f_read(&file, resultBuffer, lineEndPos - lineStartPos, &bytesRead);
+    }
+
+    return result;
+}
+
+FRESULT SDCard_readLines(char *name, SDCard_LinesPage *page) {
+    FIL file;
+    FILINFO fileInfo;
+    FRESULT result;
+
+    result = f_stat(name, &fileInfo);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' doesn't exist!", name);
+
+        return result;
+    }
+
+    result = f_open(&file, name, FA_READ);
+
+    if (result != FR_OK) {
+        handleErrorWithParam(result, "File '%s' cannot be opened!", name);
+
+        return result;
+    }
+
+    uint32_t lineCount = 0, lineCurPos = 0, lineStartPos = 0, lineEndPos = 0;
+    uint32_t lineNumber = page->startIndex;
+    uint8_t bufferSize = 4, linesRead = 0, found = 0;
+    UINT bytesRead = bufferSize;
+    char readBuffer[bufferSize];
+    char *searchBuffer;
+
+    while (linesRead < SDCARD_CONTENT_PAGE_SIZE) {
+        while (bytesRead == bufferSize) {
+            result = f_read(&file, readBuffer, bufferSize, &bytesRead);
+
+            if (result != FR_OK) {
+                handleErrorWithParam(result, "Couldn't read from file '%s'!", name);
+                return result;
+            }
+
+            searchBuffer = readBuffer;
+
+            while ((searchBuffer = strstr(searchBuffer, newLine))) {
+                uint8_t lineSubPos = (uint8_t)(searchBuffer - readBuffer);
+
+                if (lineNumber > 0 && lineStartPos == 0 && lineNumber - 1 == lineCount) {
+                    lineStartPos = lineCurPos + lineSubPos + 1;
+                } else if (lineNumber == 0 || lineStartPos > 0) {
+                    lineEndPos = lineCurPos + lineSubPos;
+                    found = 1;
+                    break;
+                }
+
+                lineCount++;
+
+                searchBuffer += strlen(newLine);
+            }
+
+            if (found) {
+                break;
+            }
+
+            lineCurPos += bufferSize;
+        }
+
+        if (lineStartPos != lineEndPos) {
+            f_lseek(&file, lineStartPos);
+            f_read(&file, page->lines[linesRead], lineEndPos - lineStartPos, &bytesRead);
+
+            linesRead++;
+        } else {
+            break;
+        }
     }
 
     return result;
