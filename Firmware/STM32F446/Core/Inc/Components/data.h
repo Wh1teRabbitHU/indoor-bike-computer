@@ -61,15 +61,15 @@ uint32_t Data_countRunMeasurements(uint32_t runIndex);
  * Reads out the run on the given index.
  * Index is dependent on the order of the files, so if the naming is different from the creation order, it won't take in
  * a chronological order! */
-void Data_readRun(uint32_t runIndex, Data_Run* run);
+uint8_t Data_readRun(uint32_t runIndex, Data_Run* run);
 
 /**
  * Loads a measurement value from a run on the given index using the measurement index.
  * Measurements are stored in one file and the order of the measurement defines the indexed position! */
-void Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Data_RunMeasurement* measurement);
-void Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page);
+uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Data_RunMeasurement* measurement);
+uint8_t Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page);
 uint8_t Data_storeRun(Data_Run* run);
-void Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement);
-void Data_deleteRun(uint32_t runIndex);
+uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement);
+uint8_t Data_deleteRun(uint32_t runIndex);
 
 #endif

@@ -146,7 +146,7 @@ uint32_t Data_countRuns(void) {
 
 uint32_t Data_countRunMeasurements(uint32_t runIndex) {
     FRESULT result;
-    char pathBuffer[64] = {0};
+    char pathBuffer[128] = {0};
 
     sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUNS_NAME_PREFIX, runIndex,
             DATA_RUNS_MEASUREMENTS_FILENAME);
@@ -168,76 +168,82 @@ uint32_t Data_countRunMeasurements(uint32_t runIndex) {
     return statistics.lines;
 }
 
-void Data_readRun(uint32_t runIndex, Data_Run* run) {
+uint8_t Data_readRun(uint32_t runIndex, Data_Run* run) {
     FRESULT result;
-    char pathBuffer[64] = {0};
-    char data[64] = {0};
+    char pathBuffer[128] = {0};
+    char data[128] = {0};
 
     result = SDCard_mount("/");
 
     if (result != FR_OK) {
-        return;
+        return 0;
     }
 
     Data_runPath(pathBuffer, runIndex);
 
     if (!SDCard_pathExists(pathBuffer)) {
-        return;
+        return 0;
     }
 
     result = SDCard_readFile(pathBuffer, data, 64);
 
+    SDCard_unmount("/");
+
     if (result != FR_OK) {
-        return;
+        return 0;
     }
 
     Data_parseRun(data, run);
 
-    SDCard_unmount("/");
+    return 1;
 }
 
-void Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Data_RunMeasurement* measurement) {
+uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Data_RunMeasurement* measurement) {
     FRESULT result;
-    char pathBuffer[64] = {0};
-    char line[64] = {0};
+    char pathBuffer[128] = {0};
+    char line[128] = {0};
 
     result = SDCard_mount("/");
 
     if (result != FR_OK) {
-        return;
+        return 0;
     }
 
     Data_measurementsPath(pathBuffer, runIndex);
 
     if (!SDCard_pathExists(pathBuffer)) {
         SDCard_unmount("/");
-        return;
+        return 0;
     }
 
     result = SDCard_readLine(pathBuffer, line, measurementIndex);
 
-    if (result == FR_OK) {
-        Data_parseMeasurement(line, measurement);
+    SDCard_unmount("/");
+
+    if (result != FR_OK) {
+        return 0;
     }
 
-    SDCard_unmount("/");
+    Data_parseMeasurement(line, measurement);
+
+    return 1;
 }
 
-void Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page) {
+uint8_t Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page) {
     FRESULT result;
-    char pathBuffer[64] = {0};
+    char pathBuffer[128] = {0};
 
     result = SDCard_mount("/");
 
     if (result != FR_OK) {
-        return;
+        return 0;
     }
 
     Data_measurementsPath(pathBuffer, runIndex);
 
     if (!SDCard_pathExists(pathBuffer)) {
         SDCard_unmount("/");
-        return;
+        return 0;
     }
 
     SDCard_LinesPage linePage = {.startIndex = page->startIndex, 0};
@@ -246,7 +252,7 @@ void Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page) 
 
     if (result != FR_OK) {
         SDCard_unmount("/");
-        return;
+        return 0;
     }
 
     page->endOfRun = linePage.endOfFile;
@@ -260,6 +266,8 @@ void Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page) 
     }
 
     SDCard_unmount("/");
+
+    return 1;
 }
 
 uint8_t Data_storeRun(Data_Run* run) {
@@ -302,6 +310,27 @@ uint8_t Data_storeRun(Data_Run* run) {
     return 1;
 }
 
-void Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement) {}
+uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement) {
+    volatile FRESULT result;
 
-void Data_deleteRun(uint32_t runIndex) {}
+    char pathBuffer[128] = {0};
+    char dataBuffer[128] = {0};
+
+    result = SDCard_mount("/");
+
+    if (result != FR_OK) {
+        return 0;
+    }
+
+    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUNS_MEASUREMENTS_FILENAME);
+    sprintf(dataBuffer, "%lu;%d;%lu;%lu;%lu\n", measurement->timestamp, measurement->difficulty, measurement->speed,
+            measurement->rpm, measurement->bpm);
+
+    result = SDCard_appendFile(pathBuffer, dataBuffer);
+
+    SDCard_unmount("/");
+
+    return result == FR_OK ? 1 : 0;
+}
+
+uint8_t Data_deleteRun(uint32_t runIndex) { return 1; }
