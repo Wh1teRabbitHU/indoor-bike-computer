@@ -4,78 +4,83 @@ const char* attrSeparator = ";";
 static Data_Statistics statistics = {0};
 
 PRIVATE void Data_runPath(char* pathBuffer, const uint32_t runIndex) {
-    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUNS_NAME_PREFIX, runIndex,
-            DATA_RUNS_SUMMARY_FILENAME);
+    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUN_NAME_PREFIX, runIndex,
+            DATA_RUN_SUMMARY_FILENAME);
 }
+
 PRIVATE void Data_measurementsPath(char* pathBuffer, const uint32_t runIndex) {
-    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUNS_NAME_PREFIX, runIndex,
-            DATA_RUNS_MEASUREMENTS_FILENAME);
+    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUN_NAME_PREFIX, runIndex,
+            DATA_RUN_MEASUREMENTS_FILENAME);
 }
 
 PRIVATE void Data_parseRun(char* data, Data_Run* run) {
-    uint8_t attrCount = 0;
+    Data_RunAttr_t attrPointer = 0;
     char* attr = strtok(data, attrSeparator);
     char* endptr;
 
     while (attr != NULL) {
-        switch (attrCount) {
-            case 0:  // name
+        switch (attrPointer) {
+            case DATA_RUN_ATTR_NAME:
                 strcpy(run->name, attr);
                 break;
-            case 1:  // created
+            case DATA_RUN_ATTR_CREATED:
                 strcpy(run->created, attr);
                 break;
-            case 2:  // sessionLength
+            case DATA_RUN_ATTR_SESSION_LENGTH:
                 run->sessionLength = strtol(attr, &endptr, 10);
                 break;
-            case 3:  // distance
+            case DATA_RUN_ATTR_DISTANCE:
                 run->distance = strtol(attr, &endptr, 10);
                 break;
-            case 4:  // avgDifficulty
+            case DATA_RUN_ATTR_AVG_DIFFICULTY:
                 run->avgDifficulty = strtol(attr, &endptr, 10);
                 break;
-            case 5:  // avgSpeed
+            case DATA_RUN_ATTR_AVG_SPEED:
                 run->avgSpeed = strtol(attr, &endptr, 10);
                 break;
-            case 6:  // avgRpm
+            case DATA_RUN_ATTR_AVG_RPM:
                 run->avgRpm = strtol(attr, &endptr, 10);
                 break;
-            case 7:  // avgBpm
+            case DATA_RUN_ATTR_AVG_BPM:
                 run->avgBpm = strtol(attr, &endptr, 10);
                 break;
+            case DATA_RUN_ATTR_UNKNOWN:
+                return;
         }
 
         attr = strtok(NULL, attrSeparator);
-        attrCount++;
+        attrPointer++;
     }
 }
 
 PRIVATE void Data_parseMeasurement(char* data, Data_RunMeasurement* measurement) {
-    uint8_t attrCount = 0;
+    Data_MeasurementAttr_t attrPointer = 0;
     char* attr = strtok(data, attrSeparator);
     char* endptr;
 
     while (attr != NULL) {
-        switch (attrCount) {
-            case 0:  // timestamp
+        switch (attrPointer) {
+            case DATA_MEASUREMENT_ATTR_TIMESTAMP:
                 measurement->timestamp = strtol(attr, &endptr, 10);
                 break;
-            case 1:  // difficulty
+            case DATA_MEASUREMENT_ATTR_DIFFICULTY:
                 measurement->difficulty = strtol(attr, &endptr, 10);
                 break;
-            case 2:  // speed
+            case DATA_MEASUREMENT_ATTR_SPEED:
                 measurement->speed = strtol(attr, &endptr, 10);
                 break;
-            case 3:  // rpm
+            case DATA_MEASUREMENT_ATTR_RPM:
                 measurement->rpm = strtol(attr, &endptr, 10);
                 break;
-            case 4:  // bpm
+            case DATA_MEASUREMENT_ATTR_BPM:
                 measurement->bpm = strtol(attr, &endptr, 10);
                 break;
+            case DATA_MEASUREMENT_ATTR_UNKNOWN:
+                return;
         }
 
         attr = strtok(NULL, attrSeparator);
-        attrCount++;
+        attrPointer++;
     }
 }
 
@@ -102,10 +107,9 @@ uint8_t Data_initStorage() {
     SDCard_DirectoryStatistics stats = {0};
 
     SDCard_directoryStatistics(DATA_RUNS_DIRECTORY_PATH, &stats);
+    SDCard_unmount("/");
 
     statistics.runs = stats.folders;
-
-    SDCard_unmount("/");
 
     return 1;
 }
@@ -115,7 +119,7 @@ void Data_initRun(Data_Run* run) {
 
     statistics.runs++;
 
-    sprintf(nameBuffer, "%s%05lu", DATA_RUNS_NAME_PREFIX, statistics.runs);
+    sprintf(nameBuffer, "%s%05lu", DATA_RUN_NAME_PREFIX, statistics.runs);
 
     strcpy(run->name, nameBuffer);
     strcpy(run->created, "2024-01-01 10:10:10");
@@ -146,23 +150,20 @@ uint32_t Data_countRuns(void) {
 
 uint32_t Data_countRunMeasurements(uint32_t runIndex) {
     FRESULT result;
-    char pathBuffer[128] = {0};
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
 
-    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUNS_NAME_PREFIX, runIndex,
-            DATA_RUNS_MEASUREMENTS_FILENAME);
+    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUN_NAME_PREFIX, runIndex,
+            DATA_RUN_MEASUREMENTS_FILENAME);
 
     result = SDCard_mount("/");
 
-    if (result != FR_OK) {
-        return 0;
-    } else if (!SDCard_pathExists(pathBuffer)) {
+    if (result != FR_OK || !SDCard_pathExists(pathBuffer)) {
         return 0;
     }
 
     SDCard_FileStatistics statistics = {0};
 
     SDCard_fileStatistics(pathBuffer, &statistics);
-
     SDCard_unmount("/");
 
     return statistics.lines;
@@ -170,8 +171,8 @@ uint32_t Data_countRunMeasurements(uint32_t runIndex) {
 
 uint8_t Data_readRun(uint32_t runIndex, Data_Run* run) {
     FRESULT result;
-    char pathBuffer[128] = {0};
-    char data[128] = {0};
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+    char data[SDCARD_MAX_LINE_SIZE] = {0};
 
     result = SDCard_mount("/");
 
@@ -186,7 +187,6 @@ uint8_t Data_readRun(uint32_t runIndex, Data_Run* run) {
     }
 
     result = SDCard_readFile(pathBuffer, data, 64);
-
     SDCard_unmount("/");
 
     if (result != FR_OK) {
@@ -200,8 +200,8 @@ uint8_t Data_readRun(uint32_t runIndex, Data_Run* run) {
 
 uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Data_RunMeasurement* measurement) {
     FRESULT result;
-    char pathBuffer[128] = {0};
-    char line[128] = {0};
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+    char line[SDCARD_MAX_LINE_SIZE] = {0};
 
     result = SDCard_mount("/");
 
@@ -217,7 +217,6 @@ uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Da
     }
 
     result = SDCard_readLine(pathBuffer, line, measurementIndex);
-
     SDCard_unmount("/");
 
     if (result != FR_OK) {
@@ -231,7 +230,7 @@ uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Da
 
 uint8_t Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page) {
     FRESULT result;
-    char pathBuffer[128] = {0};
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
 
     result = SDCard_mount("/");
 
@@ -249,9 +248,9 @@ uint8_t Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* pag
     SDCard_LinesPage linePage = {.startIndex = page->startIndex, 0};
 
     result = SDCard_readLines(pathBuffer, &linePage);
+    SDCard_unmount("/");
 
     if (result != FR_OK) {
-        SDCard_unmount("/");
         return 0;
     }
 
@@ -265,16 +264,13 @@ uint8_t Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* pag
         Data_parseMeasurement(line, &measurement);
     }
 
-    SDCard_unmount("/");
-
     return 1;
 }
 
 uint8_t Data_storeRun(Data_Run* run) {
-    volatile FRESULT result;
-
-    char pathBuffer[128] = {0};
-    char dataBuffer[128] = {0};
+    FRESULT result;
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+    char dataBuffer[SDCARD_MAX_LINE_SIZE] = {0};
 
     sprintf(pathBuffer, "%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name);
 
@@ -295,26 +291,20 @@ uint8_t Data_storeRun(Data_Run* run) {
         }
     }
 
-    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUNS_SUMMARY_FILENAME);
+    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUN_SUMMARY_FILENAME);
     sprintf(dataBuffer, "%s;%s;%lu;%lu;%d;%lu;%lu;%lu", run->name, run->created, run->sessionLength, run->distance,
             run->avgDifficulty, run->avgSpeed, run->avgRpm, run->avgBpm);
 
     result = SDCard_writeFile(pathBuffer, dataBuffer);
-
-    if (result != FR_OK) {
-        return 0;
-    }
-
     SDCard_unmount("/");
 
-    return 1;
+    return result == FR_OK ? 1 : 0;
 }
 
 uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement) {
-    volatile FRESULT result;
-
-    char pathBuffer[128] = {0};
-    char dataBuffer[128] = {0};
+    FRESULT result;
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+    char dataBuffer[SDCARD_MAX_LINE_SIZE] = {0};
 
     result = SDCard_mount("/");
 
@@ -322,12 +312,11 @@ uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement
         return 0;
     }
 
-    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUNS_MEASUREMENTS_FILENAME);
+    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUN_MEASUREMENTS_FILENAME);
     sprintf(dataBuffer, "%lu;%d;%lu;%lu;%lu\n", measurement->timestamp, measurement->difficulty, measurement->speed,
             measurement->rpm, measurement->bpm);
 
     result = SDCard_appendFile(pathBuffer, dataBuffer);
-
     SDCard_unmount("/");
 
     return result == FR_OK ? 1 : 0;

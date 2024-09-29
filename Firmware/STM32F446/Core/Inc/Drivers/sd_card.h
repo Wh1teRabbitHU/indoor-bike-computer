@@ -11,6 +11,7 @@
 
 #define SDCARD_DIR_PAGE_SIZE 10
 #define SDCARD_CONTENT_PAGE_SIZE 10
+#define SDCARD_MAX_LINE_SIZE 127
 #define SDCARD_MAX_FILE_NAME_SIZE _MAX_LFN
 #define SDCARD_MAX_FILE_EXTENSION_SIZE 8
 
@@ -58,7 +59,7 @@ typedef struct SDCard_DirPage {
 } SDCard_DirPage;
 
 typedef struct SDCard_LinesPage {
-    char *lines[SDCARD_CONTENT_PAGE_SIZE];
+    char lines[SDCARD_CONTENT_PAGE_SIZE][SDCARD_MAX_LINE_SIZE];
     uint32_t startIndex;
     uint8_t resultSize;
     uint8_t endOfFile;

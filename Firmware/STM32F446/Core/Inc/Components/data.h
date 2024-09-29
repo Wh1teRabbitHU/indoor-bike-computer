@@ -5,12 +5,33 @@
 #include "sd_card.h"
 
 #define DATA_RUNS_DIRECTORY_PATH "/indoor-bike/runs"
-#define DATA_RUNS_SUMMARY_FILENAME "summary.txt"
-#define DATA_RUNS_MEASUREMENTS_FILENAME "measurements.txt"
-#define DATA_RUNS_NAME_PREFIX "run_"
+#define DATA_RUN_SUMMARY_FILENAME "summary.txt"
+#define DATA_RUN_MEASUREMENTS_FILENAME "measurements.txt"
+#define DATA_RUN_NAME_PREFIX "run_"
 #define DATA_RUN_NAME_MAX_LENGTH 10
 #define DATA_RUN_TIMESTAMP_LENGTH 19
 #define DATA_MEASUREMENTS_PAGE_SIZE SDCARD_CONTENT_PAGE_SIZE
+
+typedef enum Data_RunAttr_t {
+    DATA_RUN_ATTR_NAME = 0,
+    DATA_RUN_ATTR_CREATED = 1,
+    DATA_RUN_ATTR_SESSION_LENGTH = 2,
+    DATA_RUN_ATTR_DISTANCE = 3,
+    DATA_RUN_ATTR_AVG_DIFFICULTY = 4,
+    DATA_RUN_ATTR_AVG_SPEED = 5,
+    DATA_RUN_ATTR_AVG_RPM = 6,
+    DATA_RUN_ATTR_AVG_BPM = 7,
+    DATA_RUN_ATTR_UNKNOWN = 8
+} Data_RunAttr_t;
+
+typedef enum Data_MeasurementAttr_t {
+    DATA_MEASUREMENT_ATTR_TIMESTAMP = 0,
+    DATA_MEASUREMENT_ATTR_DIFFICULTY = 1,
+    DATA_MEASUREMENT_ATTR_SPEED = 2,
+    DATA_MEASUREMENT_ATTR_RPM = 3,
+    DATA_MEASUREMENT_ATTR_BPM = 4,
+    DATA_MEASUREMENT_ATTR_UNKNOWN = 5
+} Data_MeasurementAttr_t;
 
 typedef struct Data_Statistics {
     uint32_t runs;            // Run count
