@@ -1,6 +1,8 @@
 #ifndef __STATE_HANDLER_H_
 #define __STATE_HANDLER_H_
 
+#include "bike.h"
+#include "data.h"
 #include "stdint.h"
 #include "stdio.h"
 
@@ -18,16 +20,23 @@ typedef struct State_Global {
 
 typedef struct State_Live {
     uint32_t difficulty;
-    float speed;
+    uint32_t speed;
+    uint32_t distance;
     uint32_t rpm;
     uint32_t bpm;
     uint8_t updateChart;  //
     char* time;
     State_Live_Session sessionState;
+    uint8_t running;
+    Data_Run liveRun;
+    Data_RunMeasurement lastMeasurement;
 } State_Live;
 
 State_Global* State_Global_get(void);
 State_Live* State_Live_get(void);
-void State_Live_reset(void);
+void State_Live_start();
+void State_Live_pause();
+void State_Live_update(char* timestamp);
+void State_Live_stop(void);
 
 #endif

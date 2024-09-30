@@ -1,6 +1,7 @@
 #ifndef __STOPTIMER_H_
 #define __STOPTIMER_H_
 
+#include "macros.h"
 #include "main.h"
 #include "state-handler.h"
 

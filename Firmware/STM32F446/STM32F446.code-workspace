@@ -33,7 +33,8 @@
 			"sd_card.h": "c",
 			"stoptimer.h": "c",
 			"main.h": "c",
-			"data.h": "c"
+			"data.h": "c",
+			"state-handler.h": "c"
 		}
 	}
 }

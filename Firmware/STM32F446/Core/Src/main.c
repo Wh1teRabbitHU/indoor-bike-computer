@@ -117,7 +117,8 @@ int main(void) {
 
     GUI_init();
     MCP3421_init(&hi2c2);
-    HAL_TIM_Base_Start_IT(&htim14);
+    Data_initStorage();
+    HAL_TIM_Base_Start_IT(&htim14);  // Start timer
 
     // SDCard_writeLine("/test_long_filename.txt", "Testing the SD card library...\n");
     // SDCard_DirPage dirPage = {0};
@@ -125,10 +126,9 @@ int main(void) {
     // dirPage.readMode = SDCARD_DIR_READMODE_ONLY_DIRECTORIES;
     // dirPage.startIndex = 2;
 
-    Data_Run run = {0};
+    // Data_Run run = {0};
 
-    Data_initStorage();
-    Data_readRun(1, &run);
+    // Data_readRun(1, &run);
     // Data_initRun(&run);
     // Data_storeRun(&run);
     // volatile uint32_t measurements = Data_countRunMeasurements(1);

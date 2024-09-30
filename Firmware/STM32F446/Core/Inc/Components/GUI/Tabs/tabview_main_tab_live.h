@@ -4,6 +4,7 @@
 #include "box_measurement.h"
 #include "chart_measurement.h"
 #include "control_live.h"
+#include "data.h"
 #include "label_timer.h"
 #include "macros.h"
 #include "state-handler.h"

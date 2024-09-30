@@ -11,9 +11,7 @@ static ControlLive controlLive;
 static char textBuffer[32] = {0};
 
 PRIVATE void TabView_Main_Tab_Live_executeStart() {
-    State_Live_Session sessionState = State_Live_get()->sessionState;
-
-    if (sessionState == APP_LIVESTATE_SESSION_RUNNING) {
+    if (State_Live_get()->sessionState == APP_LIVESTATE_SESSION_RUNNING) {
         return;
     }
 
@@ -22,7 +20,7 @@ PRIVATE void TabView_Main_Tab_Live_executeStart() {
 
     ControlLive_updateBtnText(0, "Pause");
 
-    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_RUNNING;
+    State_Live_start();
     Stoptimer_start();
 }
 
@@ -38,28 +36,26 @@ PRIVATE void TabView_Main_Tab_Live_executePause() {
 
     ControlLive_updateBtnText(0, "Start");
 
-    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_PAUSED;
     Stoptimer_pause();
+    State_Live_pause();
 }
 
 PRIVATE void TabView_Main_Tab_Live_executeEnd() {
-    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_STOPPED;
     Stoptimer_stop();
+    State_Live_stop();
     // TODO: Handle finishing the current session:
     // TODO: Confirm the decision with the user
-    // TODO: Store remaining measurement on the SD card
-    // TODO: Reset state
-    // TODO: Update screen?
+    // TODO: Reset state - Done
+    // TODO: Update screen? - Done
 }
 
 PRIVATE void TabView_Main_Tab_Live_executeReset() {
-    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_STOPPED;
     Stoptimer_stop();
+    State_Live_stop();
     // TODO: Handle reseting the current session:
     // TODO: Confirm the decision with the user
-    // TODO: Delete measurement data from SD card
-    // TODO: Reset state
-    // TODO: Update screen?
+    // TODO: Reset state - Done
+    // TODO: Update screen? - Done
 }
 
 void TabView_Main_Tab_Live_init(TabView_Main_Tab_Live_Config* config) {
@@ -97,7 +93,9 @@ void TabView_Main_Tab_Live_updateDifficulty(uint32_t difficulty) {
 }
 
 void TabView_Main_Tab_Live_updateSpeed(uint32_t speed) {
-    sprintf(textBuffer, "%ld\nkmh", speed);
+    uint8_t speedDecimal = speed / 100;
+
+    sprintf(textBuffer, "%d\nkmh", speedDecimal);
 
     BoxMeasurement_setValue(&speedBox, textBuffer, textBuffer);
 }
@@ -120,7 +118,7 @@ void TabView_Main_Tab_Live_updateChart(uint8_t updateChart) {
     }
 
     // TODO: Replace with a proper implementation
-    ChartMeasurement_setValue(&measurementChart, lv_rand(70, 90));
+    ChartMeasurement_setValue(&measurementChart, lv_rand(75, 85));
 }
 
 void TabView_Main_Tab_Live_updateTimer(char* time) { LabelTimer_setValue(&timerLabel, time); }
