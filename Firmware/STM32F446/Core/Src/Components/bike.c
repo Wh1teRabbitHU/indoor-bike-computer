@@ -20,9 +20,9 @@ void Bike_updateRevolution(void) {
     uint32_t currentTimestamp = HAL_GetTick();
 
     if (lastRevolutionTimestamp > 0 && currentTimestamp != lastRevolutionTimestamp) {
-        rpm = 60 / ((currentTimestamp - lastRevolutionTimestamp) / 1000.0);
-        speed = rpm * BIKE_WHEEL_SPEED_RATIO;  // km/h * 100
-        distance = (speed * 10) / 60 / 60;     // km/h * 100 -> m/h -> m/min -> m/s
+        rpm = BIKE_CALCULATE_RPM(currentTimestamp - lastRevolutionTimestamp);
+        speed = BIKE_CALCULATE_SPEED(rpm);
+        distance = BIKE_CALCULATE_DISTANCE(speed);
     }
 
     lastRevolutionTimestamp = currentTimestamp;

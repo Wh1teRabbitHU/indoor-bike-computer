@@ -41,7 +41,7 @@ void State_Live_update(char* timestamp) {
     live.lastMeasurement.speed = live.speed;
 
     live.liveRun.sessionLength += 1;  // Add one second
-    live.liveRun.distance += live.rpm / 60 * BIKE_WHEEL_CIRCUMFERENCE;
+    live.liveRun.distance += BIKE_CALCULATE_DISTANCE(live.speed);
 
     if (live.liveRun.sessionLength == 1) {
         live.liveRun.avgBpm = live.bpm;
