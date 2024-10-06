@@ -154,7 +154,10 @@ void TabView_Main_init(TabView_Main_Config* config) {
     lv_obj_t* tabLiveObj = mainTabView.tabs[TABVIEW_MAIN_TAB_LIVE];
 
     TabView_Main_Tab_Live_Config tabLiveConfig = {.tab = tabLiveObj};
+    TabView_Main_Tab_History_Config tabHistoryConfig = {.tab = tabLiveObj};
+
     TabView_Main_Tab_Live_init(&tabLiveConfig);
+    TabView_Main_Tab_History_init(&tabHistoryConfig);
 }
 
 void TabView_Main_prevTab() {

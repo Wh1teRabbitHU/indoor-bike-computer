@@ -10,6 +10,7 @@
 #define DATA_RUN_NAME_PREFIX "run_"
 #define DATA_RUN_NAME_MAX_LENGTH 10
 #define DATA_RUN_TIMESTAMP_LENGTH 19
+#define DATA_RUNS_PAGE_SIZE SDCARD_DIR_PAGE_SIZE
 #define DATA_MEASUREMENTS_PAGE_SIZE SDCARD_CONTENT_PAGE_SIZE
 
 typedef enum Data_RunAttr_t {
@@ -51,6 +52,13 @@ typedef struct Data_Run {
     uint32_t avgBpm;                          // Heartbeat per minute, 3 char
 } Data_Run;
 
+typedef struct Data_RunPage {
+    char* runs[DATA_RUNS_PAGE_SIZE];
+    uint32_t startIndex;
+    uint8_t resultSize;
+    uint8_t endOfList;
+} Data_RunPage;
+
 typedef struct Data_RunMeasurement {
     uint32_t timestamp;  // In seconds
     uint8_t difficulty;  // Percentage value
@@ -75,22 +83,47 @@ void Data_initRun(Data_Run* run);
  * This relies on unmodified folder structure inside the runs directory! */
 uint32_t Data_countRuns(void);
 
-/** Counts the run measurement entries of a given run. */
-uint32_t Data_countRunMeasurements(uint32_t runIndex);
+/**
+ * @brief Counts the run measurement entries of a given run.
+ *
+ * @param runName Name of the run you want to read from the SD card
+ * @return uint32_t The available measurements for the given run
+ */
+uint32_t Data_countRunMeasurements(char* runName);
 
 /**
- * Reads out the run on the given index.
- * Index is dependent on the order of the files, so if the naming is different from the creation order, it won't take in
- * a chronological order! */
-uint8_t Data_readRun(uint32_t runIndex, Data_Run* run);
+ * @brief Reads out the run with the given name. If the run doesn't exist, it returns `0`.
+ *
+ * @param runName Name of the run you want to read from the SD card
+ * @param run The object where the result is loaded into
+ * @return `1` if the run exists and the read was successful, `0` if something went wrong
+ */
+uint8_t Data_readRun(char* runName, Data_Run* run);
 
 /**
- * Loads a measurement value from a run on the given index using the measurement index.
- * Measurements are stored in one file and the order of the measurement defines the indexed position! */
-uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Data_RunMeasurement* measurement);
-uint8_t Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page);
+ * @brief Reads the available runs using a page object. Before you call the method, set the `startIndex`. If you want to
+ * go through all runs, call this method recursively and increment the `startIndex` every time with the page size until
+ * the `endOfList` variable becomes `1`. Rely on the `resultSize` variable whenever you read out the result!
+ *
+ * @param page
+ * @return uint8_t `1` if the read was successful, `0` if something went wrong
+ */
+uint8_t Data_readRuns(Data_RunPage* page);
+
+/**
+ * @brief Loads a measurement value from a run with the given name using the measurement index. Measurements are stored
+ * in one file and the order of the measurement defines the indexed position!
+ *
+ * @param runName Name of the run you want to read from the SD card
+ * @param measurementIndex Index of the measurement, depends on the order in the file
+ * @param measurement The object where the function will load the result into, if the read suceeded
+ * @return uint8_t `1` if the read was successful, `0` if something went wrong
+ */
+uint8_t Data_readRunMeasurement(char* runName, uint32_t measurementIndex, Data_RunMeasurement* measurement);
+uint8_t Data_readRunMeasurements(char* runName, Data_RunMeasurementPage* page);
 uint8_t Data_storeRun(Data_Run* run);
 uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement);
-uint8_t Data_deleteRun(uint32_t runIndex);
+uint8_t Data_deleteRun(char* runName);
+Data_Statistics* Data_getStatistics();
 
 #endif

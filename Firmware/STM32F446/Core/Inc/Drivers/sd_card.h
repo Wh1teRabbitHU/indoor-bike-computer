@@ -9,7 +9,7 @@
 #define SDCARD_END_OF_SCAN(fileInfo) (fileInfo.fname[0] == 0)
 #define SDCARD_IS_DIRECTORY(fileInfo) (fileInfo.fattrib & AM_DIR)
 
-#define SDCARD_DIR_PAGE_SIZE 10
+#define SDCARD_DIR_PAGE_SIZE 4
 #define SDCARD_CONTENT_PAGE_SIZE 10
 #define SDCARD_MAX_LINE_SIZE 127
 #define SDCARD_MAX_FILE_NAME_SIZE _MAX_LFN
@@ -51,9 +51,9 @@ typedef struct SDCard_FSItem {
 } SDCard_FSItem;
 
 typedef struct SDCard_DirPage {
-    SDCard_DirReadMode readMode;
+    SDCard_DirReadMode readMode;  // Need to be defined
+    uint32_t startIndex;          // Need to be defined
     SDCard_FSItem items[SDCARD_DIR_PAGE_SIZE];
-    uint32_t startIndex;
     uint8_t resultSize;
     uint8_t endOfDir;
 } SDCard_DirPage;

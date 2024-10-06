@@ -3,14 +3,12 @@
 const char* attrSeparator = ";";
 static Data_Statistics statistics = {0};
 
-PRIVATE void Data_runPath(char* pathBuffer, const uint32_t runIndex) {
-    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUN_NAME_PREFIX, runIndex,
-            DATA_RUN_SUMMARY_FILENAME);
+PRIVATE void Data_runPath(char* pathBuffer, const char* name) {
+    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, name, DATA_RUN_SUMMARY_FILENAME);
 }
 
-PRIVATE void Data_measurementsPath(char* pathBuffer, const uint32_t runIndex) {
-    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUN_NAME_PREFIX, runIndex,
-            DATA_RUN_MEASUREMENTS_FILENAME);
+PRIVATE void Data_measurementsPath(char* pathBuffer, const char* name) {
+    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, name, DATA_RUN_MEASUREMENTS_FILENAME);
 }
 
 PRIVATE void Data_parseRun(char* data, Data_Run* run) {
@@ -148,12 +146,11 @@ uint32_t Data_countRuns(void) {
     return stats.folders;
 }
 
-uint32_t Data_countRunMeasurements(uint32_t runIndex) {
+uint32_t Data_countRunMeasurements(char* runName) {
     FRESULT result;
     char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
 
-    sprintf(pathBuffer, "%s/%s%05lu/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUN_NAME_PREFIX, runIndex,
-            DATA_RUN_MEASUREMENTS_FILENAME);
+    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, runName, DATA_RUN_MEASUREMENTS_FILENAME);
 
     result = SDCard_mount("/");
 
@@ -169,7 +166,7 @@ uint32_t Data_countRunMeasurements(uint32_t runIndex) {
     return statistics.lines;
 }
 
-uint8_t Data_readRun(uint32_t runIndex, Data_Run* run) {
+uint8_t Data_readRun(char* runName, Data_Run* run) {
     FRESULT result;
     char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
     char data[SDCARD_MAX_LINE_SIZE] = {0};
@@ -180,7 +177,7 @@ uint8_t Data_readRun(uint32_t runIndex, Data_Run* run) {
         return 0;
     }
 
-    Data_runPath(pathBuffer, runIndex);
+    Data_runPath(pathBuffer, runName);
 
     if (!SDCard_pathExists(pathBuffer)) {
         return 0;
@@ -198,7 +195,34 @@ uint8_t Data_readRun(uint32_t runIndex, Data_Run* run) {
     return 1;
 }
 
-uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Data_RunMeasurement* measurement) {
+uint8_t Data_readRuns(Data_RunPage* page) {
+    FRESULT result = SDCard_mount("/");
+
+    if (result != FR_OK) {
+        return 0;
+    }
+
+    SDCard_DirPage dirPage = {.startIndex = page->startIndex, .readMode = SDCARD_DIR_READMODE_ONLY_DIRECTORIES};
+
+    result = SDCard_readDirectory(DATA_RUNS_DIRECTORY_PATH, &dirPage);
+
+    SDCard_unmount("/");
+
+    if (result != FR_OK) {
+        return 0;
+    }
+
+    for (uint8_t i = 0; i < SDCARD_DIR_PAGE_SIZE; i++) {
+        page->runs[i] = dirPage.items[i].name;
+    }
+
+    page->resultSize = dirPage.resultSize;
+    page->endOfList = dirPage.endOfDir;
+
+    return 1;
+}
+
+uint8_t Data_readRunMeasurement(char* runName, uint32_t measurementIndex, Data_RunMeasurement* measurement) {
     FRESULT result;
     char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
     char line[SDCARD_MAX_LINE_SIZE] = {0};
@@ -209,7 +233,7 @@ uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Da
         return 0;
     }
 
-    Data_measurementsPath(pathBuffer, runIndex);
+    Data_measurementsPath(pathBuffer, runName);
 
     if (!SDCard_pathExists(pathBuffer)) {
         SDCard_unmount("/");
@@ -228,7 +252,7 @@ uint8_t Data_readRunMeasurement(uint32_t runIndex, uint32_t measurementIndex, Da
     return 1;
 }
 
-uint8_t Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* page) {
+uint8_t Data_readRunMeasurements(char* runName, Data_RunMeasurementPage* page) {
     FRESULT result;
     char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
 
@@ -238,7 +262,7 @@ uint8_t Data_readRunMeasurements(uint32_t runIndex, Data_RunMeasurementPage* pag
         return 0;
     }
 
-    Data_measurementsPath(pathBuffer, runIndex);
+    Data_measurementsPath(pathBuffer, runName);
 
     if (!SDCard_pathExists(pathBuffer)) {
         SDCard_unmount("/");
@@ -322,4 +346,6 @@ uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement
     return result == FR_OK ? 1 : 0;
 }
 
-uint8_t Data_deleteRun(uint32_t runIndex) { return 1; }
+uint8_t Data_deleteRun(char* runName) { return 1; }
+
+Data_Statistics* Data_getStatistics() { return &statistics; }

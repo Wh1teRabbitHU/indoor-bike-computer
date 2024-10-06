@@ -2,6 +2,7 @@
 #define __TABVIEW_MAIN_TAB_HISTORY_H_
 
 #include "data.h"
+#include "list_run_details.h"
 #include "macros.h"
 #include "state-handler.h"
 #include "stdio.h"
