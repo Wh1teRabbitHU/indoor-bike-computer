@@ -74,7 +74,7 @@ PRIVATE void TabView_Main_TabLevel_stepIn() {
             TabView_Main_Tab_Live_stepIn();
             break;
         case TABVIEW_MAIN_TAB_HISTORY:
-            // TODO
+            TabView_Main_Tab_History_stepIn();
             break;
         case TABVIEW_MAIN_TAB_SETTINGS:
             // TODO
@@ -92,7 +92,7 @@ PRIVATE void TabView_Main_TabLevel_stepOut() {
             TabView_Main_Tab_Live_stepOut();
             break;
         case TABVIEW_MAIN_TAB_HISTORY:
-            // TODO
+            TabView_Main_Tab_History_stepOut();
             break;
         case TABVIEW_MAIN_TAB_SETTINGS:
             // TODO
@@ -108,7 +108,7 @@ PRIVATE void TabView_Main_TabLevel_execute() {
             TabView_Main_Tab_Live_execute();
             break;
         case TABVIEW_MAIN_TAB_HISTORY:
-            // TODO
+            TabView_Main_Tab_History_execute();
             break;
         case TABVIEW_MAIN_TAB_SETTINGS:
             // TODO
@@ -122,7 +122,7 @@ PRIVATE void TabView_Main_TabLevel_handlePrev() {
             TabView_Main_Tab_Live_handlePrev();
             break;
         case TABVIEW_MAIN_TAB_HISTORY:
-            // TODO
+            TabView_Main_Tab_History_handlePrev();
             break;
         case TABVIEW_MAIN_TAB_SETTINGS:
             // TODO
@@ -136,7 +136,7 @@ PRIVATE void TabView_Main_TabLevel_handleNext() {
             TabView_Main_Tab_Live_handleNext();
             break;
         case TABVIEW_MAIN_TAB_HISTORY:
-            // TODO
+            TabView_Main_Tab_History_handleNext();
             break;
         case TABVIEW_MAIN_TAB_SETTINGS:
             // TODO
@@ -186,10 +186,20 @@ void TabView_Main_update() {
         TabView_Main_setActiveTab(activeTab);
     }
 
-    TabView_Main_updateTabLive();
+    switch (activeTab) {
+        case TABVIEW_MAIN_TAB_LIVE:
+            TabView_Main_updateTabLive();
+            break;
+        case TABVIEW_MAIN_TAB_HISTORY:
+            // Do nothing
+            break;
+        case TABVIEW_MAIN_TAB_SETTINGS:
+            // Do nothing
+            break;
+    }
 
     if (State_Global_get()->updateLevel) {
-        // Change the tab based on the level
+        // Change the tab height based on the level
         int32_t tabViewHeight = activeTabLevel == TABVIEW_MAIN_TABLEVEL_TAB ? GUI_TABVIEW_TAB_HEIGHT : 0;
 
         lv_tabview_set_tab_bar_size(mainTabView.tabView, tabViewHeight);

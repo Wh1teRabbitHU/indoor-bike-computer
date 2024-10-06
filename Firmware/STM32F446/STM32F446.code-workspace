@@ -34,7 +34,9 @@
 			"stoptimer.h": "c",
 			"main.h": "c",
 			"data.h": "c",
-			"state-handler.h": "c"
+			"state-handler.h": "c",
+			"tabview_main_tab_history.h": "c",
+			"box_measurement.h": "c"
 		}
 	}
 }

@@ -125,10 +125,13 @@ void TabView_Main_Tab_Live_updateTimer(char* time) { LabelTimer_setValue(&timerL
 
 void TabView_Main_Tab_Live_updateControl(void) { ControlLive_updateState(&controlLive); }
 
-void TabView_Main_Tab_Live_stepIn() {}
-void TabView_Main_Tab_Live_stepOut() {}
+void TabView_Main_Tab_Live_stepIn() {
+    // Do nothing
+}
+void TabView_Main_Tab_Live_stepOut() {
+    // Do nothing
+}
 
-// Control handlers
 void TabView_Main_Tab_Live_execute(void) {
     switch (controlLive.selected) {
         case CONTROLLIVE_START:

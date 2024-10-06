@@ -4,6 +4,7 @@
 #include "lvgl.h"
 #include "macros.h"
 #include "state-handler.h"
+#include "tabview_main_tab_history.h"
 #include "tabview_main_tab_live.h"
 
 #define GUI_TABVIEW_TAB_COUNT 3
