@@ -1,9 +1,57 @@
 #include "box_run_details.h"
 
-BoxRunDetails BoxRunDetails_create(BoxRunDetails_Config* config) {
-    // TODO
+const static char* loading = "Loading...";
+static char textBuffer[64] = {0};
 
+BoxRunDetails BoxRunDetails_create(BoxRunDetails_Config* config) {
     BoxRunDetails runDetails = {0};
+
+    lv_obj_t* box = lv_obj_create(config->screen);
+
+    lv_obj_set_width(box, BUX_RUN_DETAILS_WIDTH);
+    lv_obj_set_height(box, BUX_RUN_DETAILS_HEIGHT);
+    lv_obj_set_pos(box, config->x, config->y);
+    lv_obj_set_style_pad_all(box, 5, LV_PART_MAIN);
+
+    lv_obj_t* nameLabel = lv_label_create(box);
+
+    lv_obj_set_style_text_color(nameLabel, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_align(nameLabel, LV_ALIGN_TOP_LEFT, 0, 0);
+    lv_obj_set_width(nameLabel, 140);
+    lv_obj_set_style_text_align(nameLabel, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
+    lv_label_set_long_mode(nameLabel, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_label_set_text(nameLabel, loading);
+
+    lv_obj_t* createdLabel = lv_label_create(box);
+
+    lv_obj_set_style_text_color(createdLabel, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_align(createdLabel, LV_ALIGN_TOP_RIGHT, 0, 0);
+    lv_obj_set_width(createdLabel, 140);
+    lv_obj_set_style_text_align(createdLabel, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
+    lv_label_set_long_mode(createdLabel, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_label_set_text(createdLabel, loading);
+
+    lv_obj_t* sessionLengthLabel = lv_label_create(box);
+
+    lv_obj_set_style_text_color(sessionLengthLabel, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_align(sessionLengthLabel, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+    lv_obj_set_width(sessionLengthLabel, 140);
+    lv_obj_set_style_text_align(sessionLengthLabel, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
+    lv_label_set_text(sessionLengthLabel, loading);
+
+    lv_obj_t* distanceLabel = lv_label_create(box);
+
+    lv_obj_set_style_text_color(distanceLabel, lv_color_hex(0x000000), LV_PART_MAIN);
+    lv_obj_align(distanceLabel, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
+    lv_obj_set_width(distanceLabel, 140);
+    lv_obj_set_style_text_align(distanceLabel, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
+    lv_label_set_text(distanceLabel, loading);
+
+    runDetails.box = box;
+    runDetails.nameLabel = nameLabel;
+    runDetails.createdLabel = createdLabel;
+    runDetails.sessionLengthLabel = sessionLengthLabel;
+    runDetails.distanceLabel = distanceLabel;
 
     return runDetails;
 }
@@ -13,9 +61,25 @@ void BoxRunDetails_changeSelection(BoxRunDetails* instance, uint8_t selected) {
 }
 
 void BoxRunDetails_setRun(BoxRunDetails* instance, Data_Run* run) {
-    // TODO
+    lv_label_set_text(instance->nameLabel, run->name);
+    lv_label_set_text(instance->createdLabel, run->created);
+
+    uint8_t seconds = 0, minutes = 0, hours = 0;
+
+    seconds = run->sessionLength % 60;
+    minutes = (run->sessionLength / 60) % 60;
+    hours = (run->sessionLength / 60 / 60) % 60;
+
+    sprintf(textBuffer, "%02d:%02d:%02d", hours, minutes, seconds);
+    lv_label_set_text(instance->sessionLengthLabel, textBuffer);
+
+    sprintf(textBuffer, "%lum", run->distance / 100);
+    lv_label_set_text(instance->distanceLabel, textBuffer);
 }
 
 void BoxRunDetails_clearRun(BoxRunDetails* instance) {
-    // TODO
+    lv_label_set_text(instance->nameLabel, "run_?????");
+    lv_label_set_text(instance->createdLabel, "????-??-?? ??:??:??");
+    lv_label_set_text(instance->sessionLengthLabel, "??:??:??");
+    lv_label_set_text(instance->distanceLabel, "????m");
 }

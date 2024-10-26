@@ -17,5 +17,6 @@ void TabView_Main_Tab_History_stepOut(void);
 void TabView_Main_Tab_History_execute(void);
 void TabView_Main_Tab_History_handlePrev(void);
 void TabView_Main_Tab_History_handleNext(void);
+void TabView_Main_Tab_History_update(void);
 
 #endif

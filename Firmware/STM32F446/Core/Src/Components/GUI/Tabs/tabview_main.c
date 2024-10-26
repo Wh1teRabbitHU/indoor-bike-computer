@@ -13,10 +13,6 @@ PRIVATE void TabView_Main_setActiveTab(TabView_Main_Tab_t tab) {
 }
 
 PRIVATE void TabView_Main_updateTabLive() {
-    if (activeTab != TABVIEW_MAIN_TAB_LIVE) {
-        return;
-    }
-
     State_Live* state = State_Live_get();
 
     TabView_Main_Tab_Live_updateDifficulty(state->difficulty);
@@ -29,6 +25,8 @@ PRIVATE void TabView_Main_updateTabLive() {
 
     state->updateChart = 0;
 }
+
+PRIVATE void TabView_Main_updateTabHistory() { TabView_Main_Tab_History_update(); }
 
 PRIVATE TabView_Main TabView_Main_create(TabView_Main_Config* config) {
     TabView_Main tabInstance = {.tabs = {0}};
@@ -152,9 +150,10 @@ void TabView_Main_init(TabView_Main_Config* config) {
     TabView_Main_setActiveTab(activeTab);
 
     lv_obj_t* tabLiveObj = mainTabView.tabs[TABVIEW_MAIN_TAB_LIVE];
+    lv_obj_t* tabHistoryObj = mainTabView.tabs[TABVIEW_MAIN_TAB_HISTORY];
 
     TabView_Main_Tab_Live_Config tabLiveConfig = {.tab = tabLiveObj};
-    TabView_Main_Tab_History_Config tabHistoryConfig = {.tab = tabLiveObj};
+    TabView_Main_Tab_History_Config tabHistoryConfig = {.tab = tabHistoryObj};
 
     TabView_Main_Tab_Live_init(&tabLiveConfig);
     TabView_Main_Tab_History_init(&tabHistoryConfig);
@@ -194,7 +193,7 @@ void TabView_Main_update() {
             TabView_Main_updateTabLive();
             break;
         case TABVIEW_MAIN_TAB_HISTORY:
-            // Do nothing
+            TabView_Main_updateTabHistory();
             break;
         case TABVIEW_MAIN_TAB_SETTINGS:
             // Do nothing

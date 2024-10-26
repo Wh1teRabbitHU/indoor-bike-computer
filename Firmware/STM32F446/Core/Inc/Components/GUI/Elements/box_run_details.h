@@ -4,16 +4,16 @@
 #include "data.h"
 #include "lvgl.h"
 
+#define BUX_RUN_DETAILS_WIDTH 300
+#define BUX_RUN_DETAILS_HEIGHT 50
+#define BUX_RUN_DETAILS_MARGIN 5
+
 typedef struct BoxRunDetails {
     lv_obj_t* box;
     lv_obj_t* nameLabel;
     lv_obj_t* createdLabel;
     lv_obj_t* sessionLengthLabel;
     lv_obj_t* distanceLabel;
-    lv_obj_t* avgDifficultyLabel;
-    lv_obj_t* avgSpeedLabel;
-    lv_obj_t* avgRpmLabel;
-    lv_obj_t* avgBpmLabel;
 } BoxRunDetails;
 
 typedef struct BoxRunDetails_Config {

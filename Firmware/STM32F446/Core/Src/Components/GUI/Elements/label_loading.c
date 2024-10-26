@@ -29,6 +29,26 @@ LabelLoading LabelLoading_create(LabelLoading_Config* config) {
     return loadingInstance;
 }
 
-void LabelLoading_show(LabelLoading* instance) { lv_obj_clear_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN); }
+void LabelLoading_show(LabelLoading* instance) {
+    instance->visible = 1;
+    instance->updated = 0;
+}
 
-void LabelLoading_hide(LabelLoading* instance) { lv_obj_add_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN); }
+void LabelLoading_hide(LabelLoading* instance) {
+    instance->visible = 0;
+    instance->updated = 0;
+}
+
+void LabelLoading_update(LabelLoading* instance) {
+    if (instance->updated) {
+        return;
+    }
+
+    if (instance->visible) {
+        lv_obj_clear_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        lv_obj_add_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN);
+    }
+
+    instance->updated = 1;
+}

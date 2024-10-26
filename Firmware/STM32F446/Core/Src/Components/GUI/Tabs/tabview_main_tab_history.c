@@ -10,7 +10,7 @@ void TabView_Main_Tab_History_init(TabView_Main_Tab_History_Config* config) {
 
 void TabView_Main_Tab_History_stepIn(void) { ListRunDetails_loadRuns(&runDetails); }
 
-void TabView_Main_Tab_History_stepOut(void) { ListRunDetails_clearRuns(&runDetails); }
+void TabView_Main_Tab_History_stepOut(void) { ListRunDetails_clearRuns(); }
 
 void TabView_Main_Tab_History_execute(void) {
     // Do nothing
@@ -19,3 +19,5 @@ void TabView_Main_Tab_History_execute(void) {
 void TabView_Main_Tab_History_handlePrev(void) { ListRunDetails_selectPrev(&runDetails); }
 
 void TabView_Main_Tab_History_handleNext(void) { ListRunDetails_selectNext(&runDetails); }
+
+void TabView_Main_Tab_History_update(void) { ListRunDetails_update(&runDetails); }
