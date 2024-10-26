@@ -213,7 +213,7 @@ uint8_t Data_readRuns(Data_RunPage* page) {
     }
 
     for (uint8_t i = 0; i < SDCARD_DIR_PAGE_SIZE; i++) {
-        page->runs[i] = dirPage.items[i].name;
+        strcpy(page->runs[i], dirPage.items[i].name);
     }
 
     page->resultSize = dirPage.resultSize;

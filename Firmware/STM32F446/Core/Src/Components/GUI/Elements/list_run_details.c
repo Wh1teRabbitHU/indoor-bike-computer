@@ -54,7 +54,7 @@ void ListRunDetails_selectNext(ListRunDetails* instance) {
     uint32_t endRunIndex = currentRunIndex + LIST_RUN_DETAILS_MAX_RUN_COUNT;
     uint32_t runCounts = Data_countRuns();
 
-    if (runCounts == 0 || endRunIndex >= (runCounts - 1)) {
+    if (runCounts == 0 || endRunIndex > (runCounts - 1)) {
         LabelLoading_hide(&instance->loadingLabel);
         return;
     }

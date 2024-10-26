@@ -438,7 +438,7 @@ FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *st
     statistics->files = 0;
     statistics->folders = 0;
 
-    for (uint8_t i = 0; i < SDCARD_DIR_PAGE_SIZE; i++) {
+    while (1) {
         result = f_readdir(&dir, &fileInfo);
 
         if (result != FR_OK) {

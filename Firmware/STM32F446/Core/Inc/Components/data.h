@@ -53,7 +53,7 @@ typedef struct Data_Run {
 } Data_Run;
 
 typedef struct Data_RunPage {
-    char* runs[DATA_RUNS_PAGE_SIZE];
+    char runs[DATA_RUNS_PAGE_SIZE][DATA_RUN_NAME_MAX_LENGTH];
     uint32_t startIndex;
     uint8_t resultSize;
     uint8_t endOfList;
