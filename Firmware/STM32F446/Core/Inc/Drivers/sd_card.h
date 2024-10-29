@@ -74,7 +74,7 @@ FRESULT SDCard_checkCapacity(SDCard_Capacity *capacity);
 uint8_t SDCard_pathExists(char *path);
 FRESULT SDCard_createDirectory(char *name);
 FRESULT SDCard_createFile(char *name);
-FRESULT SDCard_removeFile(char *name);
+FRESULT SDCard_removeItem(char *name);
 FRESULT SDCard_removeFiles(void);
 FRESULT SDCard_readFile(char *name, char *readBuffer, uint32_t readLength);
 FRESULT SDCard_writeFile(char *name, char *data);

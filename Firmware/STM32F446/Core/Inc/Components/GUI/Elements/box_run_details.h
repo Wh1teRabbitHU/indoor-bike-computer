@@ -4,9 +4,9 @@
 #include "data.h"
 #include "lvgl.h"
 
-#define BUX_RUN_DETAILS_WIDTH 300
-#define BUX_RUN_DETAILS_HEIGHT 50
-#define BUX_RUN_DETAILS_MARGIN 5
+#define BOX_RUN_DETAILS_WIDTH 320
+#define BOX_RUN_DETAILS_HEIGHT 76
+#define BOX_RUN_DETAILS_MARGIN 5
 
 typedef struct BoxRunDetails {
     lv_obj_t* box;

@@ -5,6 +5,7 @@
 #include "sd_card.h"
 
 #define DATA_RUNS_DIRECTORY_PATH "/indoor-bike/runs"
+#define DATA_RUNS_STATISTICS_FILENAME "statistics.txt"
 #define DATA_RUN_SUMMARY_FILENAME "summary.txt"
 #define DATA_RUN_MEASUREMENTS_FILENAME "measurements.txt"
 #define DATA_RUN_NAME_PREFIX "run_"
@@ -12,6 +13,13 @@
 #define DATA_RUN_TIMESTAMP_LENGTH 19
 #define DATA_RUNS_PAGE_SIZE SDCARD_DIR_PAGE_SIZE
 #define DATA_MEASUREMENTS_PAGE_SIZE SDCARD_CONTENT_PAGE_SIZE
+
+typedef enum Data_StatisticsAttr_t {
+    DATA_STATISTICS_ATTR_RUNS = 0,
+    DATA_STATISTICS_ATTR_SESSION_LENGTH = 1,
+    DATA_STATISTICS_ATTR_DISTANCE_SUM = 2,
+    DATA_STATISTICS_ATTR_UNKNOWN = 3,
+} Data_StatisticsAttr_t;
 
 typedef enum Data_RunAttr_t {
     DATA_RUN_ATTR_NAME = 0,
@@ -35,9 +43,10 @@ typedef enum Data_MeasurementAttr_t {
 } Data_MeasurementAttr_t;
 
 typedef struct Data_Statistics {
-    uint32_t runs;            // Run count
-    uint32_t sessionsLength;  // In seconds
-    uint32_t distanceSum;     // In meters
+    uint32_t runs;            // Run count, maximum 10 digits (4 294 967 295 runs)
+    uint32_t sessionsLength;  // In seconds, maximum 10 digits (4 294 967 295 seconds, 71 582 788 min, 1 193 046 hours,
+                              // 49 710 days, 136 years)
+    uint32_t distanceSum;     // In meters, maximum 10 digits (4 294 967 295 m, 4 294 967 km)
 } Data_Statistics;
 
 // Max data length: 53
@@ -92,6 +101,17 @@ uint32_t Data_countRuns(void);
 uint32_t Data_countRunMeasurements(char* runName);
 
 /**
+ * @brief This method is reading the stored statistics of all time runs, including roun count, distance and length. The
+ * result is stored internally in the module and can be accessed with the `Data_getStatistics` method after
+ * initialization.
+ *
+ * @return uint8_t `1` if the data load was successful
+ */
+uint8_t Data_loadStatistics();
+
+uint8_t Data_saveStatistics();
+
+/**
  * @brief Reads out the run with the given name. If the run doesn't exist, it returns `0`.
  *
  * @param runName Name of the run you want to read from the SD card
@@ -123,7 +143,9 @@ uint8_t Data_readRunMeasurement(char* runName, uint32_t measurementIndex, Data_R
 uint8_t Data_readRunMeasurements(char* runName, Data_RunMeasurementPage* page);
 uint8_t Data_storeRun(Data_Run* run);
 uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement);
-uint8_t Data_deleteRun(char* runName);
+uint8_t Data_deleteRun(Data_Run* run);
+uint8_t Data_addRunToStatistics(Data_Run* run);
+uint8_t Data_removeRunToStatistics(Data_Run* run);
 Data_Statistics* Data_getStatistics();
 
 #endif

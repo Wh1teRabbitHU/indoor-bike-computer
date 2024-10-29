@@ -121,7 +121,7 @@ FRESULT SDCard_createFile(char *name) {
     return result;
 }
 
-FRESULT SDCard_removeFile(char *name) {
+FRESULT SDCard_removeItem(char *name) {
     FILINFO fileInfo;
     /**** check whether the file exists or not ****/
     FRESULT result = f_stat(name, &fileInfo);

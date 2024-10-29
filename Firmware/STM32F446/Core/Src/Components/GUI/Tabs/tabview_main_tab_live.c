@@ -41,21 +41,23 @@ PRIVATE void TabView_Main_Tab_Live_executePause() {
 }
 
 PRIVATE void TabView_Main_Tab_Live_executeEnd() {
+    // TODO: Confirm the decision with the user
+
+    Data_Run* run = &State_Live_get()->liveRun;
+
     Stoptimer_stop();
     State_Live_stop();
-    // TODO: Handle finishing the current session:
-    // TODO: Confirm the decision with the user
-    // TODO: Reset state - Done
-    // TODO: Update screen? - Done
+    Data_addRunToStatistics(run);
 }
 
 PRIVATE void TabView_Main_Tab_Live_executeReset() {
+    // TODO: Confirm the decision with the user
+
+    Data_Run* run = &State_Live_get()->liveRun;
+
     Stoptimer_stop();
     State_Live_stop();
-    // TODO: Handle reseting the current session:
-    // TODO: Confirm the decision with the user
-    // TODO: Reset state - Done
-    // TODO: Update screen? - Done
+    Data_deleteRun(run);
 }
 
 void TabView_Main_Tab_Live_init(TabView_Main_Tab_Live_Config* config) {

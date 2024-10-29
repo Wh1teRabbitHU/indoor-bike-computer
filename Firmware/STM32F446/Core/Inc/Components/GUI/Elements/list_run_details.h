@@ -18,6 +18,8 @@ typedef struct ListRunDetails_Config {
 } ListRunDetails_Config;
 
 ListRunDetails ListRunDetails_create(ListRunDetails_Config* config);
+
+void ListRunDetails_init();
 void ListRunDetails_loadRuns(ListRunDetails* instance);
 void ListRunDetails_clearRuns();
 void ListRunDetails_selectPrev(ListRunDetails* instance);

@@ -51,6 +51,31 @@ PRIVATE void Data_parseRun(char* data, Data_Run* run) {
     }
 }
 
+PRIVATE void Data_parseStatistics(char* data) {
+    Data_StatisticsAttr_t attrPointer = 0;
+    char* attr = strtok(data, attrSeparator);
+    char* endptr;
+
+    while (attr != NULL) {
+        switch (attrPointer) {
+            case DATA_STATISTICS_ATTR_RUNS:
+                statistics.runs = strtol(attr, &endptr, 10);
+                break;
+            case DATA_STATISTICS_ATTR_SESSION_LENGTH:
+                statistics.sessionsLength = strtol(attr, &endptr, 10);
+                break;
+            case DATA_STATISTICS_ATTR_DISTANCE_SUM:
+                statistics.distanceSum = strtol(attr, &endptr, 10);
+                break;
+            case DATA_STATISTICS_ATTR_UNKNOWN:
+                return;
+        }
+
+        attr = strtok(NULL, attrSeparator);
+        attrPointer++;
+    }
+}
+
 PRIVATE void Data_parseMeasurement(char* data, Data_RunMeasurement* measurement) {
     Data_MeasurementAttr_t attrPointer = 0;
     char* attr = strtok(data, attrSeparator);
@@ -107,17 +132,15 @@ uint8_t Data_initStorage() {
     SDCard_directoryStatistics(DATA_RUNS_DIRECTORY_PATH, &stats);
     SDCard_unmount("/");
 
-    statistics.runs = stats.folders;
-
     return 1;
 }
 
 void Data_initRun(Data_Run* run) {
     char nameBuffer[DATA_RUN_NAME_MAX_LENGTH] = {0};
 
-    statistics.runs++;
+    // TODO: get the last run's name
 
-    sprintf(nameBuffer, "%s%05lu", DATA_RUN_NAME_PREFIX, statistics.runs);
+    sprintf(nameBuffer, "%s%05lu", DATA_RUN_NAME_PREFIX, statistics.runs + 1);
 
     strcpy(run->name, nameBuffer);
     strcpy(run->created, "2024-01-01 10:10:10");
@@ -164,6 +187,62 @@ uint32_t Data_countRunMeasurements(char* runName) {
     SDCard_unmount("/");
 
     return statistics.lines;
+}
+
+uint8_t Data_loadStatistics() {
+    FRESULT result;
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+    char dataBuffer[32] = {0};
+
+    sprintf(pathBuffer, "%s/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUNS_STATISTICS_FILENAME);
+
+    result = SDCard_mount("/");
+
+    if (result != FR_OK) {
+        return 0;
+    }
+
+    if (!SDCard_pathExists(pathBuffer)) {
+        result = SDCard_appendFile(pathBuffer, "0;0;0");
+
+        if (result != FR_OK) {
+            SDCard_unmount("/");
+            return 0;
+        }
+    }
+
+    result = SDCard_readFile(pathBuffer, dataBuffer, 32);
+    SDCard_unmount("/");
+
+    if (result != FR_OK) {
+        return 0;
+    }
+
+    Data_parseStatistics(dataBuffer);
+
+    return 1;
+}
+
+uint8_t Data_saveStatistics() {
+    FRESULT result;
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+    char dataBuffer[32] = {0};
+
+    sprintf(pathBuffer, "%s/%s", DATA_RUNS_DIRECTORY_PATH, DATA_RUNS_STATISTICS_FILENAME);
+
+    result = SDCard_mount("/");
+
+    if (result != FR_OK) {
+        return 0;
+    }
+
+    sprintf(dataBuffer, "%lu;%lu;%lu", statistics.runs, statistics.sessionsLength, statistics.distanceSum);
+
+    result = SDCard_writeFile(pathBuffer, dataBuffer);
+
+    SDCard_unmount("/");
+
+    return result == FR_OK ? 1 : 0;
 }
 
 uint8_t Data_readRun(char* runName, Data_Run* run) {
@@ -346,6 +425,59 @@ uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement
     return result == FR_OK ? 1 : 0;
 }
 
-uint8_t Data_deleteRun(char* runName) { return 1; }
+uint8_t Data_deleteRun(Data_Run* run) {
+    FRESULT result;
+    char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+
+    result = SDCard_mount("/");
+
+    if (result != FR_OK) {
+        return 0;
+    }
+
+    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUN_SUMMARY_FILENAME);
+    result = SDCard_removeItem(pathBuffer);
+
+    if (result != FR_OK) {
+        SDCard_unmount("/");
+        return 0;
+    }
+
+    sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUN_MEASUREMENTS_FILENAME);
+    result = SDCard_removeItem(pathBuffer);
+
+    if (result != FR_OK) {
+        SDCard_unmount("/");
+        return 0;
+    }
+
+    sprintf(pathBuffer, "%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name);
+    result = SDCard_removeItem(pathBuffer);
+
+    if (result != FR_OK) {
+        SDCard_unmount("/");
+        return 0;
+    }
+
+    SDCard_unmount("/");
+
+    return 1;
+}
+
+uint8_t Data_addRunToStatistics(Data_Run* run) {
+    statistics.runs++;
+    statistics.sessionsLength += run->sessionLength;
+    statistics.distanceSum += run->distance;
+
+    return Data_saveStatistics();
+}
+
+uint8_t Data_removeRunToStatistics(Data_Run* run) {
+    statistics.runs--;
+    statistics.sessionsLength -= run->sessionLength;
+    statistics.distanceSum -= run->distance;
+
+    return Data_saveStatistics();
+}
 
 Data_Statistics* Data_getStatistics() { return &statistics; }

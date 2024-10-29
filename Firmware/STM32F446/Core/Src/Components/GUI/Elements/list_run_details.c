@@ -9,16 +9,22 @@ ListRunDetails ListRunDetails_create(ListRunDetails_Config* listConfig) {
 
     LabelLoading_Config loadingLabelConfig = {.screen = listConfig->screen, .bgColor = 0x77EEE6};
 
-    runDetails.loadingLabel = LabelLoading_create(&loadingLabelConfig);
-
     for (uint8_t i = 0; i < LIST_RUN_DETAILS_MAX_RUN_COUNT; i++) {
-        int32_t x = 5, y = 5 + (i * (BUX_RUN_DETAILS_HEIGHT + BUX_RUN_DETAILS_MARGIN));
+        int32_t x = 5, y = 5 + (i * (BOX_RUN_DETAILS_HEIGHT + BOX_RUN_DETAILS_MARGIN));
         BoxRunDetails_Config config = {.screen = listConfig->screen, .x = x, .y = y};
 
         runDetails.boxes[i] = BoxRunDetails_create(&config);
     }
 
+    runDetails.loadingLabel = LabelLoading_create(&loadingLabelConfig);
+
     return runDetails;
+}
+
+void ListRunDetails_init() {
+    uint32_t maxRuns = Data_getStatistics()->runs;
+
+    currentRunIndex = maxRuns - LIST_RUN_DETAILS_MAX_RUN_COUNT;
 }
 
 void ListRunDetails_loadRuns(ListRunDetails* instance) {
@@ -28,7 +34,7 @@ void ListRunDetails_loadRuns(ListRunDetails* instance) {
     Data_readRuns(&page);
 
     for (uint8_t i = 0; i < page.resultSize; i++) {
-        Data_readRun(page.runs[i], &runs[i]);
+        Data_readRun(page.runs[i], &runs[page.resultSize - i - 1]);
     }
 
     clearRuns = 0;
@@ -39,16 +45,6 @@ void ListRunDetails_loadRuns(ListRunDetails* instance) {
 void ListRunDetails_clearRuns() { clearRuns = 1; }
 
 void ListRunDetails_selectPrev(ListRunDetails* instance) {
-    if (currentRunIndex == 0) {
-        return;
-    }
-
-    currentRunIndex--;
-
-    ListRunDetails_loadRuns(instance);
-}
-
-void ListRunDetails_selectNext(ListRunDetails* instance) {
     LabelLoading_show(&instance->loadingLabel);
 
     uint32_t endRunIndex = currentRunIndex + LIST_RUN_DETAILS_MAX_RUN_COUNT;
@@ -60,6 +56,16 @@ void ListRunDetails_selectNext(ListRunDetails* instance) {
     }
 
     currentRunIndex++;
+
+    ListRunDetails_loadRuns(instance);
+}
+
+void ListRunDetails_selectNext(ListRunDetails* instance) {
+    if (currentRunIndex == 0) {
+        return;
+    }
+
+    currentRunIndex--;
 
     ListRunDetails_loadRuns(instance);
 }

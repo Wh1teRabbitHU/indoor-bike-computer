@@ -50,5 +50,5 @@ void LabelLoading_update(LabelLoading* instance) {
         lv_obj_add_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN);
     }
 
-    instance->updated = 1;
+    // instance->updated = 1;
 }

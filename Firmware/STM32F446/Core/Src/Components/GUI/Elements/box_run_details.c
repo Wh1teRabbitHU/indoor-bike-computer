@@ -8,27 +8,26 @@ BoxRunDetails BoxRunDetails_create(BoxRunDetails_Config* config) {
 
     lv_obj_t* box = lv_obj_create(config->screen);
 
-    lv_obj_set_width(box, BUX_RUN_DETAILS_WIDTH);
-    lv_obj_set_height(box, BUX_RUN_DETAILS_HEIGHT);
+    lv_obj_set_width(box, BOX_RUN_DETAILS_WIDTH);
+    lv_obj_set_height(box, BOX_RUN_DETAILS_HEIGHT);
     lv_obj_set_pos(box, config->x, config->y);
-    lv_obj_set_style_pad_all(box, 5, LV_PART_MAIN);
+    lv_obj_set_style_pad_all(box, 4, LV_PART_MAIN);
+    lv_obj_remove_flag(box, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_t* nameLabel = lv_label_create(box);
 
     lv_obj_set_style_text_color(nameLabel, lv_color_hex(0x000000), LV_PART_MAIN);
     lv_obj_align(nameLabel, LV_ALIGN_TOP_LEFT, 0, 0);
-    lv_obj_set_width(nameLabel, 140);
+    lv_obj_set_width(nameLabel, BOX_RUN_DETAILS_WIDTH);
     lv_obj_set_style_text_align(nameLabel, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-    lv_label_set_long_mode(nameLabel, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_label_set_text(nameLabel, loading);
 
     lv_obj_t* createdLabel = lv_label_create(box);
 
     lv_obj_set_style_text_color(createdLabel, lv_color_hex(0x000000), LV_PART_MAIN);
-    lv_obj_align(createdLabel, LV_ALIGN_TOP_RIGHT, 0, 0);
-    lv_obj_set_width(createdLabel, 140);
-    lv_obj_set_style_text_align(createdLabel, LV_TEXT_ALIGN_RIGHT, LV_PART_MAIN);
-    lv_label_set_long_mode(createdLabel, LV_LABEL_LONG_SCROLL_CIRCULAR);
+    lv_obj_align(createdLabel, LV_ALIGN_TOP_LEFT, 0, 24);
+    lv_obj_set_width(createdLabel, BOX_RUN_DETAILS_WIDTH);
+    lv_obj_set_style_text_align(createdLabel, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
     lv_label_set_text(createdLabel, loading);
 
     lv_obj_t* sessionLengthLabel = lv_label_create(box);

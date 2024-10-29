@@ -118,6 +118,7 @@ int main(void) {
     GUI_init();
     MCP3421_init(&hi2c2);
     Data_initStorage();
+    Data_loadStatistics();
     HAL_TIM_Base_Start_IT(&htim14);  // Start timer
 
     // SDCard_writeLine("/test_long_filename.txt", "Testing the SD card library...\n");
