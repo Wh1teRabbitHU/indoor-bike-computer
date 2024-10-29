@@ -34,7 +34,7 @@ PRIVATE void TabView_Main_Tab_Live_executePause() {
     controlLive.enabled[CONTROLLIVE_END] = 1;
     controlLive.enabled[CONTROLLIVE_RESET] = 1;
 
-    ControlLive_updateBtnText(0, "Start");
+    ControlLive_updateBtnText(0, "Resume");
 
     Stoptimer_pause();
     State_Live_pause();
@@ -42,6 +42,12 @@ PRIVATE void TabView_Main_Tab_Live_executePause() {
 
 PRIVATE void TabView_Main_Tab_Live_executeEnd() {
     // TODO: Confirm the decision with the user
+
+    controlLive.selected = CONTROLLIVE_START;
+    controlLive.enabled[CONTROLLIVE_END] = 0;
+    controlLive.enabled[CONTROLLIVE_RESET] = 0;
+
+    ControlLive_updateBtnText(0, "Start");
 
     Data_Run* run = &State_Live_get()->liveRun;
 
@@ -52,6 +58,12 @@ PRIVATE void TabView_Main_Tab_Live_executeEnd() {
 
 PRIVATE void TabView_Main_Tab_Live_executeReset() {
     // TODO: Confirm the decision with the user
+
+    controlLive.selected = CONTROLLIVE_START;
+    controlLive.enabled[CONTROLLIVE_END] = 0;
+    controlLive.enabled[CONTROLLIVE_RESET] = 0;
+
+    ControlLive_updateBtnText(0, "Start");
 
     Data_Run* run = &State_Live_get()->liveRun;
 

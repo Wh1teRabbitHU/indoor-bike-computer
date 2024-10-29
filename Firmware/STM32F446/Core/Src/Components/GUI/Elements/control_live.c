@@ -13,7 +13,7 @@ PRIVATE void ControlLive_hideButton(ControlLive* instance, uint8_t index) {
 }
 
 ControlLive ControlLive_create(ControlLive_Config* config) {
-    ControlLive controlInstance = {.selected = CONTROLLIVE_START, .enabled = {1, 1, 1}};
+    ControlLive controlInstance = {.selected = CONTROLLIVE_START, .enabled = {1, 0, 0}};
 
     lv_obj_t* buttonMatrix = lv_buttonmatrix_create(config->screen);
 
