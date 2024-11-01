@@ -467,15 +467,15 @@ uint8_t Data_deleteRun(Data_Run* run) {
 uint8_t Data_addRunToStatistics(Data_Run* run) {
     statistics.runs++;
     statistics.sessionsLength += run->sessionLength;
-    statistics.distanceSum += run->distance;
+    statistics.distanceSum += (run->distance / 100);
 
     return Data_saveStatistics();
 }
 
-uint8_t Data_removeRunToStatistics(Data_Run* run) {
+uint8_t Data_removeRunFromStatistics(Data_Run* run) {
     statistics.runs--;
     statistics.sessionsLength -= run->sessionLength;
-    statistics.distanceSum -= run->distance;
+    statistics.distanceSum -= (run->distance / 100);
 
     return Data_saveStatistics();
 }

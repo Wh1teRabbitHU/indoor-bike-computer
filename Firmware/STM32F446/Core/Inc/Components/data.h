@@ -145,7 +145,7 @@ uint8_t Data_storeRun(Data_Run* run);
 uint8_t Data_storeRunMeasurement(Data_Run* run, Data_RunMeasurement* measurement);
 uint8_t Data_deleteRun(Data_Run* run);
 uint8_t Data_addRunToStatistics(Data_Run* run);
-uint8_t Data_removeRunToStatistics(Data_Run* run);
+uint8_t Data_removeRunFromStatistics(Data_Run* run);
 Data_Statistics* Data_getStatistics();
 
 #endif

@@ -9,7 +9,7 @@ void TabView_Main_Tab_History_init(TabView_Main_Tab_History_Config* config) {
 }
 
 void TabView_Main_Tab_History_stepIn(void) {
-    ListRunDetails_init();
+    ListRunDetails_init(&runDetails);
     ListRunDetails_loadRuns(&runDetails);
 }
 

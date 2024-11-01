@@ -4,7 +4,7 @@
 #include "data.h"
 #include "lvgl.h"
 
-#define BOX_RUN_DETAILS_WIDTH 320
+#define BOX_RUN_DETAILS_WIDTH 310
 #define BOX_RUN_DETAILS_HEIGHT 76
 #define BOX_RUN_DETAILS_MARGIN 5
 

@@ -39,7 +39,8 @@
 			"box_measurement.h": "c",
 			"box_run_details.h": "c",
 			"list_run_details.h": "c",
-			"label_loading.h": "c"
+			"label_loading.h": "c",
+			"box_runs_statistics.h": "c"
 		}
 	}
 }
