@@ -5,12 +5,14 @@
 #include "box_runs_statistics.h"
 #include "data.h"
 #include "label_loading.h"
+#include "label_page_header.h"
 #include "lvgl.h"
 
 #define LIST_RUN_DETAILS_MAX_RUN_COUNT DATA_RUNS_PAGE_SIZE
 
 typedef struct ListRunDetails {
     LabelLoading loadingLabel;
+    LabelPageHeader pageHeaderLabel;
     BoxRunsStatistics statistics;
     BoxRunDetails boxes[LIST_RUN_DETAILS_MAX_RUN_COUNT];
 } ListRunDetails;

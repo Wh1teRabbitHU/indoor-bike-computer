@@ -364,6 +364,7 @@ Core/Src/Components/GUI/Elements/box_runs_statistics.c \
 Core/Src/Components/GUI/Elements/chart_measurement.c \
 Core/Src/Components/GUI/Elements/control_live.c \
 Core/Src/Components/GUI/Elements/label_loading.c \
+Core/Src/Components/GUI/Elements/label_page_header.c \
 Core/Src/Components/GUI/Elements/label_timer.c \
 Core/Src/Components/GUI/Elements/list_run_details.c \
 Core/Src/Components/GUI/Elements/modal_log.c \
