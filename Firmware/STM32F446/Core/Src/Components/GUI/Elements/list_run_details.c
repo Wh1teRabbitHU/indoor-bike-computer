@@ -9,14 +9,14 @@ ListRunDetails ListRunDetails_create(ListRunDetails_Config* listConfig) {
     ListRunDetails runDetails = {};
 
     BoxRunsStatistics_Config statisticsConfig = {.screen = listConfig->screen, .x = 5, .y = 5};
-    LabelPageHeader_Config pageHeaderConfig = {.screen = listConfig->screen, .x = 5, .y = 94};
+    LabelPageHeader_Config pageHeaderConfig = {.screen = listConfig->screen, .x = 5, .y = 102};
     LabelLoading_Config loadingLabelConfig = {.screen = listConfig->screen, .bgColor = 0x77EEE6};
 
     runDetails.statistics = BoxRunsStatistics_create(&statisticsConfig);
     runDetails.pageHeaderLabel = LabelPageHeader_create(&pageHeaderConfig);
 
     for (uint8_t i = 0; i < LIST_RUN_DETAILS_MAX_RUN_COUNT; i++) {
-        int32_t x = 5, y = 142 + (i * (BOX_RUN_DETAILS_HEIGHT + BOX_RUN_DETAILS_MARGIN));
+        int32_t x = 5, y = 148 + (i * (BOX_RUN_DETAILS_HEIGHT + BOX_RUN_DETAILS_MARGIN));
         BoxRunDetails_Config detailsConfig = {.screen = listConfig->screen, .x = x, .y = y};
 
         runDetails.boxes[i] = BoxRunDetails_create(&detailsConfig);

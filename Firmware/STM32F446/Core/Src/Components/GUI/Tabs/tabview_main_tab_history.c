@@ -13,7 +13,7 @@ void TabView_Main_Tab_History_stepIn(void) {
     ListRunDetails_loadRuns(&runDetails);
 }
 
-void TabView_Main_Tab_History_stepOut(void) { ListRunDetails_clearRuns(); }
+void TabView_Main_Tab_History_stepOut(void) {}
 
 void TabView_Main_Tab_History_execute(void) {
     // Do nothing
