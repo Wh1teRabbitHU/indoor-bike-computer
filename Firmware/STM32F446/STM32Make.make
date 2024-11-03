@@ -535,6 +535,7 @@ AS_INCLUDES = \
 
 # C includes
 C_INCLUDES =  \
+-I-Core/Inc \
 -ICore/Inc \
 -ICore/Inc/Components \
 -ICore/Inc/Components/GUI/Elements \

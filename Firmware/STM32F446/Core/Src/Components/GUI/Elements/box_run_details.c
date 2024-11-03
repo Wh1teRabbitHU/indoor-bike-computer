@@ -12,7 +12,7 @@ BoxRunDetails BoxRunDetails_create(BoxRunDetails_Config* config) {
     lv_obj_set_pos(box, config->x, config->y);
     lv_obj_set_style_pad_all(box, 4, LV_PART_MAIN);
     lv_obj_remove_flag(box, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_style_bg_color(box, lv_color_hex(0xE1F6FF), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(box, lv_color_hex(BOX_RUN_DETAILS_DEFAULT_BG_COLOR), LV_PART_MAIN);
 
     lv_obj_t* nameLabel = lv_label_create(box);
 
@@ -52,7 +52,13 @@ BoxRunDetails BoxRunDetails_create(BoxRunDetails_Config* config) {
 }
 
 void BoxRunDetails_changeSelection(BoxRunDetails* instance, uint8_t selected) {
-    // TODO
+    lv_color_t bgColor =
+        selected ? lv_color_hex(BOX_RUN_DETAILS_SELECTED_BG_COLOR) : lv_color_hex(BOX_RUN_DETAILS_DEFAULT_BG_COLOR);
+    lv_color_t borderColor = selected ? lv_color_hex(BOX_RUN_DETAILS_SELECTED_BORDER_COLOR)
+                                      : lv_color_hex(BOX_RUN_DETAILS_DEFAULT_BORDER_COLOR);
+
+    lv_obj_set_style_bg_color(instance->box, bgColor, LV_PART_MAIN);
+    lv_obj_set_style_border_color(instance->box, borderColor, LV_PART_MAIN);
 }
 
 void BoxRunDetails_setRun(BoxRunDetails* instance, Data_Run* run) {
