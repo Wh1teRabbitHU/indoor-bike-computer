@@ -5,12 +5,11 @@
 #include "lvgl.h"
 
 #define LABEL_LOADING_WIDTH 300
-#define LABEL_LOADING_HEIGHT 30
+#define LABEL_LOADING_HEIGHT 50
 
 typedef struct LabelLoading {
     lv_obj_t* loadingBox;
     uint8_t visible;
-    uint8_t updated;
 } LabelLoading;
 
 typedef struct LabelLoading_Config {
@@ -21,6 +20,5 @@ typedef struct LabelLoading_Config {
 LabelLoading LabelLoading_create(LabelLoading_Config* config);
 void LabelLoading_show(LabelLoading* config);
 void LabelLoading_hide(LabelLoading* config);
-void LabelLoading_update(LabelLoading* config);
 
 #endif

@@ -17,7 +17,7 @@ LabelLoading LabelLoading_create(LabelLoading_Config* config) {
     lv_obj_t* loadingLabel = lv_label_create(box);
 
     lv_obj_set_style_text_color(loadingLabel, lv_color_hex(0x000000), LV_PART_MAIN);
-    // lv_obj_align(loadingLabel, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_align(loadingLabel, LV_ALIGN_CENTER, 0, 0);
     lv_obj_set_width(loadingLabel, LABEL_LOADING_WIDTH);
     lv_obj_set_style_text_align(loadingLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_label_set_text(loadingLabel, "Loading data...");
@@ -31,24 +31,12 @@ LabelLoading LabelLoading_create(LabelLoading_Config* config) {
 
 void LabelLoading_show(LabelLoading* instance) {
     instance->visible = 1;
-    instance->updated = 0;
+
+    lv_obj_clear_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN);
 }
 
 void LabelLoading_hide(LabelLoading* instance) {
     instance->visible = 0;
-    instance->updated = 0;
-}
 
-void LabelLoading_update(LabelLoading* instance) {
-    if (instance->updated) {
-        return;
-    }
-
-    if (instance->visible) {
-        lv_obj_clear_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN);
-    } else {
-        lv_obj_add_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN);
-    }
-
-    // instance->updated = 1;
+    lv_obj_add_flag(instance->loadingBox, LV_OBJ_FLAG_HIDDEN);
 }
