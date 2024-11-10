@@ -41,7 +41,8 @@
 			"list_run_details.h": "c",
 			"label_loading.h": "c",
 			"box_runs_statistics.h": "c",
-			"label_page_header.h": "c"
+			"label_page_header.h": "c",
+			"modal_run_details.h": "c"
 		}
 	}
 }

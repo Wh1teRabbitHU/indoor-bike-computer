@@ -8,6 +8,7 @@
 #include "label_page_header.h"
 #include "lvgl.h"
 #include "macros.h"
+#include "modal_run_details.h"
 
 #define LIST_RUN_DETAILS_MAX_RUN_COUNT DATA_RUNS_PAGE_SIZE
 
@@ -16,19 +17,22 @@ typedef struct ListRunDetails {
     LabelPageHeader pageHeaderLabel;
     BoxRunsStatistics statistics;
     BoxRunDetails boxes[LIST_RUN_DETAILS_MAX_RUN_COUNT];
+    ModalRunDetails modal;
 } ListRunDetails;
 
 typedef struct ListRunDetails_Config {
-    lv_obj_t* screen;
+    lv_obj_t * screen;
 } ListRunDetails_Config;
 
-ListRunDetails ListRunDetails_create(ListRunDetails_Config* config);
+ListRunDetails ListRunDetails_create(ListRunDetails_Config * config);
 
-void ListRunDetails_init(ListRunDetails* instance);
-void ListRunDetails_triggerLoadRuns(ListRunDetails* instance);
+void ListRunDetails_init(ListRunDetails * instance);
+void ListRunDetails_triggerLoadRuns(ListRunDetails * instance);
 void ListRunDetails_clearRuns();
-void ListRunDetails_selectPrev(ListRunDetails* instance);
-void ListRunDetails_selectNext(ListRunDetails* instance);
-void ListRunDetails_update(ListRunDetails* instance);
+void ListRunDetails_selectPrev(ListRunDetails * instance);
+void ListRunDetails_selectNext(ListRunDetails * instance);
+void ListRunDetails_execute(ListRunDetails * instance);
+void ListRunDetails_stepOut(ListRunDetails * instance);
+void ListRunDetails_update(ListRunDetails * instance);
 
 #endif
