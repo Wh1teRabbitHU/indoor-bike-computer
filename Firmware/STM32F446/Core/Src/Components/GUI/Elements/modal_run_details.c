@@ -162,8 +162,9 @@ ModalRunDetails ModalRunDetails_create(ModalRunDetails_Config * config) {
 }
 
 void ModalRunDetails_open(ModalRunDetails * instance) {
-    instance->open    = 1;
-    instance->updated = 0;
+    instance->open           = 1;
+    instance->updated        = 0;
+    instance->buttonSelected = MODALRUNDETAILS_CLOSE;
 }
 
 void ModalRunDetails_close(ModalRunDetails * instance) {
@@ -191,16 +192,17 @@ void ModalRunDetails_selectNext(ModalRunDetails * instance) {
 
 uint8_t ModalRunDetails_execute(ModalRunDetails * instance) {
     switch (instance->buttonSelected) {
-    case MODALRUNDETAILS_CLOSE:
-        ModalRunDetails_close(instance);
-
-        return 0;
     case MODALRUNDETAILS_DELETE:
         Data_removeRunFromStatistics(selectedRun);
         Data_deleteRun(selectedRun);
         ModalRunDetails_close(instance);
 
         return 1;
+    case MODALRUNDETAILS_CLOSE:
+    default:
+        ModalRunDetails_close(instance);
+
+        return 0;
     }
 }
 

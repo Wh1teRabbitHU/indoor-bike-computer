@@ -10,13 +10,13 @@
 #include "macros.h"
 #include "modal_run_details.h"
 
-#define LIST_RUN_DETAILS_MAX_RUN_COUNT DATA_RUNS_PAGE_SIZE
+#define LIST_RUN_DETAILS_BOX_COUNT DATA_RUNS_PAGE_SIZE
 
 typedef struct ListRunDetails {
     LabelLoading loadingLabel;
     LabelPageHeader pageHeaderLabel;
     BoxRunsStatistics statistics;
-    BoxRunDetails boxes[LIST_RUN_DETAILS_MAX_RUN_COUNT];
+    BoxRunDetails boxes[LIST_RUN_DETAILS_BOX_COUNT];
     ModalRunDetails modal;
 } ListRunDetails;
 
@@ -28,7 +28,6 @@ ListRunDetails ListRunDetails_create(ListRunDetails_Config * config);
 
 void ListRunDetails_init(ListRunDetails * instance);
 void ListRunDetails_triggerLoadRuns(ListRunDetails * instance);
-void ListRunDetails_clearRuns();
 void ListRunDetails_selectPrev(ListRunDetails * instance);
 void ListRunDetails_selectNext(ListRunDetails * instance);
 void ListRunDetails_execute(ListRunDetails * instance);
