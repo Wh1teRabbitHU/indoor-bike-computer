@@ -32,7 +32,7 @@ void ListRunDetails_clearRuns();
 void ListRunDetails_selectPrev(ListRunDetails * instance);
 void ListRunDetails_selectNext(ListRunDetails * instance);
 void ListRunDetails_execute(ListRunDetails * instance);
-void ListRunDetails_stepOut(ListRunDetails * instance);
+uint8_t ListRunDetails_stepOut(ListRunDetails * instance);
 void ListRunDetails_update(ListRunDetails * instance);
 
 #endif

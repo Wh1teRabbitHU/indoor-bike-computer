@@ -1,5 +1,6 @@
 #include "list_run_details.h"
 
+static uint8_t showBoxes                             = 0;
 static uint8_t loadRuns                              = 0;
 static uint8_t clearRuns                             = 1;
 static uint32_t pageIndex                            = 0;
@@ -49,12 +50,20 @@ void ListRunDetails_init(ListRunDetails * instance) {
     Data_Statistics * statistics = Data_getStatistics();
     uint32_t maxRuns             = statistics->runs;
 
-    pageIndex     = maxRuns - LIST_RUN_DETAILS_MAX_RUN_COUNT;
+    pageIndex     = LIST_RUN_DETAILS_MAX_RUN_COUNT > maxRuns ? 0 : maxRuns - LIST_RUN_DETAILS_MAX_RUN_COUNT;
     selectedIndex = 0;
 }
 
 void ListRunDetails_triggerLoadRuns(ListRunDetails * instance) {
-    loadRuns = 1;
+    uint32_t runCounts = Data_countRuns();
+
+    if (selectedIndex > runCounts - 1) {
+        selectedIndex--;
+        pageIndex--;
+    }
+
+    loadRuns  = 1;
+    showBoxes = 1;
 }
 
 void ListRunDetails_clearRuns() {
@@ -62,6 +71,11 @@ void ListRunDetails_clearRuns() {
 }
 
 void ListRunDetails_selectPrev(ListRunDetails * instance) {
+    if (instance->modal.open) {
+        ModalRunDetails_selectPrev(&instance->modal);
+        return;
+    }
+
     if (selectedIndex > 0) {
         selectedIndex--;
 
@@ -80,7 +94,15 @@ void ListRunDetails_selectPrev(ListRunDetails * instance) {
 }
 
 void ListRunDetails_selectNext(ListRunDetails * instance) {
-    if (selectedIndex < LIST_RUN_DETAILS_MAX_RUN_COUNT - 1) {
+    if (instance->modal.open) {
+        ModalRunDetails_selectNext(&instance->modal);
+        return;
+    }
+
+    uint32_t elementCount = Data_getStatistics()->runs;
+    uint8_t pageSize      = LIST_RUN_DETAILS_MAX_RUN_COUNT > elementCount ? elementCount : LIST_RUN_DETAILS_MAX_RUN_COUNT;
+
+    if (selectedIndex < pageSize - 1) {
         selectedIndex++;
 
         return;
@@ -96,16 +118,24 @@ void ListRunDetails_selectNext(ListRunDetails * instance) {
 
 void ListRunDetails_execute(ListRunDetails * instance) {
     if (instance->modal.open) {
-        ModalRunDetails_close(&instance->modal);
+        uint8_t refresh = ModalRunDetails_execute(&instance->modal);
+
+        if (refresh) {
+            ListRunDetails_triggerLoadRuns(instance);
+        }
     } else {
         ModalRunDetails_open(&instance->modal);
     }
 }
 
-void ListRunDetails_stepOut(ListRunDetails * instance) {
+uint8_t ListRunDetails_stepOut(ListRunDetails * instance) {
+    showBoxes = 0;
+
     if (instance->modal.open) {
-        ModalRunDetails_close(&instance->modal);
+        return ModalRunDetails_stepOut(&instance->modal);
     }
+
+    return 1;
 }
 
 void ListRunDetails_update(ListRunDetails * instance) {
@@ -124,7 +154,16 @@ void ListRunDetails_update(ListRunDetails * instance) {
 
     BoxRunsStatistics_update(&instance->statistics, Data_getStatistics());
 
+    uint32_t elementCount = Data_getStatistics()->runs;
+    uint8_t pageSize      = elementCount >= LIST_RUN_DETAILS_MAX_RUN_COUNT ? LIST_RUN_DETAILS_MAX_RUN_COUNT : elementCount;
+
     for (uint8_t i = 0; i < LIST_RUN_DETAILS_MAX_RUN_COUNT; i++) {
+        if (i > pageSize - 1) {
+            BoxRunDetails_hide(&instance->boxes[i]);
+
+            continue;
+        }
+
         if (clearRuns) {
             BoxRunDetails_clearRun(&instance->boxes[i]);
         } else {
@@ -132,13 +171,18 @@ void ListRunDetails_update(ListRunDetails * instance) {
         }
 
         BoxRunDetails_changeSelection(&instance->boxes[i], i == selectedIndex);
+
+        if (showBoxes) {
+            BoxRunDetails_show(&instance->boxes[i]);
+        } else {
+            BoxRunDetails_hide(&instance->boxes[i]);
+        }
     }
 
-    uint32_t elementCount  = Data_getStatistics()->runs;
-    uint32_t invertedIndex = elementCount - pageIndex - LIST_RUN_DETAILS_MAX_RUN_COUNT;
+    uint32_t invertedIndex = elementCount - pageIndex - pageSize;
 
     instance->pageHeaderLabel.pageStart     = invertedIndex + 1;
-    instance->pageHeaderLabel.pageEnd       = invertedIndex + LIST_RUN_DETAILS_MAX_RUN_COUNT;
+    instance->pageHeaderLabel.pageEnd       = invertedIndex + pageSize;
     instance->pageHeaderLabel.selectedIndex = invertedIndex + selectedIndex + 1;
     instance->pageHeaderLabel.elementCount  = elementCount;
 

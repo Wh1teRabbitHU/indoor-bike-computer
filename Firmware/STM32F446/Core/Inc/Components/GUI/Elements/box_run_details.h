@@ -30,5 +30,7 @@ BoxRunDetails BoxRunDetails_create(BoxRunDetails_Config * config);
 void BoxRunDetails_changeSelection(BoxRunDetails * instance, uint8_t selected);
 void BoxRunDetails_setRun(BoxRunDetails * instance, Data_Run * run);
 void BoxRunDetails_clearRun(BoxRunDetails * instance);
+void BoxRunDetails_show(BoxRunDetails * instance);
+void BoxRunDetails_hide(BoxRunDetails * instance);
 
 #endif

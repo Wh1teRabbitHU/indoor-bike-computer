@@ -1,5 +1,7 @@
 #include "modal_run_details.h"
 
+Data_Run * selectedRun = NULL;
+
 PRIVATE void ModalRunDetails_setupLabel(lv_obj_t * label, uint32_t offsetY) {
     lv_obj_set_style_text_color(label, lv_color_hex(0x000000), LV_PART_MAIN);
     lv_obj_align(label, LV_ALIGN_TOP_LEFT, 0, offsetY);
@@ -116,7 +118,9 @@ ModalRunDetails ModalRunDetails_create(ModalRunDetails_Config * config) {
     lv_obj_align(closeButton, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     lv_obj_set_width(closeButton, MODAL_RUN_DETAILS_BUTTON_WIDTH);
     lv_obj_set_height(closeButton, MODAL_RUN_DETAILS_BUTTON_HEIGHT);
-    lv_obj_set_style_bg_color(closeButton, lv_color_hex(0x888888), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(closeButton, lv_color_hex(0xAAAAAA), LV_PART_MAIN);
+    lv_obj_set_style_border_color(closeButton, lv_color_hex(0x777777), LV_PART_MAIN);
+    lv_obj_set_style_border_width(closeButton, 0, LV_PART_MAIN);
     lv_obj_t * closeButtonLabel = lv_label_create(closeButton);
     lv_label_set_text(closeButtonLabel, "Close");
     lv_obj_center(closeButtonLabel);
@@ -125,6 +129,8 @@ ModalRunDetails ModalRunDetails_create(ModalRunDetails_Config * config) {
     lv_obj_set_width(deleteButton, MODAL_RUN_DETAILS_BUTTON_WIDTH);
     lv_obj_set_height(deleteButton, MODAL_RUN_DETAILS_BUTTON_HEIGHT);
     lv_obj_set_style_bg_color(deleteButton, lv_color_hex(0xFF0000), LV_PART_MAIN);
+    lv_obj_set_style_border_color(deleteButton, lv_color_hex(0xAA3333), LV_PART_MAIN);
+    lv_obj_set_style_border_width(deleteButton, 0, LV_PART_MAIN);
     lv_obj_t * deleteButtonLabel = lv_label_create(deleteButton);
     lv_label_set_text(deleteButtonLabel, "Delete");
     lv_obj_center(deleteButtonLabel);
@@ -148,6 +154,7 @@ ModalRunDetails ModalRunDetails_create(ModalRunDetails_Config * config) {
     runDetails.avgBpmValueLabel         = avgBpmValueLabel;
     runDetails.closeButton              = closeButton;
     runDetails.deleteButton             = deleteButton;
+    runDetails.buttonSelected           = MODALRUNDETAILS_CLOSE;
     runDetails.open                     = 0;
     runDetails.updated                  = 1;
 
@@ -164,9 +171,65 @@ void ModalRunDetails_close(ModalRunDetails * instance) {
     instance->updated = 0;
 }
 
+void ModalRunDetails_selectPrev(ModalRunDetails * instance) {
+    if (instance->open) {
+        uint8_t closeSelected = instance->buttonSelected == MODALRUNDETAILS_CLOSE;
+
+        instance->buttonSelected = closeSelected ? MODALRUNDETAILS_DELETE : MODALRUNDETAILS_CLOSE;
+        instance->updated        = 0;
+    }
+}
+
+void ModalRunDetails_selectNext(ModalRunDetails * instance) {
+    if (instance->open) {
+        uint8_t closeSelected = instance->buttonSelected == MODALRUNDETAILS_CLOSE;
+
+        instance->buttonSelected = closeSelected ? MODALRUNDETAILS_DELETE : MODALRUNDETAILS_CLOSE;
+        instance->updated        = 0;
+    }
+}
+
+uint8_t ModalRunDetails_execute(ModalRunDetails * instance) {
+    switch (instance->buttonSelected) {
+    case MODALRUNDETAILS_CLOSE:
+        ModalRunDetails_close(instance);
+
+        return 0;
+    case MODALRUNDETAILS_DELETE:
+        Data_removeRunFromStatistics(selectedRun);
+        Data_deleteRun(selectedRun);
+        ModalRunDetails_close(instance);
+
+        return 1;
+    }
+}
+
+uint8_t ModalRunDetails_stepOut(ModalRunDetails * instance) {
+    ModalRunDetails_close(instance);
+
+    return 0;
+}
+
 void ModalRunDetails_update(ModalRunDetails * instance, Data_Run * run) {
     if (instance->updated) {
         return;
+    }
+
+    selectedRun = run;
+
+    switch (instance->buttonSelected) {
+    case MODALRUNDETAILS_CLOSE:
+        lv_obj_set_style_shadow_width(instance->closeButton, 0, LV_PART_MAIN);
+        lv_obj_set_style_shadow_width(instance->deleteButton, 3, LV_PART_MAIN);
+        lv_obj_set_style_border_width(instance->closeButton, 3, LV_PART_MAIN);
+        lv_obj_set_style_border_width(instance->deleteButton, 0, LV_PART_MAIN);
+        break;
+    case MODALRUNDETAILS_DELETE:
+        lv_obj_set_style_shadow_width(instance->closeButton, 3, LV_PART_MAIN);
+        lv_obj_set_style_shadow_width(instance->deleteButton, 0, LV_PART_MAIN);
+        lv_obj_set_style_border_width(instance->closeButton, 0, LV_PART_MAIN);
+        lv_obj_set_style_border_width(instance->deleteButton, 3, LV_PART_MAIN);
+        break;
     }
 
     if (instance->open) {

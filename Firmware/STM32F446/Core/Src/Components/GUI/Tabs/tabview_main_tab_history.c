@@ -17,8 +17,8 @@ void TabView_Main_Tab_History_execute(void) {
     ListRunDetails_execute(&runDetails);
 }
 
-void TabView_Main_Tab_History_stepOut(void) {
-    ListRunDetails_stepOut(&runDetails);
+uint8_t TabView_Main_Tab_History_stepOut() {
+    return ListRunDetails_stepOut(&runDetails);
 }
 
 void TabView_Main_Tab_History_handlePrev(void) {

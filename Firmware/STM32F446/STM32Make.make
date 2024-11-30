@@ -367,7 +367,7 @@ Core/Src/Components/GUI/Elements/label_loading.c \
 Core/Src/Components/GUI/Elements/label_page_header.c \
 Core/Src/Components/GUI/Elements/label_timer.c \
 Core/Src/Components/GUI/Elements/list_run_details.c \
-Core/Src/Components/GUI/Elements/modal_log.c \
+Core/Src/Components/GUI/Elements/modal_confirm.c \
 Core/Src/Components/GUI/Elements/modal_run_details.c \
 Core/Src/Components/GUI/Screens/screen_main.c \
 Core/Src/Components/GUI/Tabs/tabview_main.c \

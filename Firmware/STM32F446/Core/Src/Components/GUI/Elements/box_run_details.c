@@ -85,3 +85,11 @@ void BoxRunDetails_setRun(BoxRunDetails * instance, Data_Run * run) {
 void BoxRunDetails_clearRun(BoxRunDetails * instance) {
     lv_obj_add_flag(instance->box, LV_OBJ_FLAG_HIDDEN);
 }
+
+void BoxRunDetails_show(BoxRunDetails * instance) {
+    lv_obj_remove_flag(instance->box, LV_OBJ_FLAG_HIDDEN);
+}
+
+void BoxRunDetails_hide(BoxRunDetails * instance) {
+    lv_obj_add_flag(instance->box, LV_OBJ_FLAG_HIDDEN);
+}

@@ -1,7 +1,7 @@
 #include "tabview_main.h"
 
 static TabView_Main mainTabView;
-static TabView_Main_Tab_t activeTab = TABVIEW_MAIN_TAB_LIVE;
+static TabView_Main_Tab_t activeTab           = TABVIEW_MAIN_TAB_LIVE;
 static TabView_Main_TabLevel_t activeTabLevel = TABVIEW_MAIN_TABLEVEL_TAB;
 
 // PRIVATE METHODS
@@ -13,7 +13,7 @@ PRIVATE void TabView_Main_setActiveTab(TabView_Main_Tab_t tab) {
 }
 
 PRIVATE void TabView_Main_updateTabLive() {
-    State_Live* state = State_Live_get();
+    State_Live * state = State_Live_get();
 
     TabView_Main_Tab_Live_updateDifficulty(state->difficulty);
     TabView_Main_Tab_Live_updateSpeed(state->speed);
@@ -26,20 +26,22 @@ PRIVATE void TabView_Main_updateTabLive() {
     state->updateChart = 0;
 }
 
-PRIVATE void TabView_Main_updateTabHistory() { TabView_Main_Tab_History_update(); }
+PRIVATE void TabView_Main_updateTabHistory() {
+    TabView_Main_Tab_History_update();
+}
 
-PRIVATE TabView_Main TabView_Main_create(TabView_Main_Config* config) {
+PRIVATE TabView_Main TabView_Main_create(TabView_Main_Config * config) {
     TabView_Main tabInstance = {.tabs = {0}};
 
-    lv_obj_t* tabView = lv_tabview_create(config->screen);
+    lv_obj_t * tabView = lv_tabview_create(config->screen);
 
     lv_obj_set_style_bg_color(tabView, lv_color_hex(GUI_TABVIEW_TABMAIN_BGCOLOR), 0);
     lv_tabview_set_tab_bar_position(tabView, LV_DIR_BOTTOM);
     lv_tabview_set_tab_bar_size(tabView, GUI_TABVIEW_TAB_HEIGHT);
 
-    lv_obj_t* tabMain = lv_tabview_add_tab(tabView, "Live");
-    lv_obj_t* tabHistory = lv_tabview_add_tab(tabView, "Hist.");
-    lv_obj_t* tabSettings = lv_tabview_add_tab(tabView, "Set.");
+    lv_obj_t * tabMain     = lv_tabview_add_tab(tabView, "Live");
+    lv_obj_t * tabHistory  = lv_tabview_add_tab(tabView, "Hist.");
+    lv_obj_t * tabSettings = lv_tabview_add_tab(tabView, "Set.");
 
     lv_obj_set_style_pad_all(tabMain, 0, LV_PART_MAIN);
     lv_obj_set_style_bg_color(tabMain, lv_color_hex(GUI_TABVIEW_TABMAIN_BGCOLOR), LV_PART_MAIN);
@@ -55,8 +57,8 @@ PRIVATE TabView_Main TabView_Main_create(TabView_Main_Config* config) {
 
     tabInstance.tabView = tabView;
 
-    tabInstance.tabs[TABVIEW_MAIN_TAB_LIVE] = tabMain;
-    tabInstance.tabs[TABVIEW_MAIN_TAB_HISTORY] = tabHistory;
+    tabInstance.tabs[TABVIEW_MAIN_TAB_LIVE]     = tabMain;
+    tabInstance.tabs[TABVIEW_MAIN_TAB_HISTORY]  = tabHistory;
     tabInstance.tabs[TABVIEW_MAIN_TAB_SETTINGS] = tabSettings;
 
     tabInstance.active = TABVIEW_MAIN_TAB_LIVE;
@@ -68,33 +70,37 @@ PRIVATE void TabView_Main_TabLevel_stepIn() {
     activeTabLevel = TABVIEW_MAIN_TABLEVEL_CONTENT;
 
     switch (activeTab) {
-        case TABVIEW_MAIN_TAB_LIVE:
-            TabView_Main_Tab_Live_stepIn();
-            break;
-        case TABVIEW_MAIN_TAB_HISTORY:
-            TabView_Main_Tab_History_stepIn();
-            break;
-        case TABVIEW_MAIN_TAB_SETTINGS:
-            // TODO
-            break;
+    case TABVIEW_MAIN_TAB_LIVE:
+        TabView_Main_Tab_Live_stepIn();
+        break;
+    case TABVIEW_MAIN_TAB_HISTORY:
+        TabView_Main_Tab_History_stepIn();
+        break;
+    case TABVIEW_MAIN_TAB_SETTINGS:
+        // TODO
+        break;
     }
 
     State_Global_get()->updateLevel = 1;
 }
 
 PRIVATE void TabView_Main_TabLevel_stepOut() {
-    activeTabLevel = TABVIEW_MAIN_TABLEVEL_TAB;
+    uint8_t triggerStepOut = 1;
 
     switch (activeTab) {
-        case TABVIEW_MAIN_TAB_LIVE:
-            TabView_Main_Tab_Live_stepOut();
-            break;
-        case TABVIEW_MAIN_TAB_HISTORY:
-            TabView_Main_Tab_History_stepOut();
-            break;
-        case TABVIEW_MAIN_TAB_SETTINGS:
-            // TODO
-            break;
+    case TABVIEW_MAIN_TAB_LIVE:
+        TabView_Main_Tab_Live_stepOut();
+        break;
+    case TABVIEW_MAIN_TAB_HISTORY:
+        triggerStepOut = TabView_Main_Tab_History_stepOut();
+        break;
+    case TABVIEW_MAIN_TAB_SETTINGS:
+        // TODO
+        break;
+    }
+
+    if (triggerStepOut) {
+        activeTabLevel = TABVIEW_MAIN_TABLEVEL_TAB;
     }
 
     State_Global_get()->updateLevel = 1;
@@ -102,57 +108,57 @@ PRIVATE void TabView_Main_TabLevel_stepOut() {
 
 PRIVATE void TabView_Main_TabLevel_execute() {
     switch (activeTab) {
-        case TABVIEW_MAIN_TAB_LIVE:
-            TabView_Main_Tab_Live_execute();
-            break;
-        case TABVIEW_MAIN_TAB_HISTORY:
-            TabView_Main_Tab_History_execute();
-            break;
-        case TABVIEW_MAIN_TAB_SETTINGS:
-            // TODO
-            break;
+    case TABVIEW_MAIN_TAB_LIVE:
+        TabView_Main_Tab_Live_execute();
+        break;
+    case TABVIEW_MAIN_TAB_HISTORY:
+        TabView_Main_Tab_History_execute();
+        break;
+    case TABVIEW_MAIN_TAB_SETTINGS:
+        // TODO
+        break;
     }
 }
 
 PRIVATE void TabView_Main_TabLevel_handlePrev() {
     switch (activeTab) {
-        case TABVIEW_MAIN_TAB_LIVE:
-            TabView_Main_Tab_Live_handlePrev();
-            break;
-        case TABVIEW_MAIN_TAB_HISTORY:
-            TabView_Main_Tab_History_handlePrev();
-            break;
-        case TABVIEW_MAIN_TAB_SETTINGS:
-            // TODO
-            break;
+    case TABVIEW_MAIN_TAB_LIVE:
+        TabView_Main_Tab_Live_handlePrev();
+        break;
+    case TABVIEW_MAIN_TAB_HISTORY:
+        TabView_Main_Tab_History_handlePrev();
+        break;
+    case TABVIEW_MAIN_TAB_SETTINGS:
+        // TODO
+        break;
     }
 }
 
 PRIVATE void TabView_Main_TabLevel_handleNext() {
     switch (activeTab) {
-        case TABVIEW_MAIN_TAB_LIVE:
-            TabView_Main_Tab_Live_handleNext();
-            break;
-        case TABVIEW_MAIN_TAB_HISTORY:
-            TabView_Main_Tab_History_handleNext();
-            break;
-        case TABVIEW_MAIN_TAB_SETTINGS:
-            // TODO
-            break;
+    case TABVIEW_MAIN_TAB_LIVE:
+        TabView_Main_Tab_Live_handleNext();
+        break;
+    case TABVIEW_MAIN_TAB_HISTORY:
+        TabView_Main_Tab_History_handleNext();
+        break;
+    case TABVIEW_MAIN_TAB_SETTINGS:
+        // TODO
+        break;
     }
 }
 
 // PUBLIC METHODS
 
-void TabView_Main_init(TabView_Main_Config* config) {
+void TabView_Main_init(TabView_Main_Config * config) {
     mainTabView = TabView_Main_create(config);
 
     TabView_Main_setActiveTab(activeTab);
 
-    lv_obj_t* tabLiveObj = mainTabView.tabs[TABVIEW_MAIN_TAB_LIVE];
-    lv_obj_t* tabHistoryObj = mainTabView.tabs[TABVIEW_MAIN_TAB_HISTORY];
+    lv_obj_t * tabLiveObj    = mainTabView.tabs[TABVIEW_MAIN_TAB_LIVE];
+    lv_obj_t * tabHistoryObj = mainTabView.tabs[TABVIEW_MAIN_TAB_HISTORY];
 
-    TabView_Main_Tab_Live_Config tabLiveConfig = {.tab = tabLiveObj};
+    TabView_Main_Tab_Live_Config tabLiveConfig       = {.tab = tabLiveObj};
     TabView_Main_Tab_History_Config tabHistoryConfig = {.tab = tabHistoryObj};
 
     TabView_Main_Tab_Live_init(&tabLiveConfig);
@@ -189,15 +195,15 @@ void TabView_Main_update() {
     }
 
     switch (activeTab) {
-        case TABVIEW_MAIN_TAB_LIVE:
-            TabView_Main_updateTabLive();
-            break;
-        case TABVIEW_MAIN_TAB_HISTORY:
-            TabView_Main_updateTabHistory();
-            break;
-        case TABVIEW_MAIN_TAB_SETTINGS:
-            // Do nothing
-            break;
+    case TABVIEW_MAIN_TAB_LIVE:
+        TabView_Main_updateTabLive();
+        break;
+    case TABVIEW_MAIN_TAB_HISTORY:
+        TabView_Main_updateTabHistory();
+        break;
+    case TABVIEW_MAIN_TAB_SETTINGS:
+        // Do nothing
+        break;
     }
 
     if (State_Global_get()->updateLevel) {
@@ -212,44 +218,44 @@ void TabView_Main_update() {
 
 void TabView_Main_handleSelect(void) {
     switch (activeTabLevel) {
-        case TABVIEW_MAIN_TABLEVEL_TAB:
-            TabView_Main_TabLevel_stepIn();
-            break;
-        case TABVIEW_MAIN_TABLEVEL_CONTENT:
-            TabView_Main_TabLevel_execute();
-            break;
+    case TABVIEW_MAIN_TABLEVEL_TAB:
+        TabView_Main_TabLevel_stepIn();
+        break;
+    case TABVIEW_MAIN_TABLEVEL_CONTENT:
+        TabView_Main_TabLevel_execute();
+        break;
     }
 }
 
 void TabView_Main_handleCancel(void) {
     switch (activeTabLevel) {
-        case TABVIEW_MAIN_TABLEVEL_TAB:
-            // Do nothing
-            break;
-        case TABVIEW_MAIN_TABLEVEL_CONTENT:
-            TabView_Main_TabLevel_stepOut();
-            break;
+    case TABVIEW_MAIN_TABLEVEL_TAB:
+        // Do nothing
+        break;
+    case TABVIEW_MAIN_TABLEVEL_CONTENT:
+        TabView_Main_TabLevel_stepOut();
+        break;
     }
 }
 
 void TabView_Main_handlePrev(void) {
     switch (activeTabLevel) {
-        case TABVIEW_MAIN_TABLEVEL_TAB:
-            TabView_Main_prevTab();
-            break;
-        case TABVIEW_MAIN_TABLEVEL_CONTENT:
-            TabView_Main_TabLevel_handlePrev();
-            break;
+    case TABVIEW_MAIN_TABLEVEL_TAB:
+        TabView_Main_prevTab();
+        break;
+    case TABVIEW_MAIN_TABLEVEL_CONTENT:
+        TabView_Main_TabLevel_handlePrev();
+        break;
     }
 }
 
 void TabView_Main_handleNext(void) {
     switch (activeTabLevel) {
-        case TABVIEW_MAIN_TABLEVEL_TAB:
-            TabView_Main_nextTab();
-            break;
-        case TABVIEW_MAIN_TABLEVEL_CONTENT:
-            TabView_Main_TabLevel_handleNext();
-            break;
+    case TABVIEW_MAIN_TABLEVEL_TAB:
+        TabView_Main_nextTab();
+        break;
+    case TABVIEW_MAIN_TABLEVEL_CONTENT:
+        TabView_Main_TabLevel_handleNext();
+        break;
     }
 }

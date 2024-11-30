@@ -16,6 +16,11 @@
 #define MODAL_RUN_DETAILS_BUTTON_HEIGHT       30
 #define MODAL_RUN_DETAILS_BG_COLOR            0xFFFFFF
 
+typedef enum ModalRunDetails_Button_t {
+    MODALRUNDETAILS_CLOSE  = 0,
+    MODALRUNDETAILS_DELETE = 1,
+} ModalRunDetails_Button_t;
+
 typedef struct ModalRunDetails {
     lv_obj_t * box;
     lv_obj_t * nameHeaderLabel;
@@ -36,6 +41,7 @@ typedef struct ModalRunDetails {
     lv_obj_t * avgBpmValueLabel;
     lv_obj_t * closeButton;
     lv_obj_t * deleteButton;
+    uint8_t buttonSelected;
     uint8_t open;
     uint8_t updated;
 } ModalRunDetails;
@@ -47,6 +53,11 @@ typedef struct ModalRunDetails_Config {
 ModalRunDetails ModalRunDetails_create(ModalRunDetails_Config * config);
 void ModalRunDetails_open(ModalRunDetails * instance);
 void ModalRunDetails_close(ModalRunDetails * instance);
+void ModalRunDetails_selectPrev(ModalRunDetails * instance);
+void ModalRunDetails_selectNext(ModalRunDetails * instance);
+uint8_t ModalRunDetails_execute(ModalRunDetails * instance);
+uint8_t ModalRunDetails_stepOut(ModalRunDetails * instance);
+
 void ModalRunDetails_update(ModalRunDetails * instance, Data_Run * run);
 
 #endif
