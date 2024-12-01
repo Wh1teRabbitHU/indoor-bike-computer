@@ -42,7 +42,17 @@
 			"label_loading.h": "c",
 			"box_runs_statistics.h": "c",
 			"label_page_header.h": "c",
-			"modal_run_details.h": "c"
+			"modal_run_details.h": "c",
+			"run_list.h": "c",
+			"run_statistics.h": "c",
+			"loading_label.h": "c",
+			"modal_confirm.h": "c",
+			"main_tabview_history.h": "c",
+			"main_tabview_live.h": "c",
+			"tabview_main_tab_settings.h": "c",
+			"main_tabview.h": "c",
+			"live_controls.h": "c",
+			"measurement_chart.h": "c"
 		}
 	}
 }

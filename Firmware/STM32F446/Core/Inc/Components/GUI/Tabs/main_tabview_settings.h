@@ -1,0 +1,4 @@
+#ifndef __MAIN_TABVIEW_SETTINGS_H_
+#define __MAIN_TABVIEW_SETTINGS_H_
+
+#endif
