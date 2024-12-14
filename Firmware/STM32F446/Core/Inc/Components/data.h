@@ -18,7 +18,8 @@ typedef enum Data_StatisticsAttr_t {
     DATA_STATISTICS_ATTR_RUNS           = 0,
     DATA_STATISTICS_ATTR_SESSION_LENGTH = 1,
     DATA_STATISTICS_ATTR_DISTANCE_SUM   = 2,
-    DATA_STATISTICS_ATTR_UNKNOWN        = 3,
+    DATA_STATISTICS_ATTR_LAST_RUN_INDEX = 3,
+    DATA_STATISTICS_ATTR_UNKNOWN        = 4,
 } Data_StatisticsAttr_t;
 
 typedef enum Data_RunAttr_t {
@@ -47,6 +48,7 @@ typedef struct Data_Statistics {
     uint32_t sessionsLength; // In seconds, maximum 10 digits (4 294 967 295 seconds, 71 582 788 min, 1 193 046 hours,
                              // 49 710 days, 136 years)
     uint32_t distanceSum;    // In meters, maximum 10 digits (4 294 967 295 m, 4 294 967 km)
+    uint32_t lastRunIndex;   // This integer is used to create the next run. If the user deletes a run, we need to know what was the next index to avoid accidental overwrite
 } Data_Statistics;
 
 // Max data length: 53

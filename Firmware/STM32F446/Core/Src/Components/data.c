@@ -67,6 +67,9 @@ PRIVATE void Data_parseStatistics(char * data) {
         case DATA_STATISTICS_ATTR_DISTANCE_SUM:
             statistics.distanceSum = strtol(attr, &endptr, 10);
             break;
+        case DATA_STATISTICS_ATTR_LAST_RUN_INDEX:
+            statistics.lastRunIndex = strtol(attr, &endptr, 10);
+            break;
         case DATA_STATISTICS_ATTR_UNKNOWN:
             return;
         }
@@ -138,9 +141,7 @@ uint8_t Data_initStorage() {
 void Data_initRun(Data_Run * run) {
     char nameBuffer[DATA_RUN_NAME_MAX_LENGTH] = {0};
 
-    // TODO: get the last run's name
-
-    sprintf(nameBuffer, "%s%05lu", DATA_RUN_NAME_PREFIX, statistics.runs + 1);
+    sprintf(nameBuffer, "%s%05lu", DATA_RUN_NAME_PREFIX, statistics.lastRunIndex + 1);
 
     strcpy(run->name, nameBuffer);
     strcpy(run->created, "2024-01-01 10:10:10");
@@ -236,7 +237,7 @@ uint8_t Data_saveStatistics() {
         return 0;
     }
 
-    sprintf(dataBuffer, "%lu;%lu;%lu", statistics.runs, statistics.sessionsLength, statistics.distanceSum);
+    sprintf(dataBuffer, "%lu;%lu;%lu;%lu", statistics.runs, statistics.sessionsLength, statistics.distanceSum, statistics.lastRunIndex);
 
     result = SDCard_writeFile(pathBuffer, dataBuffer);
 
@@ -461,6 +462,7 @@ uint8_t Data_addRunToStatistics(Data_Run * run) {
     statistics.runs++;
     statistics.sessionsLength += run->sessionLength;
     statistics.distanceSum += (run->distance / 100);
+    statistics.lastRunIndex++;
 
     return Data_saveStatistics();
 }

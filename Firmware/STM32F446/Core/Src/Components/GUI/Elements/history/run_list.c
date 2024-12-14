@@ -63,8 +63,8 @@ void RunList_triggerLoadRuns(RunList * instance) {
         boxIndex = pageSize - 1;
     }
 
-    if (pageIndex > 0 && (pageIndex + pageSize > runCounts - 1)) {
-        pageIndex = runCounts - pageSize - 1;
+    if (pageIndex > 0 && (pageIndex + pageSize > runCounts)) {
+        pageIndex = runCounts - pageSize;
     }
 
     loadRuns     = 1;
