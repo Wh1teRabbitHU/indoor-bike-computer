@@ -52,7 +52,8 @@
 			"tabview_main_tab_settings.h": "c",
 			"main_tabview.h": "c",
 			"live_controls.h": "c",
-			"measurement_chart.h": "c"
+			"measurement_chart.h": "c",
+			"measurement_box.h": "c"
 		}
 	}
 }

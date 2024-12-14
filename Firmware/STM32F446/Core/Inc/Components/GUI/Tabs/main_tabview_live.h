@@ -17,10 +17,11 @@ typedef struct MainTabviewLive_Config {
 
 void MainTabviewLive_init(MainTabviewLive_Config * config);
 
-void MainTabviewLive_updateDifficulty(uint32_t difficulty);
-void MainTabviewLive_updateSpeed(uint32_t speed);
-void MainTabviewLive_updateRevolution(uint32_t rpm);
-void MainTabviewLive_updateHeartRate(uint32_t bpm);
+void MainTabviewLive_updateDifficulty(uint32_t current, uint32_t average);
+void MainTabviewLive_updateSpeed(uint32_t current, uint32_t average);
+// void MainTabviewLive_updateRevolution(uint32_t current, uint32_t average);
+void MainTabviewLive_updateDistance(uint32_t distance);
+void MainTabviewLive_updateHeartRate(uint32_t current, uint32_t average);
 void MainTabviewLive_updateChart(uint8_t updateChart);
 void MainTabviewLive_updateTimer(char * time);
 void MainTabviewLive_updateControl(void);

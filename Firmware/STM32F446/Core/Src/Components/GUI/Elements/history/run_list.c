@@ -55,6 +55,10 @@ void RunList_triggerLoadRuns(RunList * instance) {
     uint32_t runCounts = Data_countRuns();
     uint8_t pageSize   = RUN_LIST_ITEM_COUNT > runCounts ? runCounts : RUN_LIST_ITEM_COUNT;
 
+    if (runCounts == 0) {
+        return;
+    }
+
     if (boxIndex > 0 && (boxIndex > pageSize - 1)) {
         boxIndex = pageSize - 1;
     }
@@ -173,9 +177,9 @@ void RunList_update(RunList * instance) {
 
     uint32_t invertedIndex = elementCount - pageIndex - pageSize;
 
-    instance->pageHeader.pageStart     = invertedIndex + 1;
+    instance->pageHeader.pageStart     = elementCount == 0 ? 0 : invertedIndex + 1;
     instance->pageHeader.pageEnd       = invertedIndex + pageSize;
-    instance->pageHeader.selectedIndex = invertedIndex + boxIndex + 1;
+    instance->pageHeader.selectedIndex = elementCount == 0 ? 0 : invertedIndex + boxIndex + 1;
     instance->pageHeader.elementCount  = elementCount;
 
     PageHeader_update(&instance->pageHeader);

@@ -1,14 +1,13 @@
 #include "main_tabview_live.h"
 
-static MeasurementBox difficultyBox;
-static MeasurementBox speedBox;
-static MeasurementBox revolutionBox;
-static MeasurementBox heartRateBox;
+static MeasurementBoxDual difficultyBox;
+static MeasurementBoxDual speedBox;
+// static MeasurementBoxDual revolutionBox;
+static MeasurementBoxSingle distanceBox;
+static MeasurementBoxDual heartRateBox;
 static MeasurementChart measurementChart;
 static TimerBox timerBox;
 static LiveControls controlLive;
-
-static char textBuffer[32] = {0};
 
 PRIVATE void MainTabviewLive_executeStart() {
     if (State_Live_get()->sessionState == APP_LIVESTATE_SESSION_RUNNING) {
@@ -77,8 +76,10 @@ void MainTabviewLive_init(MainTabviewLive_Config * config) {
         .screen = config->tab, .title = "Difficulty", .x = 10, .y = 10, .bgColor = 0xBCC7FF};
     MeasurementBox_Config speedBoxConfig = {
         .screen = config->tab, .title = "Speed", .x = 165, .y = 10, .bgColor = 0x77EEE6};
-    MeasurementBox_Config revolutionBoxConfig = {
-        .screen = config->tab, .title = "Revolution", .x = 10, .y = 120, .bgColor = 0xBFFFA1};
+    // MeasurementBox_Config revolutionBoxConfig = {
+    //     .screen = config->tab, .title = "Revolution", .x = 10, .y = 120, .bgColor = 0xBFFFA1};
+    MeasurementBox_Config distanceBoxConfig = {
+        .screen = config->tab, .title = "Distance", .x = 10, .y = 120, .bgColor = 0xBFFFA1};
     MeasurementBox_Config heartRateBoxConfig = {
         .screen = config->tab, .title = "Heart Rate", .x = 165, .y = 120, .bgColor = 0xFFA490};
     MeasurementChart_Config measurementChartConfig = {.screen       = config->tab,
@@ -91,39 +92,65 @@ void MainTabviewLive_init(MainTabviewLive_Config * config) {
                       .screen = config->tab, .name = "Timer: ", .x = 10, .y = 368, .bgColor = 0xC993FF};
     LiveControls_Config controlLiveConfig = {.screen = config->tab, .x = 10, .y = 410, .bgColor = 0xEAEAEA};
 
-    difficultyBox    = MeasurementBox_create(&difficultyBoxConfig);
-    speedBox         = MeasurementBox_create(&speedBoxConfig);
-    revolutionBox    = MeasurementBox_create(&revolutionBoxConfig);
-    heartRateBox     = MeasurementBox_create(&heartRateBoxConfig);
+    difficultyBox = MeasurementBox_createDual(&difficultyBoxConfig);
+    speedBox      = MeasurementBox_createDual(&speedBoxConfig);
+    // revolutionBox    = MeasurementBox_createDual(&revolutionBoxConfig);
+    distanceBox      = MeasurementBox_createSingle(&distanceBoxConfig);
+    heartRateBox     = MeasurementBox_createDual(&heartRateBoxConfig);
     measurementChart = MeasurementChart_create(&measurementChartConfig);
     timerBox         = TimerBox_create(&timerLabelConfig);
     controlLive      = LiveControls_create(&controlLiveConfig);
 }
 
-void MainTabviewLive_updateDifficulty(uint32_t difficulty) {
-    sprintf(textBuffer, "%ld\nmV", difficulty);
+void MainTabviewLive_updateDifficulty(uint32_t current, uint32_t average) {
+    char currentBuffer[16] = {0};
+    char averageBuffer[16] = {0};
 
-    MeasurementBox_setValue(&difficultyBox, textBuffer, textBuffer);
+    sprintf(currentBuffer, "%ld\nmV", current);
+    sprintf(averageBuffer, "%ld\nmV", average);
+
+    MeasurementBox_setDualValue(&difficultyBox, currentBuffer, averageBuffer);
 }
 
-void MainTabviewLive_updateSpeed(uint32_t speed) {
-    uint8_t speedDecimal = speed / 100;
+void MainTabviewLive_updateSpeed(uint32_t current, uint32_t average) {
+    char currentBuffer[16] = {0};
+    char averageBuffer[16] = {0};
 
-    sprintf(textBuffer, "%d\nkmh", speedDecimal);
+    uint8_t currentSpeedDecimal = current / 100;
+    uint8_t averageSpeedDecimal = average / 100;
 
-    MeasurementBox_setValue(&speedBox, textBuffer, textBuffer);
+    sprintf(currentBuffer, "%d\nkmh", currentSpeedDecimal);
+    sprintf(averageBuffer, "%d\nkmh", averageSpeedDecimal);
+
+    MeasurementBox_setDualValue(&speedBox, currentBuffer, averageBuffer);
 }
 
-void MainTabviewLive_updateRevolution(uint32_t rpm) {
-    sprintf(textBuffer, "%ld\nrpm", rpm);
+// void MainTabviewLive_updateRevolution(uint32_t current, uint32_t average) {
+//     static char currentBuffer[16] = {0};
+//     static char averageBuffer[16] = {0};
 
-    MeasurementBox_setValue(&revolutionBox, textBuffer, textBuffer);
+//     sprintf(currentBuffer, "%ld\nrpm", current);
+//     sprintf(averageBuffer, "%ld\nrpm", average);
+
+//     MeasurementBox_setDualValue(&revolutionBox, currentBuffer, averageBuffer);
+// }
+
+void MainTabviewLive_updateDistance(uint32_t distance) {
+    char distanceBuffer[16] = {0};
+
+    sprintf(distanceBuffer, "%ldm", distance / 100);
+
+    MeasurementBox_setSingleValue(&distanceBox, distanceBuffer);
 }
 
-void MainTabviewLive_updateHeartRate(uint32_t bpm) {
-    sprintf(textBuffer, "%ld\nbpm", bpm);
+void MainTabviewLive_updateHeartRate(uint32_t current, uint32_t average) {
+    char currentBuffer[16] = {0};
+    char averageBuffer[16] = {0};
 
-    MeasurementBox_setValue(&heartRateBox, textBuffer, textBuffer);
+    sprintf(currentBuffer, "%ld\nbpm", current);
+    sprintf(averageBuffer, "%ld\nbpm", average);
+
+    MeasurementBox_setDualValue(&heartRateBox, currentBuffer, averageBuffer);
 }
 
 void MainTabviewLive_updateChart(uint8_t updateChart) {

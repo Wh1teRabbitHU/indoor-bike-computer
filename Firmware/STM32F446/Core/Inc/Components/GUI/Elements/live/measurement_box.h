@@ -3,11 +3,20 @@
 
 #include "lvgl.h"
 
-typedef struct MeasurementBox {
+#define MEASUREMENT_BOX_WIDTH   145
+#define MEASUREMENT_BOX_HEIGHT  100
+#define MEASUREMENT_BOX_PADDING 5
+
+typedef struct MeasurementBoxSingle {
+    lv_obj_t * box;
+    lv_obj_t * valueLabel;
+} MeasurementBoxSingle;
+
+typedef struct MeasurementBoxDual {
     lv_obj_t * box;
     lv_obj_t * avgValueLabel;
     lv_obj_t * curValueLabel;
-} MeasurementBox;
+} MeasurementBoxDual;
 
 typedef struct MeasurementBox_Config {
     lv_obj_t * screen;
@@ -17,7 +26,9 @@ typedef struct MeasurementBox_Config {
     uint32_t bgColor;
 } MeasurementBox_Config;
 
-MeasurementBox MeasurementBox_create(MeasurementBox_Config * config);
-void MeasurementBox_setValue(MeasurementBox * instance, char * avgVal, char * curVal);
+MeasurementBoxSingle MeasurementBox_createSingle(MeasurementBox_Config * config);
+MeasurementBoxDual MeasurementBox_createDual(MeasurementBox_Config * config);
+void MeasurementBox_setSingleValue(MeasurementBoxSingle * instance, char * val);
+void MeasurementBox_setDualValue(MeasurementBoxDual * instance, char * curVal, char * avgVal);
 
 #endif

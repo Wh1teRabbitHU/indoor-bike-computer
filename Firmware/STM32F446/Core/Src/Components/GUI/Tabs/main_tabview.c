@@ -15,12 +15,24 @@ PRIVATE void MainTabview_setActiveTab(MainTabview_Tab_t tab) {
 PRIVATE void MainTabview_updateTabLive() {
     State_Live * state = State_Live_get();
 
-    MainTabviewLive_updateDifficulty(state->difficulty);
-    MainTabviewLive_updateSpeed(state->speed);
-    MainTabviewLive_updateRevolution(state->rpm);
-    MainTabviewLive_updateHeartRate(state->bpm);
-    MainTabviewLive_updateChart(state->updateChart);
-    MainTabviewLive_updateTimer(state->time);
+    if (state->running) {
+        Data_Run * run = &state->liveRun;
+
+        MainTabviewLive_updateDifficulty(state->difficulty, run->avgDifficulty);
+        MainTabviewLive_updateSpeed(state->speed, run->avgSpeed);
+        MainTabviewLive_updateDistance(run->distance);
+        MainTabviewLive_updateHeartRate(state->bpm, run->avgBpm);
+        MainTabviewLive_updateChart(state->updateChart);
+        MainTabviewLive_updateTimer(state->time);
+    } else {
+        MainTabviewLive_updateDifficulty(state->difficulty, 0);
+        MainTabviewLive_updateSpeed(state->speed, 0);
+        MainTabviewLive_updateDistance(0);
+        MainTabviewLive_updateHeartRate(state->bpm, 0);
+        MainTabviewLive_updateChart(0);
+        MainTabviewLive_updateTimer(state->time);
+    }
+
     MainTabviewLive_updateControl();
 
     state->updateChart = 0;
