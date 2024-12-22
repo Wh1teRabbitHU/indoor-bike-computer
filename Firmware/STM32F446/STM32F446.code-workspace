@@ -53,7 +53,11 @@
 			"main_tabview.h": "c",
 			"live_controls.h": "c",
 			"measurement_chart.h": "c",
-			"measurement_box.h": "c"
+			"measurement_box.h": "c",
+			"fatfs.h": "c",
+			"confirm_modal.h": "c",
+			"main_screen.h": "c",
+			"alert_modal.h": "c"
 		}
 	}
 }

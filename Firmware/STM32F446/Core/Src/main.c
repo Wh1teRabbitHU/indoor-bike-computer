@@ -25,6 +25,7 @@
 #include "data.h"
 #include "er_tft035.h"
 #include "gui.h"
+#include "main_screen.h"
 #include "mcp3421.h"
 #include "stdio.h"
 /* USER CODE END Includes */
@@ -116,22 +117,15 @@ int main(void) {
 
     GUI_init();
     MCP3421_init(&hi2c2);
-    Data_initStorage();
-    Data_loadStatistics();
+    uint8_t sdCardOk = Data_initStorage();
+
+    if (sdCardOk) {
+        Data_loadStatistics();
+    } else {
+        MainScreen_showAlert(ALERT_MODAL_VARIANT_ERROR, 0, "SD card error", "Unable to initialize the computer, the SD card is missing or not readable!");
+    }
+
     HAL_TIM_Base_Start_IT(&htim14); // Start timer
-
-    // SDCard_writeLine("/test_long_filename.txt", "Testing the SD card library...\n");
-    // SDCard_DirPage dirPage = {0};
-
-    // dirPage.readMode = SDCARD_DIR_READMODE_ONLY_DIRECTORIES;
-    // dirPage.startIndex = 2;
-
-    // Data_Run run = {0};
-
-    // Data_readRun(1, &run);
-    // Data_initRun(&run);
-    // Data_storeRun(&run);
-    // volatile uint32_t measurements = Data_countRunMeasurements(1);
 
     /* USER CODE END 2 */
 

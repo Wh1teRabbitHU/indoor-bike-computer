@@ -6,6 +6,8 @@
 
 #define LOADING_LABEL_WIDTH  300
 #define LOADING_LABEL_HEIGHT 50
+#define LOADING_LABEL_POS_X  (ER_TFT035_SCREEN_WIDTH / 2) - (LOADING_LABEL_WIDTH / 2)
+#define LOADING_LABEL_POS_Y  (ER_TFT035_SCREEN_HEIGHT / 2) - (LOADING_LABEL_HEIGHT / 2)
 
 typedef struct LoadingLabel {
     lv_obj_t * box;
@@ -18,7 +20,7 @@ typedef struct LoadingLabel_Config {
 } LoadingLabel_Config;
 
 LoadingLabel LoadingLabel_create(LoadingLabel_Config * config);
-void LoadingLabel_show(LoadingLabel * config);
-void LoadingLabel_hide(LoadingLabel * config);
+void LoadingLabel_show(LoadingLabel * instance);
+void LoadingLabel_hide(LoadingLabel * instance);
 
 #endif

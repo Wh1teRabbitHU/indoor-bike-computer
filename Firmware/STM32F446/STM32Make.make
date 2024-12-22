@@ -358,7 +358,7 @@ Core/Lib/LVGL/src/widgets/tabview/lv_tabview.c \
 Core/Lib/LVGL/src/widgets/textarea/lv_textarea.c \
 Core/Lib/LVGL/src/widgets/tileview/lv_tileview.c \
 Core/Lib/LVGL/src/widgets/win/lv_win.c \
-Core/Src/Components/GUI/Elements/common/confirm_modal.c \
+Core/Src/Components/GUI/Elements/common/alert_modal.c \
 Core/Src/Components/GUI/Elements/common/loading_label.c \
 Core/Src/Components/GUI/Elements/common/page_header.c \
 Core/Src/Components/GUI/Elements/history/run_list.c \

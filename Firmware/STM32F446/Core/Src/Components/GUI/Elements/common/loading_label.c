@@ -8,7 +8,7 @@ LoadingLabel LoadingLabel_create(LoadingLabel_Config * config) {
     lv_obj_align(box, LV_ALIGN_TOP_LEFT, 0, 0);
     lv_obj_set_width(box, LOADING_LABEL_WIDTH);
     lv_obj_set_height(box, LOADING_LABEL_HEIGHT);
-    lv_obj_set_pos(box, (ER_TFT035_SCREEN_WIDTH / 2) - (LOADING_LABEL_WIDTH / 2), (ER_TFT035_SCREEN_HEIGHT / 2) - (LOADING_LABEL_HEIGHT / 2));
+    lv_obj_set_pos(box, LOADING_LABEL_POS_X, LOADING_LABEL_POS_Y);
     lv_obj_set_style_pad_all(box, 5, LV_PART_MAIN);
     lv_obj_remove_flag(box, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_bg_color(box, lv_color_hex(config->bgColor), LV_PART_MAIN);
