@@ -478,8 +478,8 @@ static void MX_GPIO_Init(void) {
 
     /*Configure GPIO pin : REVOLUTION_SIGNAL_Pin */
     GPIO_InitStruct.Pin  = REVOLUTION_SIGNAL_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(REVOLUTION_SIGNAL_GPIO_Port, &GPIO_InitStruct);
 
     /*Configure GPIO pins : USER_BTN_1_Pin USER_BTN_2_Pin USER_BTN_3_Pin */
