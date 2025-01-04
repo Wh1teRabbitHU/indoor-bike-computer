@@ -46,7 +46,9 @@ void MCP3421_setConfig(uint8_t configBin, MCP3421_config * config) {
 
 void MCP3421_readConfig(MCP3421_config * config) {
     uint8_t buffer[4] = {0};
+
     MCP3421_readI2C(buffer);
+
     uint8_t configByte = currentConfig.sampleRate == MCP3421_RATE_003_75 ? 3 : 2;
     uint8_t configBin  = buffer[configByte];
 
@@ -76,7 +78,7 @@ uint32_t MCP3421_readMeasurement() {
 
     measurement = measurement | buffer[2];
     measurement = measurement | buffer[1] << 8;
-    measurement = measurement | ((buffer[0] << 16) & 0b11);
+    measurement = measurement | ((buffer[0] & 0b11) << 16);
 
     switch (currentConfig.sampleRate) {
     case MCP3421_RATE_240_00:
@@ -106,6 +108,8 @@ uint32_t MCP3421_readMeasurement() {
         measurement *= 8;
         break;
     }
+
+    measurement = MCP3421_CALCULATE_MEASUREMENT(measurement);
 
     return measurement;
 }
