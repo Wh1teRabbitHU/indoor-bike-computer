@@ -26,6 +26,7 @@
 #include "er_tft035.h"
 #include "gui.h"
 #include "main_screen.h"
+#include "max17055.h"
 #include "mcp3421.h"
 #include "stdio.h"
 /* USER CODE END Includes */
@@ -117,6 +118,8 @@ int main(void) {
 
     GUI_init();
     MCP3421_init(&hi2c2);
+    // MAX17055_init(&hi2c1);
+
     uint8_t sdCardOk = Data_initStorage();
 
     if (sdCardOk) {

@@ -380,6 +380,7 @@ Core/Src/Components/binary.c \
 Core/Src/Components/controls.c \
 Core/Src/Components/data.c \
 Core/Src/Drivers/er_tft035.c \
+Core/Src/Drivers/max17055.c \
 Core/Src/Drivers/mcp3421.c \
 Core/Src/Drivers/sd_card.c \
 Core/Src/Drivers/stoptimer.c \
