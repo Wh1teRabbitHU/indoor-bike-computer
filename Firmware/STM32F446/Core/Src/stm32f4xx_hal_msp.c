@@ -215,7 +215,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef * hrtc) {
         /* Peripheral clock enable */
         __HAL_RCC_RTC_ENABLE();
         /* RTC interrupt Init */
-        HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 7, 0);
+        HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 1, 0);
         HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
         /* USER CODE BEGIN RTC_MspInit 1 */
 
@@ -353,7 +353,16 @@ void HAL_SD_MspDeInit(SD_HandleTypeDef * hsd) {
  * @retval None
  */
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef * htim_base) {
-    if (htim_base->Instance == TIM14) {
+    if (htim_base->Instance == TIM6) {
+        /* USER CODE BEGIN TIM6_MspInit 0 */
+
+        /* USER CODE END TIM6_MspInit 0 */
+        /* Peripheral clock enable */
+        __HAL_RCC_TIM6_CLK_ENABLE();
+        /* USER CODE BEGIN TIM6_MspInit 1 */
+
+        /* USER CODE END TIM6_MspInit 1 */
+    } else if (htim_base->Instance == TIM14) {
         /* USER CODE BEGIN TIM14_MspInit 0 */
 
         /* USER CODE END TIM14_MspInit 0 */
@@ -375,7 +384,16 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef * htim_base) {
  * @retval None
  */
 void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef * htim_base) {
-    if (htim_base->Instance == TIM14) {
+    if (htim_base->Instance == TIM6) {
+        /* USER CODE BEGIN TIM6_MspDeInit 0 */
+
+        /* USER CODE END TIM6_MspDeInit 0 */
+        /* Peripheral clock disable */
+        __HAL_RCC_TIM6_CLK_DISABLE();
+        /* USER CODE BEGIN TIM6_MspDeInit 1 */
+
+        /* USER CODE END TIM6_MspDeInit 1 */
+    } else if (htim_base->Instance == TIM14) {
         /* USER CODE BEGIN TIM14_MspDeInit 0 */
 
         /* USER CODE END TIM14_MspDeInit 0 */
