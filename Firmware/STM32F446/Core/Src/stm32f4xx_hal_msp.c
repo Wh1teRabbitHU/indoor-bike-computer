@@ -68,6 +68,8 @@ void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
     __HAL_RCC_PWR_CLK_ENABLE();
 
+    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_3);
+
     /* System interrupt init*/
 
     /* Peripheral interrupt init */
@@ -213,7 +215,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef * hrtc) {
         /* Peripheral clock enable */
         __HAL_RCC_RTC_ENABLE();
         /* RTC interrupt Init */
-        HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 0, 0);
+        HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 7, 0);
         HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
         /* USER CODE BEGIN RTC_MspInit 1 */
 
