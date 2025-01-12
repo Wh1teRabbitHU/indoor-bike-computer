@@ -139,6 +139,12 @@ int main(void) {
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
+    // MAX17055_measurements measurements;
+    char stringBuffer[16] = {0};
+
+    sprintf(stringBuffer, "STM32 Test Data");
+    uint8_t delayTime = 0;
+
     while (1) {
         /* USER CODE END WHILE */
 
@@ -146,6 +152,15 @@ int main(void) {
         uint32_t waitTime = GUI_tick();
 
         HAL_Delay(waitTime);
+
+        // MAX17055_readMeasurements(&measurements);
+        // sprintf(stringBuffer, "Measurements:\n%lu, %lu,\n %lu, %lu", measurements.instantVoltage, measurements.instantCurrent, measurements.instantCapacity, measurements.temperature);
+        // MainScreen_showAlert(ALERT_MODAL_VARIANT_INFO, 0, "Measurements", stringBuffer);
+
+        if (delayTime++ > 10) {
+            HAL_UART_Transmit(&huart3, (uint8_t *)stringBuffer, 16, 100);
+            delayTime = 0;
+        }
     }
     /* USER CODE END 3 */
 }
