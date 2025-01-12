@@ -2,6 +2,7 @@
 #define __MAX17055_H
 
 #include "bike.h"
+#include "macros.h"
 #include "main.h"
 
 // More info can be found here: https://www.analog.com/media/en/technical-documentation/user-guides/max17055-software-implementation-guide.pdf
@@ -131,6 +132,17 @@
 
 #define MAX17055_SoftWakeup_REG      0x60
 
+typedef struct MAX17055_measurements {
+    uint16_t instantVoltage;
+    uint16_t instantCurrent;
+    uint16_t stateOfCharge;
+    uint16_t instantCapacity;
+    uint16_t timeToEmpty;
+    uint16_t status;
+    uint16_t temperature;
+} MAX17055_measurements;
+
 void MAX17055_init(I2C_HandleTypeDef * i2c);
+void MAX17055_readMeasurements(MAX17055_measurements * measurements);
 
 #endif
