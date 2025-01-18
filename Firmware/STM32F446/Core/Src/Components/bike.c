@@ -50,7 +50,10 @@ void Bike_updateRevolution(void) {
         return;
     }
 
-    volatile uint32_t elapsed = Bike_getElapsedTime();
+    State_Live_get()->pedalRotating = 1;
+    State_Live_get()->haltCounter   = 0;
+
+    uint32_t elapsed = Bike_getElapsedTime();
 
     if (elapsed > 0) {
         rpm      = BIKE_CALCULATE_RPM(elapsed);

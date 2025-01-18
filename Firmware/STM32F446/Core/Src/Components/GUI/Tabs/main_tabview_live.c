@@ -107,7 +107,7 @@ void MainTabviewLive_updateDifficulty(uint32_t current, uint32_t average) {
     char averageBuffer[16] = {0};
 
     sprintf(currentBuffer, "%ld\nmV", current);
-    sprintf(averageBuffer, "%ld\nmV", average);
+    sprintf(averageBuffer, "%ld\nmV", DATA_AVG_CONVERT_VALUE(average));
 
     MeasurementBox_setDualValue(&difficultyBox, currentBuffer, averageBuffer);
 }
@@ -117,7 +117,7 @@ void MainTabviewLive_updateSpeed(uint32_t current, uint32_t average) {
     char averageBuffer[16] = {0};
 
     uint8_t currentSpeedDecimal = current / 100;
-    uint8_t averageSpeedDecimal = average / 100;
+    uint8_t averageSpeedDecimal = DATA_AVG_CONVERT_VALUE(average) / 100;
 
     sprintf(currentBuffer, "%d\nkmh", currentSpeedDecimal);
     sprintf(averageBuffer, "%d\nkmh", averageSpeedDecimal);
@@ -130,7 +130,7 @@ void MainTabviewLive_updateSpeed(uint32_t current, uint32_t average) {
 //     static char averageBuffer[16] = {0};
 
 //     sprintf(currentBuffer, "%ld\nrpm", current);
-//     sprintf(averageBuffer, "%ld\nrpm", average);
+//     sprintf(averageBuffer, "%ld\nrpm", DATA_AVG_CONVERT_VALUE(average));
 
 //     MeasurementBox_setDualValue(&revolutionBox, currentBuffer, averageBuffer);
 // }
@@ -148,7 +148,7 @@ void MainTabviewLive_updateHeartRate(uint32_t current, uint32_t average) {
     char averageBuffer[16] = {0};
 
     sprintf(currentBuffer, "%ld\nbpm", current);
-    sprintf(averageBuffer, "%ld\nbpm", average);
+    sprintf(averageBuffer, "%ld\nbpm", DATA_AVG_CONVERT_VALUE(average));
 
     MeasurementBox_setDualValue(&heartRateBox, currentBuffer, averageBuffer);
 }

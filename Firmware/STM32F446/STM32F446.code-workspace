@@ -58,7 +58,8 @@
 			"confirm_modal.h": "c",
 			"main_screen.h": "c",
 			"alert_modal.h": "c",
-			"max17055.h": "c"
+			"max17055.h": "c",
+			"run_modal.h": "c"
 		}
 	}
 }

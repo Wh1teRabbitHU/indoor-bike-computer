@@ -396,7 +396,7 @@ uint8_t Data_storeRun(Data_Run * run) {
     }
 
     sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUN_SUMMARY_FILENAME);
-    sprintf(dataBuffer, "%s;%s;%lu;%lu;%d;%lu;%lu;%lu", run->name, run->created, run->sessionLength, run->distance, run->avgDifficulty, run->avgSpeed, run->avgRpm, run->avgBpm);
+    sprintf(dataBuffer, "%s;%s;%lu;%lu;%lu;%lu;%lu;%lu", run->name, run->created, run->sessionLength, run->distance, run->avgDifficulty, run->avgSpeed, run->avgRpm, run->avgBpm);
 
     result = SDCard_writeFile(pathBuffer, dataBuffer);
     SDCard_unmount("/");
@@ -416,7 +416,7 @@ uint8_t Data_storeRunMeasurement(Data_Run * run, Data_RunMeasurement * measureme
     }
 
     sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUN_MEASUREMENTS_FILENAME);
-    sprintf(dataBuffer, "%lu;%d;%lu;%lu;%lu\n", measurement->timestamp, measurement->difficulty, measurement->speed, measurement->rpm, measurement->bpm);
+    sprintf(dataBuffer, "%lu;%lu;%lu;%lu;%lu\n", measurement->timestamp, measurement->difficulty, measurement->speed, measurement->rpm, measurement->bpm);
 
     result = SDCard_appendFile(pathBuffer, dataBuffer);
     SDCard_unmount("/");

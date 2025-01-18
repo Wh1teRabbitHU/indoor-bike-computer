@@ -30,19 +30,19 @@ PRIVATE void RunModal_setRunDetails(RunModal * instance, Data_Run * run) {
     sprintf(textBuffer, "%lum", run->distance / 100);
     lv_label_set_text(instance->distanceValueLabel, textBuffer);
 
-    sprintf(textBuffer, "%d%%", run->avgDifficulty);
+    sprintf(textBuffer, "%lu%%", DATA_AVG_CONVERT_VALUE(run->avgDifficulty));
     lv_label_set_text(instance->avgDifficultyValueLabel, textBuffer);
 
-    uint8_t decimalSpeed  = run->avgSpeed / 100;
-    uint8_t fractionSpeed = run->avgSpeed % 100;
+    uint8_t decimalSpeed  = DATA_AVG_CONVERT_VALUE(run->avgSpeed) / 100;
+    uint8_t fractionSpeed = DATA_AVG_CONVERT_VALUE(run->avgSpeed) % 100;
 
     sprintf(textBuffer, "%d.%dkm/h", decimalSpeed, fractionSpeed);
     lv_label_set_text(instance->avgSpeedValueLabel, textBuffer);
 
-    sprintf(textBuffer, "%lu", run->avgRpm);
+    sprintf(textBuffer, "%lu", DATA_AVG_CONVERT_VALUE(run->avgRpm));
     lv_label_set_text(instance->avgRpmValueLabel, textBuffer);
 
-    sprintf(textBuffer, "%lu", run->avgBpm);
+    sprintf(textBuffer, "%lu", DATA_AVG_CONVERT_VALUE(run->avgBpm));
     lv_label_set_text(instance->avgBpmValueLabel, textBuffer);
 }
 

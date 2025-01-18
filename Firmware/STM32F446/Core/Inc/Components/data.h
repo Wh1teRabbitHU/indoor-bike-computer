@@ -4,15 +4,26 @@
 #include "macros.h"
 #include "sd_card.h"
 
-#define DATA_RUNS_DIRECTORY_PATH       "/indoor-bike/runs"
-#define DATA_RUNS_STATISTICS_FILENAME  "statistics.txt"
-#define DATA_RUN_SUMMARY_FILENAME      "summary.txt"
-#define DATA_RUN_MEASUREMENTS_FILENAME "measurements.txt"
-#define DATA_RUN_NAME_PREFIX           "run_"
-#define DATA_RUN_NAME_MAX_LENGTH       10
-#define DATA_RUN_TIMESTAMP_LENGTH      19
-#define DATA_RUNS_PAGE_SIZE            SDCARD_DIR_PAGE_SIZE
-#define DATA_MEASUREMENTS_PAGE_SIZE    SDCARD_CONTENT_PAGE_SIZE
+/**
+ * @brief Purpose of the multiplier: When the run gets long, the precision of the average calculation can get lost.
+ * To avoid this, we calculate the average with a higher precision which is defined by this constant.
+ *
+ * Example: With multiplier 1000 the average rpm is `81`, stored as `81000`. When you have 999 times `81` and one time `82`, the stored value is `81001`, which is turned back to `81.001`, while without the transformation, the fraction part would be lost
+ */
+#define DATA_AVG_MULTIPLIER                        1000
+
+#define DATA_AVG_CONVERT_VALUE(val)                ((uint32_t)(val / DATA_AVG_MULTIPLIER))
+#define DATA_CALCULATE_AVG(current, avg, avgCount) ((current * DATA_AVG_MULTIPLIER + (uint64_t)avg * avgCount) / (avgCount + 1))
+
+#define DATA_RUNS_DIRECTORY_PATH                   "/indoor-bike/runs"
+#define DATA_RUNS_STATISTICS_FILENAME              "statistics.txt"
+#define DATA_RUN_SUMMARY_FILENAME                  "summary.txt"
+#define DATA_RUN_MEASUREMENTS_FILENAME             "measurements.txt"
+#define DATA_RUN_NAME_PREFIX                       "run_"
+#define DATA_RUN_NAME_MAX_LENGTH                   10
+#define DATA_RUN_TIMESTAMP_LENGTH                  19
+#define DATA_RUNS_PAGE_SIZE                        SDCARD_DIR_PAGE_SIZE
+#define DATA_MEASUREMENTS_PAGE_SIZE                SDCARD_CONTENT_PAGE_SIZE
 
 typedef enum Data_StatisticsAttr_t {
     DATA_STATISTICS_ATTR_RUNS           = 0,
@@ -57,10 +68,11 @@ typedef struct Data_Run {
     char created[DATA_RUN_TIMESTAMP_LENGTH]; // Timestamp: 2024-01-01 00:00:00, 19 char
     uint32_t sessionLength;                  // In seconds, max 5 char long 99999
     uint32_t distance;                       // In centimeters, max 8 char long: 99999999
-    uint8_t avgDifficulty;                   // Percentage value, 3 char
-    uint32_t avgSpeed;                       // Km/h * 100, example: 1234 -> 12.34km/h, 4 char
-    uint32_t avgRpm;                         // Bike wheel rotation per minute, 3 char
-    uint32_t avgBpm;                         // Heartbeat per minute, 3 char
+
+    uint32_t avgDifficulty;                  // Raw measurement data, defined in mV, max 4 char long: 4096, multiplied with the DATA_AVG_MULTIPLIER value
+    uint32_t avgSpeed;                       // Km/h * 100, example: 1234 -> 12.34km/h, 4 char, multiplied with the DATA_AVG_MULTIPLIER value
+    uint32_t avgRpm;                         // Bike wheel rotation per minute, 3 char, multiplied with the DATA_AVG_MULTIPLIER value
+    uint32_t avgBpm;                         // Heartbeat per minute, 3 char, multiplied with the DATA_AVG_MULTIPLIER value
 } Data_Run;
 
 typedef struct Data_RunPage {
@@ -71,11 +83,11 @@ typedef struct Data_RunPage {
 } Data_RunPage;
 
 typedef struct Data_RunMeasurement {
-    uint32_t timestamp; // In seconds
-    uint8_t difficulty; // Percentage value
-    uint32_t speed;     // Km/h * 100, example: 1234 -> 12.34km/h
-    uint32_t rpm;       // Bike wheel rotation per minute
-    uint32_t bpm;       // Heartbeat per minute
+    uint32_t timestamp;  // In seconds
+    uint32_t difficulty; // Percentage value
+    uint32_t speed;      // Km/h * 100, example: 1234 -> 12.34km/h
+    uint32_t rpm;        // Bike wheel rotation per minute
+    uint32_t bpm;        // Heartbeat per minute
 } Data_RunMeasurement;
 
 typedef struct Data_RunMeasurementPage {
