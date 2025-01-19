@@ -23,7 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bike.h"
-#include "controls.h"
+#include "input.h"
 #include "stoptimer.h"
 /* USER CODE END Includes */
 
@@ -273,19 +273,19 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void) {
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     if (GPIO_Pin == USER_BTN_1_Pin) {
-        Controls_pressCancel();
+        Input_pressCancel();
     }
 
     if (GPIO_Pin == USER_BTN_2_Pin) {
-        Controls_pressSelect();
+        Input_pressSelect();
     }
 
     if (GPIO_Pin == USER_BTN_3_Pin) {
-        Controls_pressPrev();
+        Input_pressPrev();
     }
 
     if (GPIO_Pin == USER_BTN_4_Pin) {
-        Controls_pressNext();
+        Input_pressNext();
     }
 
     if (GPIO_Pin == REVOLUTION_SIGNAL_Pin) {

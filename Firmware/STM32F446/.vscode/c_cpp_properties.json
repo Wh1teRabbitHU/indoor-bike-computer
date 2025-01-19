@@ -13,7 +13,7 @@
         "Core/Inc/Components/GUI/Screens",
         "Core/Inc/Components/GUI/Tabs",
         "Core/Inc/Drivers",
-        "Core/Inc/State",
+        "Core/Inc/Handlers",
         "Core/Inc/Utils",
         "Core/Lib",
         "Core/Lib/LVGL",

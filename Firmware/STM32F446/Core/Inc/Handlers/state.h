@@ -1,5 +1,5 @@
-#ifndef __STATE_HANDLER_H_
-#define __STATE_HANDLER_H_
+#ifndef __STATE_H_
+#define __STATE_H_
 
 #include "bike.h"
 #include "data.h"
@@ -36,11 +36,12 @@ typedef struct State_Live {
     Data_RunMeasurement lastMeasurement;
 } State_Live;
 
-State_Global * State_Global_get(void);
-State_Live * State_Live_get(void);
-void State_Live_start();
-void State_Live_pause();
-void State_Live_update(char * timestamp);
-void State_Live_stop(void);
+State_Global * State_getGlobal(void);
+State_Live * State_getLive(void);
+
+void State_startRun();
+void State_pauseRun();
+void State_updateRun(char * timestamp);
+void State_stopRun(void);
 
 #endif

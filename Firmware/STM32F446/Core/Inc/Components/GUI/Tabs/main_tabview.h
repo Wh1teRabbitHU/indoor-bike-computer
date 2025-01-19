@@ -5,7 +5,7 @@
 #include "macros.h"
 #include "main_tabview_history.h"
 #include "main_tabview_live.h"
-#include "state-handler.h"
+#include "state.h"
 
 #define TABVIEW_TAB_COUNT           3
 #define TABVIEW_TAB_HEIGHT          40

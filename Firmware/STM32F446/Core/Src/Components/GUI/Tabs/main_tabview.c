@@ -13,7 +13,7 @@ PRIVATE void MainTabview_setActiveTab(MainTabview_Tab_t tab) {
 }
 
 PRIVATE void MainTabview_updateTabLive() {
-    State_Live * state = State_Live_get();
+    State_Live * state = State_getLive();
 
     if (state->running) {
         Data_Run * run = &state->liveRun;
@@ -93,7 +93,7 @@ PRIVATE void MainTabview_TabLevel_stepIn() {
         break;
     }
 
-    State_Global_get()->updateLevel = 1;
+    State_getGlobal()->updateLevel = 1;
 }
 
 PRIVATE void MainTabview_TabLevel_stepOut() {
@@ -115,7 +115,7 @@ PRIVATE void MainTabview_TabLevel_stepOut() {
         activeTabLevel = MAIN_TABVIEW_TABLEVEL_TAB;
     }
 
-    State_Global_get()->updateLevel = 1;
+    State_getGlobal()->updateLevel = 1;
 }
 
 PRIVATE void MainTabview_TabLevel_execute() {
@@ -218,13 +218,13 @@ void MainTabview_update() {
         break;
     }
 
-    if (State_Global_get()->updateLevel) {
+    if (State_getGlobal()->updateLevel) {
         // Change the tab height based on the level
         int32_t tabViewHeight = activeTabLevel == MAIN_TABVIEW_TABLEVEL_TAB ? TABVIEW_TAB_HEIGHT : 0;
 
         lv_tabview_set_tab_bar_size(mainTabView.tabView, tabViewHeight);
 
-        State_Global_get()->updateLevel = 0;
+        State_getGlobal()->updateLevel = 0;
     }
 }
 

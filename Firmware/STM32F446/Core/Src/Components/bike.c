@@ -28,21 +28,21 @@ void Bike_init(TIM_HandleTypeDef * _revolutionTimer) {
 }
 
 void Bike_setInfo(char * info) {
-    State_Global_get()->infoMessage = info;
+    State_getGlobal()->infoMessage = info;
 }
 void Bike_setError(char * error) {
-    State_Global_get()->errorMessage = error;
+    State_getGlobal()->errorMessage = error;
 }
 void Bike_clearInfo(void) {
-    State_Global_get()->infoMessage = NULL;
+    State_getGlobal()->infoMessage = NULL;
 }
 void Bike_clearError(void) {
-    State_Global_get()->errorMessage = NULL;
+    State_getGlobal()->errorMessage = NULL;
 }
 
 void Bike_updateDifficulty(void) {
-    difficulty                   = MCP3421_readMeasurement();
-    State_Live_get()->difficulty = difficulty;
+    difficulty                  = MCP3421_readMeasurement();
+    State_getLive()->difficulty = difficulty;
 }
 
 void Bike_updateRevolution(void) {
@@ -50,8 +50,8 @@ void Bike_updateRevolution(void) {
         return;
     }
 
-    State_Live_get()->pedalRotating = 1;
-    State_Live_get()->haltCounter   = 0;
+    State_getLive()->pedalRotating = 1;
+    State_getLive()->haltCounter   = 0;
 
     uint32_t elapsed = Bike_getElapsedTime();
 
@@ -61,9 +61,9 @@ void Bike_updateRevolution(void) {
         distance = BIKE_CALCULATE_DISTANCE(speed);
     }
 
-    State_Live_get()->rpm      = rpm;
-    State_Live_get()->distance = distance;
-    State_Live_get()->speed    = speed;
+    State_getLive()->rpm      = rpm;
+    State_getLive()->distance = distance;
+    State_getLive()->speed    = speed;
 
     Bike_restartTimer();
 }

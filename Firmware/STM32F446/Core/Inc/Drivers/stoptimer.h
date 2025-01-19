@@ -3,11 +3,11 @@
 
 #include "macros.h"
 #include "main.h"
-#include "state-handler.h"
+#include "state.h"
 
 typedef enum Stoptimer_State {
     STOPTIMER_STATE_STOPPED = 0,
-    STOPTIMER_STATE_PAUSED = 1,
+    STOPTIMER_STATE_PAUSED  = 1,
     STOPTIMER_STATE_RUNNING = 2
 } Stoptimer_State;
 

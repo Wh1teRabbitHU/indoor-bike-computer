@@ -1,4 +1,4 @@
-#include "state-handler.h"
+#include "state.h"
 
 static State_Global global = {.infoMessage = NULL, .errorMessage = NULL, .updateLevel = 0};
 static State_Live live     = {.difficulty   = 0,
@@ -9,15 +9,15 @@ static State_Live live     = {.difficulty   = 0,
                               .sessionState = APP_LIVESTATE_SESSION_STOPPED,
                               .running      = 0};
 
-State_Global * State_Global_get(void) {
+State_Global * State_getGlobal(void) {
     return &global;
 }
 
-State_Live * State_Live_get(void) {
+State_Live * State_getLive(void) {
     return &live;
 }
 
-void State_Live_start() {
+void State_startRun() {
     if (!live.running) {
         Data_Run run                    = {0};
         Data_RunMeasurement measurement = {0};
@@ -32,11 +32,11 @@ void State_Live_start() {
     live.sessionState = APP_LIVESTATE_SESSION_RUNNING;
 }
 
-void State_Live_pause() {
-    State_Live_get()->sessionState = APP_LIVESTATE_SESSION_PAUSED;
+void State_pauseRun() {
+    State_getLive()->sessionState = APP_LIVESTATE_SESSION_PAUSED;
 }
 
-void State_Live_update(char * timestamp) {
+void State_updateRun(char * timestamp) {
     live.time        = timestamp;
     live.updateChart = 1;
     live.haltCounter += 1;
@@ -72,7 +72,7 @@ void State_Live_update(char * timestamp) {
     Data_storeRunMeasurement(&live.liveRun, &live.lastMeasurement);
 }
 
-void State_Live_stop(void) {
+void State_stopRun(void) {
     live.sessionState = APP_LIVESTATE_SESSION_STOPPED;
     live.speed        = 0;
     live.rpm          = 0;

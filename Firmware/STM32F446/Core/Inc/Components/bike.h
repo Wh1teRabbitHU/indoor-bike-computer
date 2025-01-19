@@ -3,7 +3,7 @@
 
 #include "gui.h"
 #include "mcp3421.h"
-#include "state-handler.h"
+#include "state.h"
 #include "stdint.h"
 #include "stdio.h"
 

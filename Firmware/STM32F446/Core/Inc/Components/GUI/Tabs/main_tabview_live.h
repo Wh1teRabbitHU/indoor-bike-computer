@@ -6,7 +6,7 @@
 #include "macros.h"
 #include "measurement_box.h"
 #include "measurement_chart.h"
-#include "state-handler.h"
+#include "state.h"
 #include "stdio.h"
 #include "stoptimer.h"
 #include "timer_box.h"

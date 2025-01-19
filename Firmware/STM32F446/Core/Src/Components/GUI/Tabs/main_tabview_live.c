@@ -10,7 +10,7 @@ static TimerBox timerBox;
 static LiveControls controlLive;
 
 PRIVATE void MainTabviewLive_executeStart() {
-    if (State_Live_get()->sessionState == APP_LIVESTATE_SESSION_RUNNING) {
+    if (State_getLive()->sessionState == APP_LIVESTATE_SESSION_RUNNING) {
         return;
     }
 
@@ -19,12 +19,12 @@ PRIVATE void MainTabviewLive_executeStart() {
 
     LiveControls_updateBtnText(0, "Pause");
 
-    State_Live_start();
+    State_startRun();
     Stoptimer_start();
 }
 
 PRIVATE void MainTabviewLive_executePause() {
-    State_Live_Session sessionState = State_Live_get()->sessionState;
+    State_Live_Session sessionState = State_getLive()->sessionState;
 
     if (sessionState == APP_LIVESTATE_SESSION_PAUSED || sessionState == APP_LIVESTATE_SESSION_STOPPED) {
         return;
@@ -36,7 +36,7 @@ PRIVATE void MainTabviewLive_executePause() {
     LiveControls_updateBtnText(0, "Resume");
 
     Stoptimer_pause();
-    State_Live_pause();
+    State_pauseRun();
 }
 
 PRIVATE void MainTabviewLive_executeEnd() {
@@ -48,10 +48,10 @@ PRIVATE void MainTabviewLive_executeEnd() {
 
     LiveControls_updateBtnText(0, "Start");
 
-    Data_Run * run = &State_Live_get()->liveRun;
+    Data_Run * run = &State_getLive()->liveRun;
 
     Stoptimer_stop();
-    State_Live_stop();
+    State_stopRun();
     Data_addRunToStatistics(run);
 }
 
@@ -64,10 +64,10 @@ PRIVATE void MainTabviewLive_executeReset() {
 
     LiveControls_updateBtnText(0, "Start");
 
-    Data_Run * run = &State_Live_get()->liveRun;
+    Data_Run * run = &State_getLive()->liveRun;
 
     Stoptimer_stop();
-    State_Live_stop();
+    State_stopRun();
     Data_deleteRun(run);
 }
 
@@ -180,7 +180,7 @@ void MainTabviewLive_stepOut() {
 void MainTabviewLive_execute(void) {
     switch (controlLive.selected) {
     case LIVE_CONTROLS_START:
-        if (State_Live_get()->sessionState == APP_LIVESTATE_SESSION_RUNNING) {
+        if (State_getLive()->sessionState == APP_LIVESTATE_SESSION_RUNNING) {
             MainTabviewLive_executePause();
         } else {
             MainTabviewLive_executeStart();

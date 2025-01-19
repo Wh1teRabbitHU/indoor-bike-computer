@@ -1,8 +1,8 @@
-#include "controls.h"
+#include "input.h"
 
 static GUI_Screen_t activeScreen = GUI_MAIN_SCREEN;
 
-void Controls_pressCancel() {
+void Input_pressCancel() {
     switch (activeScreen) {
     case GUI_MAIN_SCREEN:
         MainScreen_handleCancel();
@@ -10,7 +10,7 @@ void Controls_pressCancel() {
     }
 }
 
-void Controls_pressSelect() {
+void Input_pressSelect() {
     switch (activeScreen) {
     case GUI_MAIN_SCREEN:
         MainScreen_handleSelect();
@@ -18,7 +18,7 @@ void Controls_pressSelect() {
     }
 }
 
-void Controls_pressPrev() {
+void Input_pressPrev() {
     switch (activeScreen) {
     case GUI_MAIN_SCREEN:
         MainScreen_handlePrev();
@@ -26,7 +26,7 @@ void Controls_pressPrev() {
     }
 }
 
-void Controls_pressNext() {
+void Input_pressNext() {
     switch (activeScreen) {
     case GUI_MAIN_SCREEN:
         MainScreen_handleNext();
