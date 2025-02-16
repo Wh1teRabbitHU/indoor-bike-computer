@@ -219,7 +219,7 @@ FRESULT SDCard_readFile(char * name, char * readBuffer, uint32_t readLength) {
     return result;
 }
 
-FRESULT SDCard_writeFile(char * name, char * data) {
+FRESULT SDCard_writeFile(char * name, char * data, uint8_t append) {
     FIL file;
     FILINFO fileInfo;
     UINT bytesWritten;
@@ -234,7 +234,11 @@ FRESULT SDCard_writeFile(char * name, char * data) {
         }
     }
 
-    result = f_open(&file, name, FA_CREATE_ALWAYS | FA_WRITE);
+    if (append) {
+        result = f_open(&file, name, FA_OPEN_APPEND | FA_WRITE);
+    } else {
+        result = f_open(&file, name, FA_CREATE_ALWAYS | FA_WRITE);
+    }
 
     if (result != FR_OK) {
         handleErrorWithParam(result, "File '%s' cannot be opened!", name);

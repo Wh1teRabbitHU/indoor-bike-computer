@@ -239,7 +239,7 @@ uint8_t Data_saveStatistics() {
 
     sprintf(dataBuffer, "%lu;%lu;%lu;%lu", statistics.runs, statistics.sessionsLength, statistics.distanceSum, statistics.lastRunIndex);
 
-    result = SDCard_writeFile(pathBuffer, dataBuffer);
+    result = SDCard_writeFile(pathBuffer, dataBuffer, 0);
 
     SDCard_unmount("/");
 
@@ -398,7 +398,7 @@ uint8_t Data_storeRun(Data_Run * run) {
     sprintf(pathBuffer, "%s/%s/%s", DATA_RUNS_DIRECTORY_PATH, run->name, DATA_RUN_SUMMARY_FILENAME);
     sprintf(dataBuffer, "%s;%s;%lu;%lu;%lu;%lu;%lu;%lu", run->name, run->created, run->sessionLength, run->distance, run->avgDifficulty, run->avgSpeed, run->avgRpm, run->avgBpm);
 
-    result = SDCard_writeFile(pathBuffer, dataBuffer);
+    result = SDCard_writeFile(pathBuffer, dataBuffer, 0);
     SDCard_unmount("/");
 
     return result == FR_OK ? 1 : 0;

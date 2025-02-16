@@ -79,7 +79,7 @@ FRESULT SDCard_createFile(char * name);
 FRESULT SDCard_removeItem(char * name);
 FRESULT SDCard_removeFiles(void);
 FRESULT SDCard_readFile(char * name, char * readBuffer, uint32_t readLength);
-FRESULT SDCard_writeFile(char * name, char * data);
+FRESULT SDCard_writeFile(char * name, char * data, uint8_t append);
 FRESULT SDCard_appendFile(char * name, char * data);
 
 // Advanced functions

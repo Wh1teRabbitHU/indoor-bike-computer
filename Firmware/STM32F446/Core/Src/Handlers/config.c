@@ -53,6 +53,55 @@ PRIVATE void Config_parseLine(char * line) {
     }
 }
 
+PRIVATE void Config_storeWifiEnabled() {
+    char lineBuffer[SDCARD_MAX_LINE_SIZE] = {0};
+
+    sprintf(lineBuffer, "%s=%u\n", CONFIG_WIFI_ENABLED_KEY, globalConfig.wifi.enabled);
+
+    SDCard_writeFile(CONFIG_GLOBAL_PATH, lineBuffer, 1);
+}
+
+PRIVATE void Config_storeWifiSSID() {
+    char lineBuffer[SDCARD_MAX_LINE_SIZE] = {0};
+
+    sprintf(lineBuffer, "%s=%s\n", CONFIG_WIFI_SSID_KEY, globalConfig.wifi.ssid);
+
+    SDCard_writeFile(CONFIG_GLOBAL_PATH, lineBuffer, 1);
+}
+
+PRIVATE void Config_storeWifiPassword() {
+    char lineBuffer[SDCARD_MAX_LINE_SIZE] = {0};
+
+    sprintf(lineBuffer, "%s=%s\n", CONFIG_WIFI_PASSWORD_KEY, globalConfig.wifi.password);
+
+    SDCard_writeFile(CONFIG_GLOBAL_PATH, lineBuffer, 1);
+}
+
+PRIVATE void Config_storeDifficultyIncremental() {
+    char lineBuffer[SDCARD_MAX_LINE_SIZE] = {0};
+
+    sprintf(lineBuffer, "%s=%u\n", CONFIG_DIFICULTY_INCREMENTAL_KEY, globalConfig.bike.difficulty.incremental);
+
+    SDCard_writeFile(CONFIG_GLOBAL_PATH, lineBuffer, 1);
+}
+
+PRIVATE void Config_storeDifficultySteps() {
+    char lineBuffer[SDCARD_MAX_LINE_SIZE] = {0};
+    uint16_t * steps                      = globalConfig.bike.difficulty.steps;
+
+    sprintf(lineBuffer, "%s=%u;%u;%u;%u;%u;%u;%u;%u;%u;%u;%u\n", CONFIG_DIFICULTY_STEPS_KEY, steps[0], steps[1], steps[2], steps[3], steps[4], steps[5], steps[6], steps[7], steps[8], steps[9], steps[10]);
+
+    SDCard_writeFile(CONFIG_GLOBAL_PATH, lineBuffer, 1);
+}
+
+PRIVATE void Config_storeRpmSpeedRatio() {
+    char lineBuffer[SDCARD_MAX_LINE_SIZE] = {0};
+
+    sprintf(lineBuffer, "%s=%lu\n", CONFIG_BIKE_RPM_SPEED_RATIO_KEY, globalConfig.bike.rpmSpeedRatio);
+
+    SDCard_writeFile(CONFIG_GLOBAL_PATH, lineBuffer, 1);
+}
+
 void Config_load(void) {
     FRESULT result = SDCard_mount("/");
 
@@ -61,7 +110,6 @@ void Config_load(void) {
     }
 
     if (!SDCard_pathExists(CONFIG_GLOBAL_PATH)) {
-        SDCard_createFile(CONFIG_GLOBAL_PATH);
         SDCard_unmount("/");
 
         Config_setDefaultValues();
@@ -91,6 +139,39 @@ void Config_load(void) {
 }
 
 void Config_save(void) {
+    FRESULT result = SDCard_mount("/");
+
+    if (result != FR_OK) {
+        return;
+    }
+
+    if (SDCard_pathExists(CONFIG_GLOBAL_PATH)) {
+        result = SDCard_removeItem(CONFIG_GLOBAL_PATH);
+
+        if (result != FR_OK) {
+            SDCard_unmount("/");
+            return;
+        }
+    }
+
+    result = SDCard_createFile(CONFIG_GLOBAL_PATH);
+
+    if (result != FR_OK) {
+        SDCard_unmount("/");
+        return;
+    }
+
+    SDCard_writeFile(CONFIG_GLOBAL_PATH, "# Wifi\n", 1);
+    Config_storeWifiEnabled();
+    Config_storeWifiSSID();
+    Config_storeWifiPassword();
+
+    SDCard_writeFile(CONFIG_GLOBAL_PATH, "# Bike\n", 1);
+    Config_storeDifficultyIncremental();
+    Config_storeDifficultySteps();
+    Config_storeRpmSpeedRatio();
+
+    SDCard_unmount("/");
 }
 
 Config_Global * Config_get(void) {
