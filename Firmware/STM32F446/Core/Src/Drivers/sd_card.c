@@ -561,34 +561,32 @@ FRESULT SDCard_readLines(char * name, SDCard_LinesPage * page) {
     uint32_t lineCount = 0, lineCurPos = 0, lineStartPos = 0, lineEndPos = 0;
     uint32_t lineNumber = page->startIndex;
     uint8_t bufferSize = 4, linesRead = 0, found = 0;
-    UINT bytesRead = bufferSize;
+    UINT bytesRead = 0;
     char readBuffer[bufferSize];
     char * searchBuffer;
 
     while (linesRead < SDCARD_CONTENT_PAGE_SIZE) {
-        while (bytesRead == bufferSize) {
-            result = f_read(&file, readBuffer, bufferSize, &bytesRead);
+        bytesRead = bufferSize;
+        found     = 0;
 
-            if (result != FR_OK) {
-                handleErrorWithParam(result, "Couldn't read from file '%s'!", name);
-                return result;
-            }
+        while (bytesRead == bufferSize) {
+            f_read(&file, readBuffer, bufferSize, &bytesRead);
 
             searchBuffer = readBuffer;
 
             while ((searchBuffer = strstr(searchBuffer, newLine))) {
                 uint8_t lineSubPos = (uint8_t)(searchBuffer - readBuffer);
 
-                if (lineNumber > 0 && lineStartPos == 0 && lineNumber - 1 == lineCount) {
+                if (lineNumber > 0 && lineStartPos == 0 &&
+                    lineNumber == lineCount + 1) {                // This is true if we found the start of the line
                     lineStartPos = lineCurPos + lineSubPos + 1;
-                } else if (lineNumber == 0 || lineStartPos > 0) {
-                    lineEndPos = lineCurPos + lineSubPos;
+                } else if (lineNumber == 0 || lineStartPos > 0) { // This is true if we found the end of the line
+                    lineEndPos = lineCurPos + lineSubPos + 1;
                     found      = 1;
                     break;
                 }
 
                 lineCount++;
-
                 searchBuffer += strlen(newLine);
             }
 
@@ -600,17 +598,25 @@ FRESULT SDCard_readLines(char * name, SDCard_LinesPage * page) {
         }
 
         if (lineStartPos != lineEndPos) {
-            f_lseek(&file, lineStartPos);
-            f_read(&file, page->lines[linesRead], lineEndPos - lineStartPos, &bytesRead);
+            char itemBuffer[SDCARD_MAX_LINE_SIZE] = "\0";
 
+            f_lseek(&file, lineStartPos);
+            f_read(&file, itemBuffer, lineEndPos - lineStartPos, &bytesRead);
+
+            itemBuffer[lineEndPos - lineStartPos - 1] = 0;
+            strcpy(page->lines[linesRead], itemBuffer);
+
+            lineCurPos = lineStartPos = lineEndPos;
+            lineNumber++;
             linesRead++;
         } else {
+            page->endOfFile = 1;
+
             break;
         }
     }
 
     page->resultSize = linesRead;
-    page->endOfFile  = SDCARD_CONTENT_PAGE_SIZE != linesRead;
 
     return result;
 }

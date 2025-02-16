@@ -16,7 +16,7 @@
 #define CONFIG_WIFI_ENABLED_KEY          "wifi_enabled"
 #define CONFIG_WIFI_SSID_KEY             "wifi_ssid"
 #define CONFIG_WIFI_PASSWORD_KEY         "wifi_password"
-#define CONFIG_DIFICULTY_INCREMENTAL_KEY "difficulty_inceremental"
+#define CONFIG_DIFICULTY_INCREMENTAL_KEY "difficulty_incremental"
 #define CONFIG_DIFICULTY_STEPS_KEY       "difficulty_steps"
 #define CONFIG_BIKE_RPM_SPEED_RATIO_KEY  "bike_rpm_speed_ratio"
 
@@ -38,7 +38,7 @@ typedef struct Config_Bike {
 
 typedef struct Config_Global {
     Config_Wifi wifi;
-    Config_Difficulty difficulty;
+    Config_Bike bike;
 } Config_Global;
 
 void Config_load(void);

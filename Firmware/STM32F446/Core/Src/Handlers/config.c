@@ -5,6 +5,18 @@ const char * arrayValueSeparator = ";";
 
 static Config_Global globalConfig = {0};
 
+PRIVATE void Config_setDefaultValues(void) {
+    globalConfig.wifi.enabled = 0;
+    strcpy(globalConfig.wifi.ssid, "[YOUR WIFIS SSID]");
+    strcpy(globalConfig.wifi.password, "[YOUR WIFIS PASSWORD]");
+    globalConfig.bike.difficulty.incremental = 0;
+
+    for (uint8_t i = 0; i < CONFIG_DIFICULTY_STEPS_COUNT; i++) {
+        globalConfig.bike.difficulty.steps[i] = 2300 - (i * 100);
+    }
+    globalConfig.bike.rpmSpeedRatio = 3125;
+}
+
 PRIVATE void Config_parseLine(char * line) {
     char * key   = strtok(line, keyValueSeparator);
     char * value = strtok(NULL, keyValueSeparator);
@@ -22,8 +34,8 @@ PRIVATE void Config_parseLine(char * line) {
     } else if (strcmp(key, CONFIG_WIFI_PASSWORD_KEY) == 0) {
         strcpy(globalConfig.wifi.password, value);
     } else if (strcmp(key, CONFIG_DIFICULTY_INCREMENTAL_KEY) == 0) {
-        uint8_t incremental                 = strtol(value, &endptr, 10);
-        globalConfig.difficulty.incremental = incremental;
+        uint8_t incremental                      = strtol(value, &endptr, 10);
+        globalConfig.bike.difficulty.incremental = incremental;
     } else if (strcmp(key, CONFIG_DIFICULTY_STEPS_KEY) == 0) {
         uint8_t i   = 0;
         char * attr = strtok(value, arrayValueSeparator);
@@ -32,9 +44,12 @@ PRIVATE void Config_parseLine(char * line) {
             uint16_t step = strtol(attr, &endptr, 10);
             attr          = strtok(NULL, arrayValueSeparator);
 
-            globalConfig.difficulty.steps[i] = step;
+            globalConfig.bike.difficulty.steps[i] = step;
             i++;
         }
+    } else if (strcmp(key, CONFIG_BIKE_RPM_SPEED_RATIO_KEY) == 0) {
+        uint32_t ratio                  = strtol(value, &endptr, 10);
+        globalConfig.bike.rpmSpeedRatio = ratio;
     }
 }
 
@@ -48,6 +63,9 @@ void Config_load(void) {
     if (!SDCard_pathExists(CONFIG_GLOBAL_PATH)) {
         SDCard_createFile(CONFIG_GLOBAL_PATH);
         SDCard_unmount("/");
+
+        Config_setDefaultValues();
+        Config_save();
 
         return;
     }
