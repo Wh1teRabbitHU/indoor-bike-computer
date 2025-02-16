@@ -82,6 +82,10 @@ static void MX_TIM6_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void SDCard_handleError(FRESULT result, char * message) {
+    MainScreen_showAlert(ALERT_MODAL_VARIANT_ERROR, 1, "SD card error", message);
+}
+
 /* USER CODE END 0 */
 
 /**
