@@ -1,22 +1,22 @@
 #include "er_tft035.h"
 
-static void swap(int16_t *a, int16_t *b) {
+static void swap(int16_t * a, int16_t * b) {
     int16_t t = *a;
-    *a = *b;
-    *b = t;
+    *a        = *b;
+    *b        = t;
 }
 
 void ER_TFT035_setDataPort(uint32_t data) {
     // D0-D12 = PA0-PA12
     // D13-D17 = PC0-PC4
     uint32_t bottomHalf = data & ER_TFT035_DATA_BOTTOM_MASK;
-    uint32_t topHalf = (data >> 13) & ER_TFT035_DATA_TOP_MASK;
+    uint32_t topHalf    = (data >> 13) & ER_TFT035_DATA_TOP_MASK;
 
     uint32_t bottomResetData = (bottomHalf ^ ER_TFT035_DATA_BOTTOM_MASK) << 16U;
-    uint32_t bottomSetData = bottomResetData | bottomHalf;
+    uint32_t bottomSetData   = bottomResetData | bottomHalf;
 
     uint32_t topResetData = (topHalf ^ ER_TFT035_DATA_TOP_MASK) << 16U;
-    uint32_t topSetData = topResetData | topHalf;
+    uint32_t topSetData   = topResetData | topHalf;
 
     GPIOA->BSRR = bottomSetData;
     GPIOC->BSRR = topSetData;
@@ -58,7 +58,9 @@ void ER_TFT035_clearScreen(uint32_t bColor) {
     uint16_t i, j;
     ER_TFT035_setCursorToRange(0, 319, 0, 479);
     for (i = 0; i < 320; i++) {
-        for (j = 0; j < 480; j++) ER_TFT035_writePixelData(bColor);
+        for (j = 0; j < 480; j++) {
+            ER_TFT035_writePixelData(bColor);
+        }
     }
 }
 
@@ -166,11 +168,11 @@ void ER_TFT035_fillRectangle(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 }
 
 void ER_TFT035_drawCircle(int16_t x0, int16_t y0, int16_t r, uint32_t color) {
-    int16_t f = 1 - r;
+    int16_t f     = 1 - r;
     int16_t ddF_x = 1;
     int16_t ddF_y = -2 * r;
-    int16_t x = 0;
-    int16_t y = r;
+    int16_t x     = 0;
+    int16_t y     = r;
 
     ER_TFT035_drawPixel(x0, y0 + r, color);
     ER_TFT035_drawPixel(x0, y0 - r, color);
@@ -201,11 +203,11 @@ void ER_TFT035_drawCircle(int16_t x0, int16_t y0, int16_t r, uint32_t color) {
 void ER_TFT035_fillCircle(int16_t x0, int16_t y0, int16_t r, uint32_t color) {
     ER_TFT035_drawLine(x0, y0 - r, x0, (y0 - r) + (2 * r + 1) - 1, color);
 
-    int16_t f = 1 - r;
+    int16_t f     = 1 - r;
     int16_t ddF_x = 1;
     int16_t ddF_y = -2 * r;
-    int16_t x = 0;
-    int16_t y = r;
+    int16_t x     = 0;
+    int16_t y     = r;
 
     while (x < y) {
         if (f >= 0) {
@@ -224,11 +226,11 @@ void ER_TFT035_fillCircle(int16_t x0, int16_t y0, int16_t r, uint32_t color) {
     }
 }
 
-void ER_TFT035_drawCharacter(uint8_t *font, uint8_t character, uint16_t x, uint16_t y, uint8_t fontSize,
+void ER_TFT035_drawCharacter(uint8_t * font, uint8_t character, uint16_t x, uint16_t y, uint8_t fontSize,
                              uint32_t fontColor, uint32_t bgcolor) {
     uint8_t i, j;
-    uint8_t *temp = font;
-    uint8_t fontWidth = 8 * fontSize;
+    uint8_t * temp     = font;
+    uint8_t fontWidth  = 8 * fontSize;
     uint8_t fontHeight = 12 * fontSize;
 
     ER_TFT035_setCursorToRange(x, x + fontWidth - 1, y, y + fontHeight - 1);
@@ -248,15 +250,14 @@ void ER_TFT035_drawCharacter(uint8_t *font, uint8_t character, uint16_t x, uint1
     }
 }
 
-void ER_TFT035_drawText(ER_TFT035_textProps *textProps) {
-    char *textPointer = textProps->text;
-    uint16_t posX = textProps->posX;
-    uint16_t posY = textProps->posY;
-    uint8_t fontWidth = 8 * textProps->fontSize;
+void ER_TFT035_drawText(ER_TFT035_textProps * textProps) {
+    char * textPointer = textProps->text;
+    uint16_t posX      = textProps->posX;
+    uint16_t posY      = textProps->posY;
+    uint8_t fontWidth  = 8 * textProps->fontSize;
 
     while (*textPointer != '\0') {
-        ER_TFT035_drawCharacter(textProps->font, *textPointer, posX, posY, textProps->fontSize, textProps->fontColor,
-                                textProps->backgroundColor);
+        ER_TFT035_drawCharacter(textProps->font, *textPointer, posX, posY, textProps->fontSize, textProps->fontColor, textProps->backgroundColor);
         posX += fontWidth - 1;
         textPointer++;
     }
@@ -307,48 +308,48 @@ void ER_TFT035_init(void) {
     ER_TFT035_writeCommandData(0x37);
     ER_TFT035_writeCommandData(0x0F);
 
-    ER_TFT035_writeCommand(0XC0);      // Power Control 1
-    ER_TFT035_writeCommandData(0x17);  // Vreg1out
-    ER_TFT035_writeCommandData(0x15);  // Verg2out
+    ER_TFT035_writeCommand(0XC0);     // Power Control 1
+    ER_TFT035_writeCommandData(0x17); // Vreg1out
+    ER_TFT035_writeCommandData(0x15); // Verg2out
 
-    ER_TFT035_writeCommand(0xC1);      // Power Control 2
-    ER_TFT035_writeCommandData(0x41);  // VGH,VGL
+    ER_TFT035_writeCommand(0xC1);     // Power Control 2
+    ER_TFT035_writeCommandData(0x41); // VGH,VGL
 
-    ER_TFT035_writeCommand(0xC5);  // Power Control 3
+    ER_TFT035_writeCommand(0xC5);     // Power Control 3
     ER_TFT035_writeCommandData(0x00);
-    ER_TFT035_writeCommandData(0x12);  // Vcom
+    ER_TFT035_writeCommandData(0x12); // Vcom
     ER_TFT035_writeCommandData(0x80);
 
-    ER_TFT035_writeCommand(0x36);  // Memory Access
+    ER_TFT035_writeCommand(0x36);     // Memory Access
     ER_TFT035_writeCommandData(0x88);
 
-    ER_TFT035_writeCommand(0x3A);      // Interface Pixel Format
-    ER_TFT035_writeCommandData(0x66);  // 16 bit
+    ER_TFT035_writeCommand(0x3A);     // Interface Pixel Format
+    ER_TFT035_writeCommandData(0x66); // 16 bit
 
-    ER_TFT035_writeCommand(0XB0);  // Interface Mode Control
+    ER_TFT035_writeCommand(0XB0);     // Interface Mode Control
     ER_TFT035_writeCommandData(0x00);
 
-    ER_TFT035_writeCommand(0xB1);      // Frame rate
-    ER_TFT035_writeCommandData(0xA0);  // 60Hz
+    ER_TFT035_writeCommand(0xB1);     // Frame rate
+    ER_TFT035_writeCommandData(0xA0); // 60Hz
 
-    ER_TFT035_writeCommand(0xB4);      // Display Inversion Control
-    ER_TFT035_writeCommandData(0x02);  // 2-dot
+    ER_TFT035_writeCommand(0xB4);     // Display Inversion Control
+    ER_TFT035_writeCommandData(0x02); // 2-dot
 
-    ER_TFT035_writeCommand(0XB6);  // Display Function Control  RGB/MCU Interface Control
+    ER_TFT035_writeCommand(0XB6);     // Display Function Control  RGB/MCU Interface Control
 
-    ER_TFT035_writeCommandData(0x02);  // MCU
-    ER_TFT035_writeCommandData(0x02);  // Source,Gate scan dieection
+    ER_TFT035_writeCommandData(0x02); // MCU
+    ER_TFT035_writeCommandData(0x02); // Source,Gate scan dieection
 
-    ER_TFT035_writeCommand(0XE9);      // Set Image Functio
-    ER_TFT035_writeCommandData(0x00);  // Disable 24 bit data
+    ER_TFT035_writeCommand(0XE9);     // Set Image Functio
+    ER_TFT035_writeCommandData(0x00); // Disable 24 bit data
 
-    ER_TFT035_writeCommand(0xF7);  // Adjust Control
+    ER_TFT035_writeCommand(0xF7);     // Adjust Control
     ER_TFT035_writeCommandData(0xA9);
     ER_TFT035_writeCommandData(0x51);
     ER_TFT035_writeCommandData(0x2C);
-    ER_TFT035_writeCommandData(0x82);  // D7 stream, loose
+    ER_TFT035_writeCommandData(0x82); // D7 stream, loose
 
-    ER_TFT035_writeCommand(0x11);  // Sleep out
+    ER_TFT035_writeCommand(0x11);     // Sleep out
     HAL_Delay(120);
     ER_TFT035_writeCommand(0x29);
 }

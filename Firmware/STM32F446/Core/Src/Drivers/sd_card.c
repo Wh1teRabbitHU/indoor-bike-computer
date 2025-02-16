@@ -1,29 +1,29 @@
 #include "sd_card.h"
 
-FATFS fs;  // file system
-FATFS *pfs;
+FATFS fs; // file system
+FATFS * pfs;
 
-const char *folderSeparator = "/";
-const char *newLine = "\n";
+const char * folderSeparator = "/";
+const char * newLine         = "\n";
 
-PRIVATE void handleError(FRESULT result, char *message) {
+PRIVATE void handleError(FRESULT result, char * message) {
 #ifdef SD_CARD_DEBUG
     SDCard_handleError(result, message);
 #endif
 }
 
-PRIVATE void handleErrorWithParam(FRESULT result, char *message, char *param) {
+PRIVATE void handleErrorWithParam(FRESULT result, char * message, char * param) {
 #ifdef SD_CARD_DEBUG
-    char *buf = malloc(100 * sizeof(char));
+    char * buf = malloc(100 * sizeof(char));
     sprintf(buf, message, param);
     SDCard_handleError(result, buf);
     free(buf);
 #endif
 }
 
-PRIVATE void storeFileExtension(const char *fileName, char *extension) {}
+PRIVATE void storeFileExtension(const char * fileName, char * extension) {}
 
-FRESULT SDCard_mount(const char *path) {
+FRESULT SDCard_mount(const char * path) {
     FRESULT result = f_mount(&fs, path, 1);
 
     if (result != FR_OK) {
@@ -33,7 +33,7 @@ FRESULT SDCard_mount(const char *path) {
     return result;
 }
 
-FRESULT SDCard_unmount(const char *path) {
+FRESULT SDCard_unmount(const char * path) {
     FRESULT result = f_mount(NULL, path, 1);
 
     if (result != FR_OK) {
@@ -43,18 +43,18 @@ FRESULT SDCard_unmount(const char *path) {
     return result;
 }
 
-FRESULT SDCard_checkCapacity(SDCard_Capacity *capacity) {
+FRESULT SDCard_checkCapacity(SDCard_Capacity * capacity) {
     DWORD fre_clust;
     FRESULT result = f_getfree("", &fre_clust, &pfs);
 
     if (result == FR_OK) {
         uint32_t total_capacity = (uint32_t)((pfs->n_fatent - 2) * pfs->csize * 0.5);
-        uint32_t free_space = (uint32_t)(fre_clust * pfs->csize * 0.5);
-        uint32_t used_space = total_capacity - free_space;
+        uint32_t free_space     = (uint32_t)(fre_clust * pfs->csize * 0.5);
+        uint32_t used_space     = total_capacity - free_space;
 
         capacity->total = total_capacity;
-        capacity->free = free_space;
-        capacity->used = used_space;
+        capacity->free  = free_space;
+        capacity->used  = used_space;
     } else {
         handleError(result, "Couldn't load capacity details!");
     }
@@ -62,20 +62,20 @@ FRESULT SDCard_checkCapacity(SDCard_Capacity *capacity) {
     return result;
 }
 
-uint8_t SDCard_pathExists(char *path) {
+uint8_t SDCard_pathExists(char * path) {
     FILINFO fileInfo;
     FRESULT result = f_stat(path, &fileInfo);
 
     return result == FR_OK ? 1 : 0;
 }
 
-FRESULT SDCard_createDirectory(char *name) {
-    FRESULT result = FR_OK;
-    char buffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
+FRESULT SDCard_createDirectory(char * name) {
+    FRESULT result                             = FR_OK;
+    char buffer[SDCARD_MAX_FILE_NAME_SIZE]     = {0};
     char pathBuffer[SDCARD_MAX_FILE_NAME_SIZE] = {0};
 
     strcpy(buffer, name);
-    char *folder = strtok(buffer, folderSeparator);
+    char * folder = strtok(buffer, folderSeparator);
 
     while (folder != NULL) {
         strcat(pathBuffer, "/");
@@ -93,7 +93,7 @@ FRESULT SDCard_createDirectory(char *name) {
     return result;
 }
 
-FRESULT SDCard_createFile(char *name) {
+FRESULT SDCard_createFile(char * name) {
     FIL file;
     FILINFO fileInfo;
     FRESULT result = f_stat(name, &fileInfo);
@@ -121,7 +121,7 @@ FRESULT SDCard_createFile(char *name) {
     return result;
 }
 
-FRESULT SDCard_removeItem(char *name) {
+FRESULT SDCard_removeItem(char * name) {
     FILINFO fileInfo;
     /**** check whether the file exists or not ****/
     FRESULT result = f_stat(name, &fileInfo);
@@ -138,7 +138,7 @@ FRESULT SDCard_removeItem(char *name) {
 FRESULT SDCard_removeFiles(void) {
     DIR dir;
     FILINFO fileInfo;
-    char *path = malloc(20 * sizeof(char));
+    char * path = malloc(20 * sizeof(char));
     sprintf(path, "%s", "/");
 
     FRESULT result = f_opendir(&dir, path);
@@ -183,7 +183,7 @@ FRESULT SDCard_removeFiles(void) {
     return result;
 }
 
-FRESULT SDCard_readFile(char *name, char *readBuffer, uint32_t readLength) {
+FRESULT SDCard_readFile(char * name, char * readBuffer, uint32_t readLength) {
     FIL file;
     FILINFO fileInfo;
     UINT bytesRead;
@@ -219,7 +219,7 @@ FRESULT SDCard_readFile(char *name, char *readBuffer, uint32_t readLength) {
     return result;
 }
 
-FRESULT SDCard_writeFile(char *name, char *data) {
+FRESULT SDCard_writeFile(char * name, char * data) {
     FIL file;
     FILINFO fileInfo;
     UINT bytesWritten;
@@ -257,7 +257,7 @@ FRESULT SDCard_writeFile(char *name, char *data) {
     return result;
 }
 
-FRESULT SDCard_appendFile(char *name, char *data) {
+FRESULT SDCard_appendFile(char * name, char * data) {
     FIL file;
     UINT bytesWritten;
     FRESULT result;
@@ -295,7 +295,7 @@ FRESULT SDCard_appendFile(char *name, char *data) {
  * Advanced functions
  */
 
-FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage) {
+FRESULT SDCard_readDirectory(char * dirPath, SDCard_DirPage * dirPage) {
     DIR dir;
     FILINFO fileInfo;
     FRESULT result = f_opendir(&dir, dirPath);
@@ -306,12 +306,12 @@ FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage) {
         return result;
     }
 
-    dirPage->endOfDir = 0;
+    dirPage->endOfDir   = 0;
     dirPage->resultSize = 0;
 
     // Move the pointer to the start of the page
     for (uint8_t i = 0; i < dirPage->startIndex; i++) {
-        result = f_readdir(&dir, &fileInfo);
+        result        = f_readdir(&dir, &fileInfo);
         uint8_t isDir = SDCARD_IS_DIRECTORY(fileInfo);
 
         // Skip if readmode limits the read items
@@ -354,10 +354,10 @@ FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage) {
             continue;
         }
 
-        SDCard_FSItem *item = &dirPage->items[i];
+        SDCard_FSItem * item = &dirPage->items[i];
 
         item->directory = isDir > 0 ? 1 : 0;
-        item->size = fileInfo.fsize;
+        item->size      = fileInfo.fsize;
 
         strcpy(item->name, fileInfo.fname);
         storeFileExtension(fileInfo.fname, item->extension);
@@ -374,7 +374,7 @@ FRESULT SDCard_readDirectory(char *dirPath, SDCard_DirPage *dirPage) {
     return result;
 }
 
-FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
+FRESULT SDCard_fileStatistics(char * name, SDCard_FileStatistics * statistics) {
     FIL file;
     FILINFO fileInfo;
     FRESULT result;
@@ -397,9 +397,9 @@ FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
 
     uint32_t lineCount = 0;
     uint8_t bufferSize = 32;
-    UINT bytesRead = bufferSize;
+    UINT bytesRead     = bufferSize;
     char readBuffer[bufferSize];
-    char *searchBuffer;
+    char * searchBuffer;
 
     while (bytesRead == bufferSize) {
         result = f_read(&file, readBuffer, bufferSize, &bytesRead);
@@ -417,13 +417,13 @@ FRESULT SDCard_fileStatistics(char *name, SDCard_FileStatistics *statistics) {
         }
     }
 
-    statistics->size = fileInfo.fsize;
+    statistics->size  = fileInfo.fsize;
     statistics->lines = lineCount == 0 && bytesRead > 0 ? 1 : lineCount;
 
     return result;
 }
 
-FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *statistics) {
+FRESULT SDCard_directoryStatistics(char * dirPath, SDCard_DirectoryStatistics * statistics) {
     DIR dir;
     FILINFO fileInfo;
     FRESULT result = f_opendir(&dir, dirPath);
@@ -435,8 +435,8 @@ FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *st
     }
 
     statistics->fileSizes = 0;
-    statistics->files = 0;
-    statistics->folders = 0;
+    statistics->files     = 0;
+    statistics->folders   = 0;
 
     while (1) {
         result = f_readdir(&dir, &fileInfo);
@@ -467,7 +467,7 @@ FRESULT SDCard_directoryStatistics(char *dirPath, SDCard_DirectoryStatistics *st
     return result;
 }
 
-FRESULT SDCard_readLine(char *name, char *resultBuffer, uint32_t lineNumber) {
+FRESULT SDCard_readLine(char * name, char * resultBuffer, uint32_t lineNumber) {
     FIL file;
     FILINFO fileInfo;
     FRESULT result;
@@ -488,13 +488,13 @@ FRESULT SDCard_readLine(char *name, char *resultBuffer, uint32_t lineNumber) {
         return result;
     }
 
-    uint32_t lineCount = 0;
+    uint32_t lineCount  = 0;
     uint32_t lineCurPos = 0, lineStartPos = 0, lineEndPos = 0;
     uint8_t bufferSize = 4;
-    UINT bytesRead = bufferSize;
-    uint8_t found = 0;
+    UINT bytesRead     = bufferSize;
+    uint8_t found      = 0;
     char readBuffer[bufferSize];
-    char *searchBuffer;
+    char * searchBuffer;
 
     while (bytesRead == bufferSize) {
         result = f_read(&file, readBuffer, bufferSize, &bytesRead);
@@ -513,7 +513,7 @@ FRESULT SDCard_readLine(char *name, char *resultBuffer, uint32_t lineNumber) {
                 lineStartPos = lineCurPos + lineSubPos + 1;
             } else if (lineNumber == 0 || lineStartPos > 0) {
                 lineEndPos = lineCurPos + lineSubPos;
-                found = 1;
+                found      = 1;
                 break;
             }
 
@@ -537,7 +537,7 @@ FRESULT SDCard_readLine(char *name, char *resultBuffer, uint32_t lineNumber) {
     return result;
 }
 
-FRESULT SDCard_readLines(char *name, SDCard_LinesPage *page) {
+FRESULT SDCard_readLines(char * name, SDCard_LinesPage * page) {
     FIL file;
     FILINFO fileInfo;
     FRESULT result;
@@ -563,7 +563,7 @@ FRESULT SDCard_readLines(char *name, SDCard_LinesPage *page) {
     uint8_t bufferSize = 4, linesRead = 0, found = 0;
     UINT bytesRead = bufferSize;
     char readBuffer[bufferSize];
-    char *searchBuffer;
+    char * searchBuffer;
 
     while (linesRead < SDCARD_CONTENT_PAGE_SIZE) {
         while (bytesRead == bufferSize) {
@@ -583,7 +583,7 @@ FRESULT SDCard_readLines(char *name, SDCard_LinesPage *page) {
                     lineStartPos = lineCurPos + lineSubPos + 1;
                 } else if (lineNumber == 0 || lineStartPos > 0) {
                     lineEndPos = lineCurPos + lineSubPos;
-                    found = 1;
+                    found      = 1;
                     break;
                 }
 
@@ -609,10 +609,13 @@ FRESULT SDCard_readLines(char *name, SDCard_LinesPage *page) {
         }
     }
 
+    page->resultSize = linesRead;
+    page->endOfFile  = SDCARD_CONTENT_PAGE_SIZE != linesRead;
+
     return result;
 }
 
-FRESULT SDCard_searchInFile(char *name, char *data, SDCard_SearchResult *result) {
+FRESULT SDCard_searchInFile(char * name, char * data, SDCard_SearchResult * result) {
     // TODO: Implement
     return FR_OK;
 }

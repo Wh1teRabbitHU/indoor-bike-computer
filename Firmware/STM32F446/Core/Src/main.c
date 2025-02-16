@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bike.h"
+#include "config.h"
 #include "data.h"
 #include "er_tft035.h"
 #include "gui.h"
@@ -122,28 +123,35 @@ int main(void) {
 
     Bike_init(&htim6);
     GUI_init();
-    MCP3421_init(&hi2c2);
-    // MAX17055_init(&hi2c1);
 
     uint8_t sdCardOk = Data_initStorage();
 
     if (sdCardOk) {
         Data_loadStatistics();
+        Config_load();
     } else {
         MainScreen_showAlert(ALERT_MODAL_VARIANT_ERROR, 0, "SD card error", "Unable to initialize the computer, the SD card is missing or not readable!");
     }
 
-    HAL_TIM_Base_Start_IT(&htim14); // Start timer
+    HAL_StatusTypeDef adcInitResult = MCP3421_init(&hi2c2);
 
-                                    /* USER CODE END 2 */
+    if (adcInitResult == HAL_OK) {
+        HAL_TIM_Base_Start_IT(&htim14); // Start timer
+    } else if (sdCardOk) {
+        MainScreen_showAlert(ALERT_MODAL_VARIANT_ERROR, 0, "Sensor error", "Unable to initialize the computer, one of the sensors is not responding!");
+    }
+
+    // MAX17055_init(&hi2c1);
+
+    /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     // MAX17055_measurements measurements;
-    char stringBuffer[16] = {0};
+    // char stringBuffer[16] = {0};
 
-    sprintf(stringBuffer, "STM32 Test Data");
-    uint8_t delayTime = 0;
+    // sprintf(stringBuffer, "STM32 Test Data");
+    // uint8_t delayTime = 0;
 
     while (1) {
         /* USER CODE END WHILE */
@@ -157,10 +165,10 @@ int main(void) {
         // sprintf(stringBuffer, "Measurements:\n%lu, %lu,\n %lu, %lu", measurements.instantVoltage, measurements.instantCurrent, measurements.instantCapacity, measurements.temperature);
         // MainScreen_showAlert(ALERT_MODAL_VARIANT_INFO, 0, "Measurements", stringBuffer);
 
-        if (delayTime++ > 10) {
-            HAL_UART_Transmit(&huart3, (uint8_t *)stringBuffer, 16, 100);
-            delayTime = 0;
-        }
+        // if (delayTime++ > 10) {
+        //     HAL_UART_Transmit(&huart3, (uint8_t *)stringBuffer, 16, 100);
+        //     delayTime = 0;
+        // }
     }
     /* USER CODE END 3 */
 }

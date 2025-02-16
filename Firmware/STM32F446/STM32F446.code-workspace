@@ -60,7 +60,8 @@
 			"alert_modal.h": "c",
 			"max17055.h": "c",
 			"run_modal.h": "c",
-			"input.h": "c"
+			"input.h": "c",
+			"config.h": "c"
 		}
 	}
 }

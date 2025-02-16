@@ -3,6 +3,7 @@
 
 #include "bike.h"
 #include "binary.h"
+#include "macros.h"
 #include "main.h"
 
 #define MCP3421_I2C_ADDR                  0b1101000 << 1
@@ -34,10 +35,10 @@ typedef struct MCP3421_config {
     uint8_t gain;
 } MCP3421_config;
 
-void MCP3421_init(I2C_HandleTypeDef * i2c);
+HAL_StatusTypeDef MCP3421_init(I2C_HandleTypeDef * i2c);
 
-void MCP3421_readConfig(MCP3421_config * config);
-void MCP3421_writeConfig(MCP3421_config * config);
+HAL_StatusTypeDef MCP3421_readConfig(MCP3421_config * config);
+HAL_StatusTypeDef MCP3421_writeConfig(MCP3421_config * config);
 uint32_t MCP3421_readMeasurement();
 
 #endif
