@@ -143,6 +143,7 @@ typedef struct MAX17055_measurements {
 } MAX17055_measurements;
 
 void MAX17055_init(I2C_HandleTypeDef * i2c);
+void MAX17055_init2(I2C_HandleTypeDef * i2c);
 void MAX17055_readMeasurements(MAX17055_measurements * measurements);
 
 #endif
