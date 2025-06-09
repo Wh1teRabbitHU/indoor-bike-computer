@@ -381,6 +381,7 @@ Core/Src/Drivers/max17055.c \
 Core/Src/Drivers/mcp3421.c \
 Core/Src/Drivers/sd_card.c \
 Core/Src/Drivers/stoptimer.c \
+Core/Src/ESP32/esp32_uart.c \
 Core/Src/Handlers/config.c \
 Core/Src/Handlers/data.c \
 Core/Src/Handlers/input.c \
@@ -549,6 +550,7 @@ C_INCLUDES =  \
 -ICore/Inc/Components/GUI/Screens \
 -ICore/Inc/Components/GUI/Tabs \
 -ICore/Inc/Drivers \
+-ICore/Inc/ESP32 \
 -ICore/Inc/Handlers \
 -ICore/Inc/Utils \
 -ICore/Lib \

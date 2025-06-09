@@ -26,6 +26,7 @@
 #include "config.h"
 #include "data.h"
 #include "er_tft035.h"
+#include "esp32_uart.h"
 #include "gui.h"
 #include "main_screen.h"
 #include "max17055.h"
@@ -147,14 +148,13 @@ int main(void) {
 
     // MAX17055_init(&hi2c1);
 
+    ESP32_initCommunication(&huart3);
+
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     // MAX17055_measurements measurements;
-    char stringBuffer[16] = {0};
-
-    sprintf(stringBuffer, "STM32 Test Data");
     uint8_t delayTime = 0;
 
     while (1) {
@@ -170,7 +170,7 @@ int main(void) {
         // MainScreen_showAlert(ALERT_MODAL_VARIANT_INFO, 0, "Measurements", stringBuffer);
 
         if (delayTime++ > 10) {
-            HAL_UART_Transmit(&huart3, (uint8_t *)stringBuffer, 16, 100);
+            ESP32_sendData();
             delayTime = 0;
         }
     }
