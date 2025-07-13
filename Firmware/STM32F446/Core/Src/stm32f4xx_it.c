@@ -58,7 +58,10 @@
 
 /* External variables --------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim14;
+extern DMA_HandleTypeDef hdma_usart3_rx;
+extern DMA_HandleTypeDef hdma_usart3_tx;
 extern UART_HandleTypeDef huart3;
 /* USER CODE BEGIN EV */
 
@@ -216,6 +219,32 @@ void RCC_IRQHandler(void) {
 }
 
 /**
+ * @brief This function handles DMA1 stream1 global interrupt.
+ */
+void DMA1_Stream1_IRQHandler(void) {
+    /* USER CODE BEGIN DMA1_Stream1_IRQn 0 */
+
+    /* USER CODE END DMA1_Stream1_IRQn 0 */
+    HAL_DMA_IRQHandler(&hdma_usart3_rx);
+    /* USER CODE BEGIN DMA1_Stream1_IRQn 1 */
+
+    /* USER CODE END DMA1_Stream1_IRQn 1 */
+}
+
+/**
+ * @brief This function handles DMA1 stream3 global interrupt.
+ */
+void DMA1_Stream3_IRQHandler(void) {
+    /* USER CODE BEGIN DMA1_Stream3_IRQn 0 */
+
+    /* USER CODE END DMA1_Stream3_IRQn 0 */
+    HAL_DMA_IRQHandler(&hdma_usart3_tx);
+    /* USER CODE BEGIN DMA1_Stream3_IRQn 1 */
+
+    /* USER CODE END DMA1_Stream3_IRQn 1 */
+}
+
+/**
  * @brief This function handles EXTI line[9:5] interrupts.
  */
 void EXTI9_5_IRQHandler(void) {
@@ -267,6 +296,19 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void) {
     /* USER CODE BEGIN TIM8_TRG_COM_TIM14_IRQn 1 */
     Bike_updateDifficulty();
     /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 1 */
+}
+
+/**
+ * @brief This function handles TIM7 global interrupt.
+ */
+void TIM7_IRQHandler(void) {
+    /* USER CODE BEGIN TIM7_IRQn 0 */
+
+    /* USER CODE END TIM7_IRQn 0 */
+    HAL_TIM_IRQHandler(&htim7);
+    /* USER CODE BEGIN TIM7_IRQn 1 */
+    ESP32_sendData();
+    /* USER CODE END TIM7_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

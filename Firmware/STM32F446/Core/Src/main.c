@@ -58,9 +58,12 @@ RTC_HandleTypeDef hrtc;
 SD_HandleTypeDef hsd;
 
 TIM_HandleTypeDef htim6;
+TIM_HandleTypeDef htim7;
 TIM_HandleTypeDef htim14;
 
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_usart3_rx;
+DMA_HandleTypeDef hdma_usart3_tx;
 
 /* USER CODE BEGIN PV */
 
@@ -69,6 +72,7 @@ UART_HandleTypeDef huart3;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_SDIO_SD_Init(void);
@@ -76,6 +80,7 @@ static void MX_USART3_UART_Init(void);
 static void MX_RTC_Init(void);
 static void MX_TIM14_Init(void);
 static void MX_TIM6_Init(void);
+static void MX_TIM7_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -116,6 +121,7 @@ int main(void) {
 
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
+    MX_DMA_Init();
     MX_I2C1_Init();
     MX_I2C2_Init();
     MX_SDIO_SD_Init();
@@ -124,6 +130,7 @@ int main(void) {
     MX_TIM14_Init();
     MX_FATFS_Init();
     MX_TIM6_Init();
+    MX_TIM7_Init();
     /* USER CODE BEGIN 2 */
 
     Bike_init(&htim6);
@@ -142,6 +149,7 @@ int main(void) {
 
     if (adcInitResult == HAL_OK) {
         HAL_TIM_Base_Start_IT(&htim14); // Start timer
+        HAL_TIM_Base_Start_IT(&htim7);
     } else if (sdCardOk) {
         MainScreen_showAlert(ALERT_MODAL_VARIANT_ERROR, 0, "Sensor error", "Unable to initialize the computer, one of the sensors is not responding!");
     }
@@ -168,11 +176,6 @@ int main(void) {
         // MAX17055_readMeasurements(&measurements);
         // sprintf(stringBuffer, "Measurements:\n%lu, %lu,\n %lu, %lu", measurements.instantVoltage, measurements.instantCurrent, measurements.instantCapacity, measurements.temperature);
         // MainScreen_showAlert(ALERT_MODAL_VARIANT_INFO, 0, "Measurements", stringBuffer);
-
-        if (delayTime++ > 10) {
-            ESP32_sendData();
-            delayTime = 0;
-        }
     }
     /* USER CODE END 3 */
 }
@@ -219,7 +222,7 @@ void SystemClock_Config(void) {
     RCC_ClkInitStruct.ClockType      = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
     RCC_ClkInitStruct.SYSCLKSource   = RCC_SYSCLKSOURCE_PLLCLK;
     RCC_ClkInitStruct.AHBCLKDivider  = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV8;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK) {
@@ -396,7 +399,7 @@ static void MX_TIM6_Init(void) {
 
     /* USER CODE END TIM6_Init 1 */
     htim6.Instance               = TIM6;
-    htim6.Init.Prescaler         = 9000 - 1;
+    htim6.Init.Prescaler         = 4500 - 1;
     htim6.Init.CounterMode       = TIM_COUNTERMODE_UP;
     htim6.Init.Period            = 50000;
     htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -411,6 +414,40 @@ static void MX_TIM6_Init(void) {
     /* USER CODE BEGIN TIM6_Init 2 */
 
     /* USER CODE END TIM6_Init 2 */
+}
+
+/**
+ * @brief TIM7 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_TIM7_Init(void) {
+
+    /* USER CODE BEGIN TIM7_Init 0 */
+
+    /* USER CODE END TIM7_Init 0 */
+
+    TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+    /* USER CODE BEGIN TIM7_Init 1 */
+
+    /* USER CODE END TIM7_Init 1 */
+    htim7.Instance               = TIM7;
+    htim7.Init.Prescaler         = 45000 - 1;
+    htim7.Init.CounterMode       = TIM_COUNTERMODE_UP;
+    htim7.Init.Period            = 100 - 1;
+    htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    if (HAL_TIM_Base_Init(&htim7) != HAL_OK) {
+        Error_Handler();
+    }
+    sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+    sMasterConfig.MasterSlaveMode     = TIM_MASTERSLAVEMODE_DISABLE;
+    if (HAL_TIMEx_MasterConfigSynchronization(&htim7, &sMasterConfig) != HAL_OK) {
+        Error_Handler();
+    }
+    /* USER CODE BEGIN TIM7_Init 2 */
+
+    /* USER CODE END TIM7_Init 2 */
 }
 
 /**
@@ -469,6 +506,23 @@ static void MX_USART3_UART_Init(void) {
     /* USER CODE BEGIN USART3_Init 2 */
 
     /* USER CODE END USART3_Init 2 */
+}
+
+/**
+ * Enable DMA controller clock
+ */
+static void MX_DMA_Init(void) {
+
+    /* DMA controller clock enable */
+    __HAL_RCC_DMA1_CLK_ENABLE();
+
+    /* DMA interrupt init */
+    /* DMA1_Stream1_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
+    /* DMA1_Stream3_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
 }
 
 /**
@@ -569,6 +623,10 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart) {
+    ESP32_receiveData();
+}
 
 /* USER CODE END 4 */
 

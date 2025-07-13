@@ -17,7 +17,8 @@ void setup() {
 }
 
 char logBuffer[128] = {'\0'};
-char uartBuffer[64] = {'\0'};
+char rxBuffer[64] = {'\0'};
+char txBuffer[64] = {'\0'};
 char dataBuffer[64] = {'\0'};
 uint32_t counter = 0;
 uint8_t bufferPointer = 0;
@@ -77,18 +78,27 @@ static inline uint32_t read32BitData(char* buffer, uint8_t start) {
 
 void loop() {
     while (Serial2.available()) {
-        uartBuffer[bufferPointer++] = (char)Serial2.read();
+        rxBuffer[bufferPointer++] = (char)Serial2.read();
     }
 
     if (bufferPointer > 0) {
-        uint32_t packetID = read32BitData(uartBuffer, 0);
-        uint8_t command = uartBuffer[4];
-        uint8_t dataLength = uartBuffer[5];
-        memcpy(dataBuffer, uartBuffer + 6, dataLength);
-        uint32_t crcSent = read32BitData(uartBuffer, dataLength + 6);
-        uint32_t crcCalculated = calculateCRC((uint8_t*)uartBuffer, dataLength + 6);
+        uint32_t packetID = read32BitData(rxBuffer, 0);
+        uint8_t command = rxBuffer[4];
+        uint8_t dataLength = rxBuffer[5];
+        memcpy(dataBuffer, rxBuffer + 6, dataLength);
+        uint32_t crcSent = read32BitData(rxBuffer, dataLength + 6);
+        uint32_t crcCalculated = calculateCRC((uint8_t*)rxBuffer, dataLength + 6);
         sprintf(logBuffer, "[%09lu] <%u> (%08X <=> %08X) %s", packetID, command, crcSent, crcCalculated, dataBuffer);
         Serial.println(logBuffer);
         bufferPointer = 0;
+
+        if (crcSent == crcCalculated) {
+            sprintf(txBuffer, "[%09lu] %s\n\0", packetID, "Received!");
+        } else {
+            sprintf(txBuffer, "%s\0", "Failed!");
+        }
+
+        Serial2.write(txBuffer, 64);
+        Serial2.flush();
     }
 }

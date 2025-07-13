@@ -4,6 +4,7 @@
 
 #include "macros.h"
 #include "main.h"
+#include "main_screen.h"
 #include "stdint.h"
 #include "stdio.h"
 #include <string.h>
