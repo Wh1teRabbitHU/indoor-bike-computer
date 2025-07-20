@@ -387,6 +387,7 @@ Core/Src/Handlers/data.c \
 Core/Src/Handlers/input.c \
 Core/Src/Handlers/state.c \
 Core/Src/Utils/binary.c \
+Core/Src/Utils/buffer.c \
 Core/Src/main.c \
 Core/Src/stm32f4xx_hal_msp.c \
 Core/Src/stm32f4xx_it.c \

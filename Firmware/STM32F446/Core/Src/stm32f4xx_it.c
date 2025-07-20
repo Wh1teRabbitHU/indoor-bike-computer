@@ -44,7 +44,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+static ESP32_UART_Packet packet = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -307,7 +307,10 @@ void TIM7_IRQHandler(void) {
     /* USER CODE END TIM7_IRQn 0 */
     HAL_TIM_IRQHandler(&htim7);
     /* USER CODE BEGIN TIM7_IRQn 1 */
-    ESP32_sendData();
+    packet.command = UART_CMD_WIFI_TOGGLE;
+    packet.length  = 0;
+
+    ESP32_sendData(&packet);
     /* USER CODE END TIM7_IRQn 1 */
 }
 

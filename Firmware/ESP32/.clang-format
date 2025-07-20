@@ -1,0 +1,31 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+Language: Cpp
+IndentWidth: 4
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Left
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveMacros: AcrossEmptyLines
+AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 2
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
+BinPackParametersStyle: OnePerLine
+BinPackArguments: false
+BreakBeforeBraces: Attach
+BreakBeforeTernaryOperators: true
+ColumnLimit: 0
+InsertBraces: true
+PointerAlignment: Middle
+QualifierAlignment: Left
+QualifierOrder: [inline, static, type, const, volatile]
+ReferenceAlignment: Middle
+RemoveParenthesesStyle: MultipleParentheses
+SpaceAroundPointerQualifiersStyle: Both

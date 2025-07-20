@@ -163,7 +163,6 @@ int main(void) {
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     // MAX17055_measurements measurements;
-    uint8_t delayTime = 0;
 
     while (1) {
         /* USER CODE END WHILE */
@@ -624,8 +623,12 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 
+ESP32_UART_Packet packet = {0};
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart) {
-    ESP32_receiveData();
+    ESP32_receiveData(&packet);
+
+    MainScreen_showAlert(ALERT_MODAL_VARIANT_INFO, 0, "Received Data", (char *)packet.data);
 }
 
 /* USER CODE END 4 */
